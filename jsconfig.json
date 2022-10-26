@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "paths": {
+      "src/*": ["./src/*"]
+    }
+  },
+  "include": ["gatsby-config.js", "src"]
+}
