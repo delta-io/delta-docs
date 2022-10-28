@@ -1,4 +1,5 @@
 const scala = require("highlight.js/lib/languages/scala");
+const { searchPluginConfig } = require("./config/search");
 
 const wrapESMPlugin =
   (name) =>
@@ -38,6 +39,9 @@ module.exports = {
       },
     },
     {
+      resolve: "gatsby-plugin-google-gtag",
+    },
+    {
       resolve: "gatsby-plugin-mdx",
       options: {
         gatsbyRemarkPlugins: [
@@ -73,5 +77,6 @@ module.exports = {
         path: `${__dirname}/src/pages`,
       },
     },
+    searchPluginConfig,
   ],
 };

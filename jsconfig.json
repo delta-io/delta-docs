@@ -4,8 +4,9 @@
     "moduleResolution": "node",
     "jsx": "react",
     "paths": {
+      "config/*": ["./config/*"],
       "src/*": ["./src/*"]
     }
   },
-  "include": ["gatsby-config.js", "src"]
+  "include": ["gatsby-config.js", "config", "src"]
 }

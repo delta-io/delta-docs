@@ -26,7 +26,10 @@ module.exports = {
   settings: {
     "import/resolver": {
       alias: {
-        map: [["src", "./src"]],
+        map: [
+          ["config", "./config"],
+          ["src", "./src"],
+        ],
         extensions: [".js", ".jsx", ".mdx"],
       },
     },
@@ -34,6 +37,11 @@ module.exports = {
       "error",
       {
         pathGroups: [
+          {
+            pattern: "config/**",
+            group: "external",
+            position: "after",
+          },
           {
             pattern: "src/**",
             group: "external",
