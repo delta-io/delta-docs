@@ -39,9 +39,6 @@ module.exports = {
       },
     },
     {
-      resolve: "gatsby-plugin-google-gtag",
-    },
-    {
       resolve: "gatsby-plugin-mdx",
       options: {
         gatsbyRemarkPlugins: [
