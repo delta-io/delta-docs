@@ -5,36 +5,26 @@ import MDX from "src/components/MDX";
 import { TypographyContainer } from "src/components/Typography";
 import * as menus from "config/menus";
 import Section from "src/components/Section";
-import OneColumnLayout from "./components/OneColumnLayout";
 import TwoColumnLayout from "./components/TwoColumnLayout";
 
 export const DefaultLayout = (props) => {
-  console.log(props);
   const { location, pageContext, children } = props;
   const { frontmatter = {} } = pageContext;
 
-  const sidebarMenu = menus[frontmatter.menu];
-
-  const content = (
-    <Section title={frontmatter.title} primary container={false}>
-      <TypographyContainer>
-        <MDX>{children}</MDX>
-      </TypographyContainer>
-    </Section>
-  );
+  const sidebarMenu = menus["docs" || frontmatter.menu];
 
   return (
     <PageLayout>
-      {sidebarMenu ? (
-        <TwoColumnLayout
-          sidebarMenu={sidebarMenu}
-          currentPathname={location.pathname}
-        >
-          {content}
-        </TwoColumnLayout>
-      ) : (
-        <OneColumnLayout width={frontmatter.width}>{content}</OneColumnLayout>
-      )}
+      <TwoColumnLayout
+        sidebarMenu={sidebarMenu}
+        currentPathname={location.pathname}
+      >
+        <Section title={frontmatter.title} primary container={false}>
+          <TypographyContainer>
+            <MDX>{children}</MDX>
+          </TypographyContainer>
+        </Section>
+      </TwoColumnLayout>
     </PageLayout>
   );
 };

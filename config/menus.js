@@ -1,3 +1,20 @@
+const docs = [
+  {
+    url: "/",
+    label: "Docs Home",
+  },
+  {
+    url: "/spark/",
+    label: "Delta Lake Spark",
+    items: [
+      {
+        url: "/spark/getting-started",
+        label: "Getting Started",
+      },
+    ],
+  },
+];
+
 const main = [
   {
     label: "Docs",
@@ -86,6 +103,7 @@ const footer = [
 ];
 
 module.exports = {
+  docs,
   community,
   footer,
   learn,

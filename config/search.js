@@ -7,7 +7,7 @@ const searchPluginConfig = {
       query SearchPluginQuery {
         allSitePage(filter: {component: {regex: "/mdx$/"}}) {
           nodes {
-            id
+            componentChunkName
             pageContext
             path
           }
@@ -15,14 +15,14 @@ const searchPluginConfig = {
       }
     `,
     index: ["title"],
-    normalizer: ({ data }) =>
-      data.allSitePage.nodes.map(({ node }) => ({
-        id: node.id,
-        title: node.pageContext.frontmatter.title,
-        description: node.pageContext.frontmatter.description,
-        url: node.path,
-        isExternal: false,
-      })),
+    normalizer: ({ data }) => [],
+    // return data.allSitePage.nodes.map(({ node }) => ({
+    //   id: node.componentChunkName,
+    //   title: node.pageContext.frontmatter.title,
+    //   description: node.pageContext.frontmatter.description,
+    //   url: node.path,
+    //   isExternal: false,
+    // }));
   },
 };
 
