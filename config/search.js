@@ -5,24 +5,30 @@ const searchPluginConfig = {
     engine: "flexsearch",
     query: `
       query SearchPluginQuery {
-        allSitePage(filter: {component: {regex: "/mdx$/"}}) {
+        allMdx {
           nodes {
-            componentChunkName
-            pageContext
-            path
+            id
+            frontmatter {
+              title
+              description
+            }
+            excerpt
+            fields {
+              path
+            }
           }
         }
       }
     `,
     index: ["title"],
-    normalizer: ({ data }) => [],
-    // return data.allSitePage.nodes.map(({ node }) => ({
-    //   id: node.componentChunkName,
-    //   title: node.pageContext.frontmatter.title,
-    //   description: node.pageContext.frontmatter.description,
-    //   url: node.path,
-    //   isExternal: false,
-    // }));
+    normalizer: ({ data }) =>
+      data.allMdx.nodes.map((node) => ({
+        id: node.id,
+        title: node.frontmatter.title,
+        description: node.frontmatter.description,
+        url: node.fields.path,
+        isExternal: false,
+      })),
   },
 };
 
