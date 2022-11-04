@@ -11,6 +11,10 @@ const docs = [
         url: "/spark/getting-started",
         label: "Getting Started",
       },
+      {
+        url: "/spark/best-practices",
+        label: "Best Practices",
+      },
     ],
   },
 ];
