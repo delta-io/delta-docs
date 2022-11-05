@@ -32,6 +32,14 @@ const docs = [
         label: "Delta Column Mapping",
       },
       {
+        url: "/spark/delta-faq",
+        label: "Delta FAQ",
+      },
+      {
+        url: "/spark/delta-intro",
+        label: "Delta Intro",
+      },
+      {
         url: "/spark/best-practices",
         label: "Best Practices",
       },
