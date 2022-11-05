@@ -12,6 +12,26 @@ const docs = [
         label: "Getting Started",
       },
       {
+        url: "/spark/batch",
+        label: "Batch",
+      },
+      {
+        url: "/spark/concurrency-control",
+        label: "Concurrency Control",
+      },
+      {
+        url: "/spark/constraints",
+        label: "Constraints",
+      },
+      {
+        url: "/spark/delta-apidoc",
+        label: "Delta API Doc",
+      },
+      {
+        url: "/spark/delta-column-mapping",
+        label: "Delta Column Mapping",
+      },
+      {
         url: "/spark/best-practices",
         label: "Best Practices",
       },
