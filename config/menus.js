@@ -52,6 +52,30 @@ const docs = [
         label: "Porting",
       },
       {
+        url: "/spark/quick-start-oss",
+        label: "Quick Start",
+      },
+      {
+        url: "/spark/releases-oss",
+        label: "Releases",
+      },
+      {
+        url: "/spark/streaming",
+        label: "Streaming",
+      },
+      {
+        url: "/spark/updates",
+        label: "Updates",
+      },
+      {
+        url: "/spark/utilities",
+        label: "Utilities",
+      },
+      {
+        url: "/spark/versioning-oss",
+        label: "Versioning",
+      },
+      {
         url: "/spark/best-practices",
         label: "Best Practices",
       },
