@@ -40,6 +40,18 @@ const docs = [
         label: "Delta Intro",
       },
       {
+        url: "/spark/delta-resources",
+        label: "Delta Resources",
+      },
+      {
+        url: "/spark/delta-storage-oss",
+        label: "Delta Storage",
+      },
+      {
+        url: "/spark/porting",
+        label: "Porting",
+      },
+      {
         url: "/spark/best-practices",
         label: "Best Practices",
       },
