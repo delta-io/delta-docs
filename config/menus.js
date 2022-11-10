@@ -8,56 +8,16 @@ const docs = [
     label: "Delta Lake Spark",
     items: [
       {
-        url: "/spark/getting-started",
-        label: "Getting Started",
-      },
-      {
-        url: "/spark/batch",
-        label: "Batch",
-      },
-      {
-        url: "/spark/concurrency-control",
-        label: "Concurrency Control",
-      },
-      {
-        url: "/spark/constraints",
-        label: "Constraints",
-      },
-      {
-        url: "/spark/delta-apidoc",
-        label: "Delta API Doc",
-      },
-      {
-        url: "/spark/delta-column-mapping",
-        label: "Delta Column Mapping",
-      },
-      {
-        url: "/spark/delta-faq",
-        label: "Delta FAQ",
-      },
-      {
         url: "/spark/delta-intro",
         label: "Delta Intro",
-      },
-      {
-        url: "/spark/delta-resources",
-        label: "Delta Resources",
-      },
-      {
-        url: "/spark/delta-storage-oss",
-        label: "Delta Storage",
-      },
-      {
-        url: "/spark/porting",
-        label: "Porting",
       },
       {
         url: "/spark/quick-start-oss",
         label: "Quick Start",
       },
       {
-        url: "/spark/releases-oss",
-        label: "Releases",
+        url: "/spark/batch",
+        label: "Batch",
       },
       {
         url: "/spark/streaming",
@@ -72,12 +32,52 @@ const docs = [
         label: "Utilities",
       },
       {
+        url: "/spark/constraints",
+        label: "Constraints",
+      },
+      {
         url: "/spark/versioning-oss",
         label: "Versioning",
       },
       {
+        url: "/spark/delta-apidoc",
+        label: "Delta API Doc",
+      },
+      {
+        url: "/spark/getting-started",
+        label: "Getting Started",
+      },
+      {
+        url: "/spark/delta-storage-oss",
+        label: "Delta Storage",
+      },
+      {
+        url: "/spark/concurrency-control",
+        label: "Concurrency Control",
+      },
+      {
         url: "/spark/best-practices",
         label: "Best Practices",
+      },
+      {
+        url: "/spark/delta-faq",
+        label: "Delta FAQ",
+      },
+      {
+        url: "/spark/releases-oss",
+        label: "Releases",
+      },
+      {
+        url: "/spark/delta-resources",
+        label: "Delta Resources",
+      },
+      {
+        url: "/spark/delta-column-mapping",
+        label: "Delta Column Mapping",
+      },
+      {
+        url: "/spark/porting",
+        label: "Porting", // migration guide
       },
     ],
   },
