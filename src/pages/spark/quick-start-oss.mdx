@@ -207,6 +207,7 @@ df.show()
 Dataset<Row> data = spark.range(5, 10);
 data.write().format("delta").mode("overwrite").save("/tmp/delta-table");
 ```
+
 </CodeTabs>
 
 If you read this table again, you should see only the values `5-9` you have
@@ -353,16 +354,16 @@ You should see the first set of data, from before you overwrote it. Time travel
 takes advantage of the power of the Delta Lake transaction log to access data
 that is no longer in the table. Removing the version 0 option (or specifying
 version 1) would let you see the newer data again. For more information, see
-[\_](delta-batch.md#deltatimetravel).
+[Query an older snapshot of a table (time travel)](delta-batch.md#deltatimetravel).
 
 ## Write a stream of data to a table
 
-You can also write to a Delta table using Structured Streaming. The <DeltaLake
-/> transaction log guarantees exactly-once processing, even when there are other
+You can also write to a Delta table using Structured Streaming. The Delta Lake
+transaction log guarantees exactly-once processing, even when there are other
 streams or batch queries running concurrently against the table. By default,
 streams run in append mode, which adds new records to the table:
 
-<CodeTabs>
+<CodeTabs>  
 ```python
 streamingDf = spark.readStream.format("rate").load()
 stream = streamingDf.selectExpr("value as id").writeStream.format("delta").option("checkpointLocation", "/tmp/checkpoint").start("/tmp/delta-table")
@@ -379,6 +380,7 @@ import org.apache.spark.sql.streaming.StreamingQuery;
 Dataset<Row> streamingDf = spark.readStream().format("rate").load();
 StreamingQuery stream = streamingDf.selectExpr("value as id").writeStream().format("delta").option("checkpointLocation", "/tmp/checkpoint").start("/tmp/delta-table");
 ```
+
 </CodeTabs>
 
 While the stream is running, you can read the table using the earlier commands.
@@ -421,4 +423,5 @@ val stream2 = spark.readStream.format("delta").load("/tmp/delta-table").writeStr
 ```java
 StreamingQuery stream2 = spark.readStream().format("delta").load("/tmp/delta-table").writeStream().format("console").start();
 ```
+
 </CodeTabs>
