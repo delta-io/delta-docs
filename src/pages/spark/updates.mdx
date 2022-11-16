@@ -14,7 +14,8 @@ You can remove data that matches a predicate from a Delta table. For instance, t
 DELETE FROM events WHERE date < '2017-01-01'
 
 DELETE FROM delta.`/data/events/` WHERE date < '2017-01-01'
-```
+
+````
 
 ```python
 from delta.tables import *
@@ -25,7 +26,7 @@ deltaTable = DeltaTable.forPath(spark, "/data/events/")
 deltaTable.delete("date < '2017-01-01'")        # predicate using SQL formatted string
 
 deltaTable.delete(col("date") < "2017-01-01")   # predicate using Spark SQL functions
-```
+````
 
 ```scala
 import io.delta.tables._
@@ -50,6 +51,7 @@ deltaTable.delete("date < '2017-01-01'");            // predicate using SQL form
 
 deltaTable.delete(functions.col("date").lt(functions.lit("2017-01-01")));   // predicate using Spark SQL functions
 ```
+
 </CodeTabs>
 
 See the [Delta API documentation](https://docs.delta.io/latest/delta-apidoc.html) for details.
@@ -67,7 +69,8 @@ You can update data that matches a predicate in a Delta table. For example, to f
 UPDATE events SET eventType = 'click' WHERE eventType = 'clck'
 
 UPDATE delta.`/data/events/` SET eventType = 'click' WHERE eventType = 'clck'
-```
+
+````
 
 ```python
 from delta.tables import *
@@ -78,7 +81,7 @@ deltaTable = DeltaTable.forPath(spark, "/data/events/")
 deltaTable.update("eventType = 'clck'", { "eventType": "'click'" } )   # predicate using SQL formatted string
 
 deltaTable.update(col("eventType") == "clck", { "eventType": lit("click") } )   # predicate using Spark SQL functions
-```
+````
 
 ```scala
 import io.delta.tables._
@@ -118,6 +121,7 @@ deltaTable.update(                // predicate using Spark SQL functions
   }}
 );
 ```
+
 </CodeTabs>
 
 See the [Delta API Documentation](https://docs.delta.io/latest/delta-apidoc.html) for details.
@@ -209,6 +213,7 @@ DeltaTable.forPath(spark, "/data/events/")
     }})
   .execute();
 ```
+
 </CodeTabs>
 
 See the [Delta API documentation](https://docs.delta.io/latest/delta-apidoc.html) for Scala, Java, and Python syntax details.
@@ -372,6 +377,7 @@ deltaTable
   .insertAll()
   .execute();
 ```
+
 </CodeTabs>
 
 The dataset containing the new logs needs to be deduplicated within itself. By the SQL semantics of merge, it matches and deduplicates the new data with the existing data in the table, but if there is duplicate data within the new dataset, it is inserted. Hence, deduplicate the new data before merging into the table.
@@ -412,6 +418,7 @@ deltaTable.as("logs").merge(
   .insertAll()
   .execute();
 ```
+
 </CodeTabs>
 
 This is more efficient than the previous command as it looks for duplicates only in the
@@ -431,42 +438,43 @@ Here is a concrete example of maintaining the history of addresses for a custome
 ```scala
 val customersTable: DeltaTable = ...   // table with schema (customerId, address, current, effectiveDate, endDate)
 
-val updatesDF: DataFrame = ...          // DataFrame with schema (customerId, address, effectiveDate)
+val updatesDF: DataFrame = ... // DataFrame with schema (customerId, address, effectiveDate)
 
 // Rows to INSERT new addresses of existing customers
 val newAddressesToInsert = updatesDF
-  .as("updates")
-  .join(customersTable.toDF.as("customers"), "customerid")
-  .where("customers.current = true AND updates.address <> customers.address")
+.as("updates")
+.join(customersTable.toDF.as("customers"), "customerid")
+.where("customers.current = true AND updates.address <> customers.address")
 
 // Stage the update by unioning two sets of rows
 // 1. Rows that will be inserted in the whenNotMatched clause
 // 2. Rows that will either update the current addresses of existing customers or insert the new addresses of new customers
 val stagedUpdates = newAddressesToInsert
-  .selectExpr("NULL as mergeKey", "updates.*")   // Rows for 1.
-  .union(
-    updatesDF.selectExpr("updates.customerId as mergeKey", "*")  // Rows for 2.
-  )
+.selectExpr("NULL as mergeKey", "updates._") // Rows for 1.
+.union(
+updatesDF.selectExpr("updates.customerId as mergeKey", "_") // Rows for 2.
+)
 
 // Apply SCD Type 2 operation using merge
 customersTable
-  .as("customers")
-  .merge(
-    stagedUpdates.as("staged_updates"),
-    "customers.customerId = mergeKey")
-  .whenMatched("customers.current = true AND customers.address <> staged_updates.address")
-  .updateExpr(Map(                                      // Set current to false and endDate to source's effective date.
-    "current" -> "false",
-    "endDate" -> "staged_updates.effectiveDate"))
-  .whenNotMatched()
-  .insertExpr(Map(
-    "customerid" -> "staged_updates.customerId",
-    "address" -> "staged_updates.address",
-    "current" -> "true",
-    "effectiveDate" -> "staged_updates.effectiveDate",  // Set current to true along with the new address and its effective date.
-    "endDate" -> "null"))
-  .execute()
-```
+.as("customers")
+.merge(
+stagedUpdates.as("staged_updates"),
+"customers.customerId = mergeKey")
+.whenMatched("customers.current = true AND customers.address <> staged_updates.address")
+.updateExpr(Map( // Set current to false and endDate to source's effective date.
+"current" -> "false",
+"endDate" -> "staged_updates.effectiveDate"))
+.whenNotMatched()
+.insertExpr(Map(
+"customerid" -> "staged_updates.customerId",
+"address" -> "staged_updates.address",
+"current" -> "true",
+"effectiveDate" -> "staged_updates.effectiveDate", // Set current to true along with the new address and its effective date.
+"endDate" -> "null"))
+.execute()
+
+````
 
 ```python
 customersTable = ...  # DeltaTable with schema (customerId, address, current, effectiveDate, endDate)
@@ -507,7 +515,8 @@ customersTable.alias("customers").merge(
     "endDate": "null"
   }
 ).execute()
-```
+````
+
 </CodeTabs>
 
 ### Write change data into a Delta table
@@ -532,23 +541,24 @@ val changesDF: DataFrame = ...
 // Note: For nested structs, max on struct is computed as
 // max on first struct field, if equal fall back to second fields, and so on.
 val latestChangeForEachKey = changesDF
-  .selectExpr("key", "struct(time, newValue, deleted) as otherCols" )
-  .groupBy("key")
-  .agg(max("otherCols").as("latest"))
-  .selectExpr("key", "latest.*")
+.selectExpr("key", "struct(time, newValue, deleted) as otherCols" )
+.groupBy("key")
+.agg(max("otherCols").as("latest"))
+.selectExpr("key", "latest.\*")
 
 deltaTable.as("t")
-  .merge(
-    latestChangeForEachKey.as("s"),
-    "s.key = t.key")
-  .whenMatched("s.deleted = true")
-  .delete()
-  .whenMatched()
-  .updateExpr(Map("key" -> "s.key", "value" -> "s.newValue"))
-  .whenNotMatched("s.deleted = false")
-  .insertExpr(Map("key" -> "s.key", "value" -> "s.newValue"))
-  .execute()
-```
+.merge(
+latestChangeForEachKey.as("s"),
+"s.key = t.key")
+.whenMatched("s.deleted = true")
+.delete()
+.whenMatched()
+.updateExpr(Map("key" -> "s.key", "value" -> "s.newValue"))
+.whenNotMatched("s.deleted = false")
+.insertExpr(Map("key" -> "s.key", "value" -> "s.newValue"))
+.execute()
+
+````
 
 ```python
 deltaTable = ... # DeltaTable with schema (key, value)
@@ -584,7 +594,8 @@ deltaTable.alias("t").merge(
       "value": "s.newValue"
     }
   ).execute()
-```
+````
+
 </CodeTabs>
 
 ### Upsert from streaming queries using `foreachBatch`
@@ -602,21 +613,22 @@ val deltaTable = DeltaTable.forPath(spark, "/data/aggregates")
 // Function to upsert microBatchOutputDF into Delta table using merge
 def upsertToDelta(microBatchOutputDF: DataFrame, batchId: Long) {
 deltaTable.as("t")
-    .merge(
-    microBatchOutputDF.as("s"),
-    "s.key = t.key")
-    .whenMatched().updateAll()
-    .whenNotMatched().insertAll()
-    .execute()
+.merge(
+microBatchOutputDF.as("s"),
+"s.key = t.key")
+.whenMatched().updateAll()
+.whenNotMatched().insertAll()
+.execute()
 }
 
 // Write the output of a streaming aggregation query into Delta table
 streamingAggregatesDF.writeStream
 .format("delta")
-.foreachBatch(upsertToDelta _)
+.foreachBatch(upsertToDelta \_)
 .outputMode("update")
 .start()
-```
+
+````
 
 ```python
 from delta.tables import *
@@ -639,7 +651,8 @@ streamingAggregatesDF.writeStream \
 .foreachBatch(upsertToDelta) \
 .outputMode("update") \
 .start()
-```
+````
+
 </CodeTabs>
 
 - **Write a stream of database changes into a Delta table**: The [merge query for writing change data](#merge-in-cdc) can be used in `foreachBatch` to continuously apply a stream of changes to a Delta table.
