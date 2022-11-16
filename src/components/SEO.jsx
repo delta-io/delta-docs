@@ -1,6 +1,7 @@
 import * as React from "react";
 import { number, string } from "prop-types";
 import { graphql, useStaticQuery } from "gatsby";
+import { Helmet } from "react-helmet";
 
 const query = graphql`
   query SeoQuery {
@@ -25,7 +26,7 @@ const SEO = (props) => {
   } | ${site.siteMetadata.title}`;
 
   return (
-    <>
+    <Helmet>
       <title>{documentTitle}</title>
       {description && <meta name="description" content={description} />}
       <meta property="og:title" content={title} />
@@ -40,7 +41,7 @@ const SEO = (props) => {
       <meta name="twitter:title" content={title} />
       {description && <meta name="twitter:description" content={description} />}
       {children}
-    </>
+    </Helmet>
   );
 };
 

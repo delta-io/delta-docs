@@ -10,11 +10,17 @@ import TwoColumnLayout from "./components/TwoColumnLayout";
 export const DefaultLayout = (props) => {
   const { location, pageContext, children } = props;
   const { frontmatter = {} } = pageContext;
+  const { title, description, thumbnail } = frontmatter;
 
   const sidebarMenu = menus["docs" || frontmatter.menu];
 
   return (
     <PageLayout>
+      <SEO
+        title={title}
+        description={description}
+        thumbnailPath={thumbnail?.publicURL}
+      />
       <TwoColumnLayout
         sidebarMenu={sidebarMenu}
         currentPathname={location.pathname}
@@ -26,18 +32,5 @@ export const DefaultLayout = (props) => {
         </Section>
       </TwoColumnLayout>
     </PageLayout>
-  );
-};
-
-export const Head = ({ data }) => {
-  const { frontmatter = {} } = data.mdx;
-  const { title, description, thumbnail } = frontmatter;
-
-  return (
-    <SEO
-      title={title}
-      description={description}
-      thumbnailPath={thumbnail?.publicURL}
-    />
   );
 };
