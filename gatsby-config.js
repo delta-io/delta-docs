@@ -19,7 +19,6 @@ module.exports = {
     twitter: "@DeltaLakeOSS",
   },
   plugins: [
-    "gatsby-plugin-netlify",
     "gatsby-plugin-anchor-links",
     "gatsby-plugin-styled-components",
     "gatsby-plugin-image",
