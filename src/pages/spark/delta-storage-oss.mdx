@@ -82,7 +82,7 @@ Single-cluster and Multi-cluster.
 
 |               | Single-cluster                                          | Multi-cluster                                    |
 | ------------- | ------------------------------------------------------- | ------------------------------------------------ |
-| Configuration | Comes with Delta Lake out-of-the-box                 | Is experimental and requires extra configuration |
+| Configuration | Comes with Delta Lake out-of-the-box                    | Is experimental and requires extra configuration |
 | Reads         | Supports concurrent reads from multiple clusters        | Supports concurrent reads from multiple clusters |
 | Writes        | Supports concurrent writes from a _single_ Spark driver | Supports multi-cluster writes                    |
 | Permissions   | S3 credentials                                          | S3 and DynamoDB operating permissions            |
@@ -195,8 +195,8 @@ that S3 is lacking.
 <Info title="Important!" level="warning">
   This multi-cluster writing solution is only safe when all writers use this
   `LogStore` implementation as well as the same DynamoDB table and region. If
-  some drivers use out-of-the-box Delta Lake
-  while others use this experimental `LogStore`, then data loss can occur.
+  some drivers use out-of-the-box Delta Lake while others use this experimental
+  `LogStore`, then data loss can occur.
 </Info>
 
 #### Requirements (S3 multi-cluster)
@@ -442,7 +442,7 @@ versions ([Hadoop-15156](https://issues.apache.org/jira/browse/HADOOP-15156) and
 reason, you may need to build Spark with newer Hadoop versions and use them for
 deploying your application. See [Specifying the Hadoop Version and Enabling
 YARN](https://spark.apache.org/docs/latest/building-spark.html#specifying-the-hadoop-version-and-enabling-yarn)
-for building Spark with a specific Hadoop version and [_](quick-start.md) for
+for building Spark with a specific Hadoop version and [\_](quick-start.md) for
 setting up Spark with Delta Lake.
 
 Here is a list of requirements specific to each type of Azure storage system:

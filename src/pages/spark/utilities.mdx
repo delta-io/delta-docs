@@ -28,10 +28,11 @@ VACUUM '/data/events' -- vacuum files in path-based table
 
 VACUUM delta.`/data/events/`
 
-VACUUM delta.`/data/events/` RETAIN 100 HOURS  -- vacuum files not required by versions more than 100 hours old
+VACUUM delta.`/data/events/` RETAIN 100 HOURS -- vacuum files not required by versions more than 100 hours old
 
-VACUUM eventsTable DRY RUN    -- do dry run to get the list of files to be deleted
-```
+VACUUM eventsTable DRY RUN -- do dry run to get the list of files to be deleted
+
+````
 
 ```python
 from delta.tables import *
@@ -42,7 +43,7 @@ deltaTable = DeltaTable.forName(spark, tableName)    # Hive metastore-based tabl
 deltaTable.vacuum()        # vacuum files not required by versions older than the default retention period
 
 deltaTable.vacuum(100)     # vacuum files not required by versions more than 100 hours old
-```
+````
 
 ```scala
 import io.delta.tables._
@@ -64,6 +65,7 @@ deltaTable.vacuum();        // vacuum files not required by versions older than 
 
 deltaTable.vacuum(100);     // vacuum files not required by versions more than 100 hours old
 ```
+
 </CodeTabs>
 
 When using `VACUUM`, to configure Spark to delete files in parallel (based on the number of shuffle partitions) set the session configuration `"spark.databricks.delta.vacuum.parallelDelete.enabled"` to `"true"` .
@@ -91,10 +93,11 @@ DESCRIBE HISTORY '/data/events/'          -- get the full history of the table
 
 DESCRIBE HISTORY delta.`/data/events/`
 
-DESCRIBE HISTORY '/data/events/' LIMIT 1  -- get the last operation only
+DESCRIBE HISTORY '/data/events/' LIMIT 1 -- get the last operation only
 
 DESCRIBE HISTORY eventsTable
-```
+
+````
 
 ```python
 from delta.tables import *
@@ -104,7 +107,7 @@ deltaTable = DeltaTable.forPath(spark, pathToTable)
 fullHistoryDF = deltaTable.history()    # get the full history of the table
 
 lastOperationDF = deltaTable.history(1) # get the last operation
-```
+````
 
 ```scala
 import io.delta.tables._
@@ -125,6 +128,7 @@ DataFrame fullHistoryDF = deltaTable.history();       // get the full history of
 
 DataFrame lastOperationDF = deltaTable.history(1);    // fetch the last operation on the DeltaTable
 ```
+
 </CodeTabs>
 
 See the [Delta API documentation](https://docs.delta.io/latest/delta-apidoc.html) for Scala/Java/Python syntax details.
@@ -299,6 +303,7 @@ deltaTable.generate("symlink_format_manifest")
 DeltaTable deltaTable = DeltaTable.forPath(<path-to-delta-table>);
 deltaTable.generate("symlink_format_manifest");
 ```
+
 </CodeTabs>
 
 <a id="convert-to-delta"></a>
@@ -316,7 +321,8 @@ CONVERT TO DELTA parquet.`<path-to-table>`
 
 -- Convert partitioned Parquet table at path '<path-to-table>' and partitioned by integer columns named 'part' and 'part2'
 CONVERT TO DELTA parquet.`<path-to-table>` PARTITIONED BY (part int, part2 int)
-```
+
+````
 
 ```python
 from delta.tables import *
@@ -326,7 +332,7 @@ deltaTable = DeltaTable.convertToDelta(spark, "parquet.`<path-to-table>`")
 
 # Convert partitioned parquet table at path '<path-to-table>' and partitioned by integer column named 'part'
 partitionedDeltaTable = DeltaTable.convertToDelta(spark, "parquet.`<path-to-table>`", "part int")
-```
+````
 
 ```scala
 import io.delta.tables._
@@ -347,6 +353,7 @@ DeltaTable deltaTable = DeltaTable.convertToDelta(spark, "parquet.`<path-to-tabl
 // Convert partitioned Parquet table at path '<path-to-table>' and partitioned by integer columns named 'part' and 'part2'
 DeltaTable deltaTable = DeltaTable.convertToDelta(spark, "parquet.`<path-to-table>`", "part int, part2 int");
 ```
+
 </CodeTabs>
 
 Any file not tracked by Delta Lake is invisible and can be deleted when you run `vacuum`. You should avoid updating or appending data files during the conversion process. After the table is converted, make sure all writes go through Delta Lake.
