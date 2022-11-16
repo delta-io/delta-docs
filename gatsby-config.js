@@ -12,8 +12,8 @@ const wrapESMPlugin =
 
 module.exports = {
   siteMetadata: {
-    title: "Delta Lake",
-    siteUrl: "https://delta.io",
+    title: "Delta Lake Docs",
+    siteUrl: "https://docs.delta.io",
     description:
       "Delta Lake is an open-source storage framework that enables building a Lakehouse architecture with compute engines including Spark, PrestoDB, Flink, Trino, and Hive and APIs for Scala, Java, Rust, Ruby, and Python.",
     twitter: "@DeltaLakeOSS",
@@ -28,7 +28,7 @@ module.exports = {
       resolve: "gatsby-plugin-manifest",
       options: {
         name: "Delta Lake",
-        short_name: "Delta Lake",
+        short_name: "Delta Lake Docs",
         start_url: "/",
         background_color: "#042436",
         theme_color: "#00ADD4",
