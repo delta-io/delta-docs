@@ -3,6 +3,6 @@ package = "@netlify/plugin-gatsby"
 
 [[redirects]]
   from = "/2.0.0/*"
-  to = "https://docs.delta.io/2.0.0/:splat"
+  to = "https://d1urk4s4laun85.cloudfront.net/2.0.0/:splat"
   status = 200
-  force = true 
+  force = true
