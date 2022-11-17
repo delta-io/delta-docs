@@ -1,2 +1,8 @@
 [[plugins]]
 package = "@netlify/plugin-gatsby"
+
+[[redirects]]
+  from = "/2.0.0"
+  to = "https://docs.delta.io/2.0.0"
+  status = 200
+  force = true 
