@@ -3,17 +3,17 @@ title: Delta Lake on Apache Spark
 menu: docs
 ---
 
-## Batch reads and writes
+## Table batch reads and writes
 
 Delta Lake supports most of the options provided by Apache DataFrame read and write APIs for performing batch reads and writes on tables.
 
-For many Delta Lake operations on tables, you enable integration with Apache s DataSourceV2 and Catalog APIs (since 3.0) by setting configurations when you create a new `SparkSession`. See [configure spark session](#sql-support).
+For many Delta Lake operations on tables, you enable integration with Apache Spark DataSourceV2 and Catalog APIs (since 3.0) by setting configurations when you create a new `SparkSession`. See [configure spark session](#sql-support).
 
 <a id="ddlcreatetable"></a>
 
 ### Create a table
 
-Delta Lake supports creating two types of tables---tables defined in the metastore and tables defined by path.
+Delta Lake supports creating two types of tables --- tables defined in the metastore and tables defined by path.
 
 To work with metastore-defined tables, you must enable integration with Apache Spark DataSourceV2 and Catalog APIs by setting configurations when you create a new `SparkSession`. See [sql support](#sql-support).
 
@@ -47,15 +47,15 @@ CREATE OR REPLACE TABLE default.people10m (
 ) USING DELTA
 ```
 
-  </CodeTabs>
+</CodeTabs>
 
 SQL also supports creating a table at a path, without creating an entry in the Hive metastore.
 
-  <CodeTabs>
+<CodeTabs>
 
 ```sql
 -- Create or replace table with path
-CREATE OR REPLACE TABLE delta.`/delta/people10m` (
+CREATE OR REPLACE TABLE delta.`tmp/delta/people10m` (
   id INT,
   firstName STRING,
   middleName STRING,
@@ -67,7 +67,7 @@ CREATE OR REPLACE TABLE delta.`/delta/people10m` (
 ) USING DELTA
 ```
 
-  </CodeTabs>
+</CodeTabs>
 
 - **`DataFrameWriter` API**: If you want to simultaneously create a table and insert data into it from Spark DataFrames or Datasets, you can use the Spark `DataFrameWriter` ([Scala or Java](https://spark.apache.org/docs/latest/api/scala/org/apache/spark/sql/DataFrameWriter.html) and [Python](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql.html#input-and-output)).
 
@@ -89,13 +89,13 @@ df.write.format("delta").saveAsTable("default.people10m")
 df.write.format("delta").mode("overwrite").save("/delta/people10m")
 ```
 
-  </CodeTabs>
+</CodeTabs>
 
 You can also create Delta tables using the Spark `DataFrameWriterV2` API.
 
 - **`DeltaTableBuilder` API**: You can also use the `DeltaTableBuilder` API in Delta Lake to create tables. Compared to the DataFrameWriter APIs, this API makes it easier to specify additional information like column comments, table properties, and [generated columns](#deltausegeneratedcolumns).
 
-  This feature is new and is in Preview.
+> Note: This feature is new and is in Preview. 
 
 <CodeTabs>
 
@@ -173,9 +173,7 @@ See the [API documentation](https://docs.delta.io/latest/delta-apidoc.html) for 
 
 ### Partition data
 
-You can partition data to speed up queries or DML that have predicates involving the partition columns.
-
-To partition data when you create a Delta table, specify a partition by columns. The following example partitions by gender.
+You can partition data to speed up queries or DML that have predicates involving the partition columns.  To partition data when you create a Delta table, specify a partition by columns. The following example partitions by gender.
 
 <CodeTabs>
 
@@ -260,13 +258,13 @@ the table in the metastore automatically inherits the schema, partitioning, and 
 
   If the specified configuration does not _exactly_ match the configuration of the data, Delta Lake throws an exception that describes the discrepancy.
 
-The metastore is not the source of truth about the latest information of a Delta table. In fact, the table definition in the metastore may not contain all the metadata like schema and properties. It contains the location of the table, and the table's transaction log at the location is the source of truth. If you query the metastore from a system that is not aware of this Delta-specific customization, you may see incomplete or stale table information.
+  The metastore is not the source of truth about the latest information of a Delta table. In fact, the table definition in the metastore may not contain all the metadata like schema and properties. It contains the location of the table, and the table's transaction log at the location is the source of truth. If you query the metastore from a system that is not aware of this Delta-specific customization, you may see incomplete or stale table information.
 
 <a id="deltausegeneratedcolumns"></a>
 
 ### Use generated columns
 
-This feature is new and is in Preview.
+  This feature is new and is in Preview.
 
 Delta Lake supports generated columns which are a special type of columns whose values are automatically generated based on a user-specified function over other columns in the Delta table. When you write to a table with generated columns and you do not explicitly provide values for them, Delta Lake automatically computes the values. For example, you can automatically generate a date column (for partitioning the table by date) from the timestamp column; any writes into the table need only specify the data for the timestamp column. However, if you explicitly provide values for them, the values must satisfy the [constraint](https://delta.io/docs/spark/constraints) `(<value> <=> <generation expression>) IS TRUE` or the write will fail with an error.
 
@@ -351,9 +349,9 @@ spark.read.format("delta").load("/delta/people10m")  # query table by path
 ```
 
 ```scala
-spark.table("default.people10m")      // query table in the metastore
+spark.table("default.people10m") // query table in the metastore
 
-spark.read.format("delta").load("/delta/people10m")  // create table by path
+spark.read.format("delta").load("/delta/people10m") // create table by path
 
 import io.delta.implicits._
 spark.read.delta("/delta/people10m")
