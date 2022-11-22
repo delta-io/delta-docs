@@ -10,51 +10,59 @@ const docs = [
   },
   {
     url: "/latest/delta-intro",
-    label: "Delta Intro",
+    label: "Introduction",
   },
   {
-    url: "/latest/quick-start-oss",
+    url: "/latest/quick-start",
     label: "Quick Start",
   },
   {
-    url: "/latest/batch",
-    label: "Batch",
+    url: "/latest/delta-batch",
+    label: "Table batch reads and writes",
   },
   {
-    url: "/latest/streaming",
-    label: "Streaming",
+    url: "/latest/delta-streaming",
+    label: "Table streaming reads and writes",
   },
   {
-    url: "/latest/updates",
-    label: "Updates",
+    url: "/latest/delta-update",
+    label: "Table deletes, updates, and merges",
   },
   {
-    url: "/latest/utilities",
-    label: "Utilities",
+    url: "/latest/delta-change-data-feed",
+    label: "Change data feed",
   },
   {
-    url: "/latest/constraints",
+    url: "/latest/delta-utilities",
+    label: "Table utility commands",
+  },
+  {
+    url: "/latest/delta-constraints",
     label: "Constraints",
   },
   {
-    url: "/latest/versioning-oss",
-    label: "Versioning",
+    url: "/latest/versioning",
+    label: "Table protocol versioning",
   },
   {
     url: "/latest/delta-apidoc",
     label: "Delta API Doc",
   },
   {
-    url: "/latest/getting-started",
-    label: "Getting Started",
-  },
-  {
-    url: "/latest/delta-storage-oss",
-    label: "Delta Storage",
+    url: "/latest/delta-storage",
+    label: "Storage configuration",
   },
   {
     url: "/latest/concurrency-control",
     label: "Concurrency Control",
+  },
+  {
+    url: "/latest/integrations",
+    label: "Access Delta tables from external data processing engines",
+  },
+  {
+    url: "/latest/porting",
+    label: "Migration Guide",
   },
   {
     url: "/latest/best-practices",
@@ -62,23 +70,23 @@ const docs = [
   },
   {
     url: "/latest/delta-faq",
-    label: "Delta FAQ",
+    label: "Frequently asked questions (FAQ)",
   },
   {
-    url: "/latest/releases-oss",
+    url: "/latest/releases",
     label: "Releases",
   },
   {
     url: "/latest/delta-resources",
-    label: "Delta Resources",
+    label: "Delta Lake Resources",
   },
   {
-    url: "/latest/delta-column-mapping",
-    label: "Delta Column Mapping",
+    url: "/latest/optimizations-oss",
+    label: "Optimizations",
   },
   {
-    url: "/latest/porting",
-    label: "Porting", // migration guide
+    url: "/latest/table-properties",
+    label: "Delta table properties reference",
   },
 ];
 

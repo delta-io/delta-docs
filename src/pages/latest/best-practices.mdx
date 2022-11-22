@@ -3,15 +3,7 @@ title: Best Practices
 description: Learn best practices when using Delta Lake
 ---
 
-## Provide data location hints
-
-If you expect a column to be commonly used in query predicates and if that
-column has high cardinality (that is, a large number of distinct values), then
-use `Z-ORDER BY`. Delta Lake automatically lays out the data in the files
-based on the column values and use the layout information to skip irrelevant
-data while querying.
-
-For details, see [\_](optimizations/file-mgmt.md#delta-zorder).
+This article describes best practices when using Delta Lake.
 
 ## Choose the right partition column
 
@@ -25,8 +17,6 @@ partition by:
 - Amount of data in each partition: You can partition by a column if you expect
   data in that partition to be at least 1 GB.
 
-<a id="delta-compact-files"></a>
-
 ## Compact files
 
 If you continuously write data to a Delta table, it will over time accumulate a
@@ -35,9 +25,6 @@ have an adverse effect on the efficiency of table reads, and it can also affect
 the performance of your file system. Ideally, a large number of small files
 should be rewritten into a smaller number of larger files on a regular basis.
 This is known as compaction.
-
-You can compact a table using the
-[OPTIMIZE](optimizations/file-mgmt.md#delta-optimize) command.
 
 You can compact a table by repartitioning it to smaller number of files. In
 addition, you can specify the option `dataChange` to be `false` indicates that
@@ -125,7 +112,7 @@ numFilesPerPartition = 16
 
 </CodeTabs>
 
-<Info title="Warning" level="warning">
+<Info title="Warning!" level="warning">
 
 Using `dataChange = false` on an operation that changes data can
 corrupt the data in the table.
@@ -138,8 +125,6 @@ This operation does not remove the old files. To remove them, run the
 [VACUUM](delta-utility.md#delta-vacuum) command.
 
 </Info>
-
-<a id="delta-replace-table"></a>
 
 ## Replace the content or schema of a table
 
