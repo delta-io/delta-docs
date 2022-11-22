@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import Link from "src/components/Link";
+import { Divider } from "src/components/Divider";
 import { mediaBreakpointDown } from "config/theme";
 import styled from "styled-components";
 import { NavDropdown } from "react-bootstrap";
@@ -73,13 +74,18 @@ export const HeaderDropDown = styled(NavDropdown)`
   `)}
 `;
 
-const HeaderNavItem = ({ items }) => {
+const HeaderNavItem = ({ items, className }) => {
+  if (items.divider) {
+    return <Divider className={className} />;
+  }
+
   if (items.submenu) {
     return (
       <HeaderDropDown
         id="nav-dropdown-dark-example"
         title={items.label}
         menuVariant="dark"
+        className={className}
       >
         {items.submenu.map((link) => (
           <HeaderDropDown.Item as="div" key={link.url}>
@@ -97,7 +103,12 @@ const HeaderNavItem = ({ items }) => {
   }
 
   return (
-    <HeaderTab key={items.label} activeClassName="active" partiallyActive>
+    <HeaderTab
+      key={items.label}
+      activeClassName="active"
+      partiallyActive
+      className={className}
+    >
       {items.url ? <Link href={items.url}>{items.label}</Link> : items.label}
     </HeaderTab>
   );

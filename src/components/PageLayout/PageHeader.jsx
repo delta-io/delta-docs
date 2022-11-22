@@ -70,6 +70,7 @@ const HeaderMenu = styled.div`
     background-color: white;
     color: ${props.theme.light.color};
     z-index: 999;
+    overflow: auto;
   `)}
 
   ${hidingMobileMenu(`
@@ -89,6 +90,18 @@ const HeaderNav = styled.div`
     flex-flow: column;
     padding: 0 ${props.theme.spacing.sm};
   `)}
+`;
+
+const DesktopHeaderNavItem = styled(HeaderNavItem)`
+  ${showingMobileMenu(`
+    display: none;
+`)}
+`;
+
+const MobileHeaderNavItem = styled(HeaderNavItem)`
+  ${hidingMobileMenu(`
+    display: none;
+`)}
 `;
 
 const HeaderSocialNav = styled(HeaderNav)`
@@ -178,7 +191,10 @@ const PageHeader = () => {
         <HeaderMenu showing={menuShowing}>
           <HeaderNav>
             {menus.main.map((link) => (
-              <HeaderNavItem items={link} key={link.url} />
+              <DesktopHeaderNavItem items={link} key={link.url} />
+            ))}
+            {menus.docs.map((link) => (
+              <MobileHeaderNavItem items={link} key={link.url} />
             ))}
           </HeaderNav>
           <DesktopHeaderSearchInput
