@@ -73,12 +73,19 @@ read and write from different storage systems.
 
 </Info>
 
+**In this article**
+* Amazon S3
+* Microsoft Azure storage
+* HDFS
+* Google Cloud Storage
+* Oracle Cloud Infrastructure
+* IBM Cloud Object Storage
+
 <a id="delta-storage-s3"></a>
 
 ## Amazon S3
 
-Delta Lake supports reads and writes to S3 in two different modes:
-Single-cluster and Multi-cluster.
+Delta Lake supports reads and writes to S3 in two different modes: Single-cluster and Multi-cluster.
 
 |               | Single-cluster                                          | Multi-cluster                                    |
 | ------------- | ------------------------------------------------------- | ------------------------------------------------ |
@@ -97,16 +104,21 @@ driver in order for Delta Lake to provide transactional guarantees. This is
 because S3 currently does not provide mutual exclusion, that is, there is no way
 to ensure that only one writer is able to create a file.
 
-<Info title="Important!" level="warning">
+<Info title="Warning!" level="warning">
   Concurrent writes to the same Delta table from multiple Spark drivers can lead
   to data loss.
 </Info>
+
+**In this section**:
+* Requirements (S3 single-cluster)
+* Quickstart (S3 single-cluster)
+* Configuration (S3 single-cluster)
 
 #### Requirements (S3 single-cluster)
 
 - S3 credentials: [IAM
   roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html)
-  (recommended) or access keys
+  (recommended) or access keys.
 - Apache Spark associated with the corresponding Delta Lake version.
 - Hadoop's [AWS connector
   (hadoop-aws)](https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-aws/)
@@ -116,23 +128,23 @@ to ensure that only one writer is able to create a file.
 
 This section explains how to quickly start reading and writing Delta tables on
 S3 using single-cluster mode. For a detailed explanation of the configuration,
-see [\_](#setup-configuration-s3-multi-cluster).
+see [Setup Configuration (S3 multi-cluster)](#setup-configuration-s3-multi-cluster).
 
-#. Use the following command to launch a Spark shell with Delta Lake and S3
+1. Use the following command to launch a Spark shell with Delta Lake and S3
 support (assuming you use Spark 3.2.1 which is pre-built for Hadoop 3.3.1):
 
 <CodeTabs>
 
 ```bash
 bin/spark-shell \
- --packages io.delta:delta-core_2.12:$VERSION$,org.apache.hadoop:hadoop-aws:3.3.1 \
+ --packages io.delta:delta-core_2.12:2.1.1,org.apache.hadoop:hadoop-aws:3.3.1 \
  --conf spark.hadoop.fs.s3a.access.key=<your-s3-access-key> \
  --conf spark.hadoop.fs.s3a.secret.key=<your-s3-secret-key>
 ```
 
 </CodeTabs>
 
-#. Try out some basic Delta table operations on S3 (in Scala):
+2. Try out some basic Delta table operations on S3 (in Scala):
 
 <CodeTabs>
 
@@ -147,20 +159,20 @@ spark.read.format("delta").load("s3a://<your-s3-bucket>/<path-to-delta-table>").
 </CodeTabs>
 
 For other languages and more examples of Delta table operations, see the
-[\_](quick-start.md) page.
+[Quickstart](quick-start.md) page.
 
 #### Configuration (S3 single-cluster)
 
 Here are the steps to configure Delta Lake for S3.
 
-#. Include `hadoop-aws` JAR in the classpath.
+1. Include `hadoop-aws` JAR in the classpath.
 
 Delta Lake needs the `org.apache.hadoop.fs.s3a.S3AFileSystem` class from the
 `hadoop-aws` package, which implements Hadoop's `FileSystem` API for S3. Make
 sure the version of this package matches the Hadoop version with which Spark was
 built.
 
-#. Set up S3 credentials.
+2. Set up S3 credentials.
 
 We recommend using [IAM
 roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) for
@@ -192,16 +204,23 @@ implementation. This implementation uses
 [DynamoDB](https://aws.amazon.com/dynamodb/) to provide the mutual exclusion
 that S3 is lacking.
 
-<Info title="Important!" level="warning">
+<Info title="Warning!" level="warning">
   This multi-cluster writing solution is only safe when all writers use this
   `LogStore` implementation as well as the same DynamoDB table and region. If
   some drivers use out-of-the-box Delta Lake while others use this experimental
   `LogStore`, then data loss can occur.
 </Info>
 
+In this section:
+
+* Requirements (S3 multi-cluster)
+* Quickstart (S3 multi-cluster)
+* Setup Configuration (S3 multi-cluster)
+* Production Configuration (S3 multi-cluster)
+
 #### Requirements (S3 multi-cluster)
 
-- All of the requirements listed in [\_](#requirements-s3-single-cluster)
+- All of the requirements listed in [Requirements (S3 single-cluster)](#requirements-s3-single-cluster)
   section
 - In additon to S3 credentials, you also need DynamoDB operating permissions
 
@@ -210,7 +229,7 @@ that S3 is lacking.
 This section explains how to quickly start reading and writing Delta tables on
 S3 using multi-cluster mode.
 
-#. Use the following command to launch a Spark shell with Delta Lake and S3
+1. Use the following command to launch a Spark shell with Delta Lake and S3
 support (assuming you use Spark 3.2.1 which is pre-built for Hadoop 3.3.1):
 
 <CodeTabs>
@@ -226,7 +245,7 @@ bin/spark-shell \
 
 </CodeTabs>
 
-#. Try out some basic Delta table operations on S3 (in Scala):
+2. Try out some basic Delta table operations on S3 (in Scala):
 
 <CodeTabs>
 
@@ -242,7 +261,7 @@ spark.read.format("delta").load("s3a://<your-s3-bucket>/<path-to-delta-table>").
 
 #### Setup Configuration (S3 multi-cluster)
 
-#. Create the DynamoDB table.
+1. Create the DynamoDB table.
 
 You have the choice of creating the DynamoDB table yourself (recommended) or
 having it created for you automatically.
@@ -287,15 +306,14 @@ aws dynamodb create-table \
   writes per second. You may change these default values using the
   table-creation-only configurations keys detailed in the table below.
 
-#. Follow the configuration steps listed in
-[\_](#configuration-s3-single-cluster) section.
+2. Follow the configuration steps listed in
+[Configuration (S3 single-cluster)](#configuration-s3-single-cluster) section.
 
-#. Include the `delta-storage-s3-dynamodb` JAR in the classpath.
+3. Include the `delta-storage-s3-dynamodb` JAR in the classpath.
 
-#. Configure the `LogStore` implementation in your Spark session.
+4. Configure the `LogStore` implementation in your Spark session.
 
-First, configure this `LogStore` implementation for the scheme `s3`. You can
-replicate this command for schemes `s3a` and `s3n` as well.
+First, configure this `LogStore` implementation for the scheme `s3`. You can replicate this command for schemes `s3a` and `s3n` as well.
 
 <CodeTabs>
 
@@ -329,7 +347,7 @@ By this point, this multi-cluster setup is fully operational. However, there is
 extra configuration you may do to improve performance and optimize storage when
 running in production.
 
-#. Adjust your Read and Write Capacity Mode.
+1. Adjust your Read and Write Capacity Mode.
 
 If you are using the default DynamoDB table created for you by this `LogStore`
 implementation, its default RCU and WCU might not be enough for your workloads.
@@ -355,7 +373,9 @@ Run the following command on your given DynamoDB table to enable TTL:
     AttributeName=commitTime"
 ```
 
-#. Cleanup old AWS S3 temp files using S3 Lifecycle Expiration.
+The default `expireTime` will be one day after the DynamoDB entry was marked as completed.
+
+3. Cleanup old AWS S3 temp files using S3 Lifecycle Expiration.
 
 In this `LogStore` implementation, a temp file is created containing a copy of
 the metadata to be committed into the Delta log. Once that commit to the Delta
@@ -365,7 +385,7 @@ ever be used during recovery of a failed commit.
 
 Here are two simple options for deleting these temp files.
 
-#. Delete manually using S3 CLI.
+1. Delete manually using S3 CLI.
 
 This is the safest option. The following command will delete all but the latest temp file in your given `<bucket>` and `<table>`:
 
@@ -376,7 +396,7 @@ aws s3 ls s3://<bucket>/<delta_table_path>/_delta_log/.tmp/ --recursive | awk 'N
 done
 ```
 
-#. Delete using an S3 Lifecycle Expiration Rule
+2. Delete using an S3 Lifecycle Expiration Rule
 
 A more automated option is to use an [S3 Lifecycle Expiration rule](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html), with filter prefix pointing to the `<delta_table_path>/_delta_log/.tmp/` folder located in your table path, and an expiration value of 30 days.
 
@@ -396,10 +416,11 @@ See [S3 Lifecycle
 Configuration](https://docs.aws.amazon.com/cli/latest/reference/s3api/put-bucket-lifecycle-configuration.html)
 for details. An example rule and command invocation is given below:
 
+In a file referenced as `file://lifecycle.json`:
+
 <CodeTabs>
 
 ```json
-// file://lifecycle.json
 {
   "Rules": [
     {
@@ -442,10 +463,14 @@ versions ([Hadoop-15156](https://issues.apache.org/jira/browse/HADOOP-15156) and
 reason, you may need to build Spark with newer Hadoop versions and use them for
 deploying your application. See [Specifying the Hadoop Version and Enabling
 YARN](https://spark.apache.org/docs/latest/building-spark.html#specifying-the-hadoop-version-and-enabling-yarn)
-for building Spark with a specific Hadoop version and [\_](quick-start.md) for
+for building Spark with a specific Hadoop version and [Quickstart](quick-start.md) for
 setting up Spark with Delta Lake.
 
 Here is a list of requirements specific to each type of Azure storage system:
+
+* Azure Blob storage
+* Azure Data Lake Storage Gen1
+* Azure Data Lake Storage Gen2
 
 ### Azure Blob storage
 
@@ -473,10 +498,10 @@ along with Apache Spark 3.0 compiled and deployed with Hadoop 3.2.
 
 Here are the steps to configure Delta Lake on Azure Blob storage.
 
-#. Include `hadoop-azure` JAR in the classpath. See the requirements above for
+1. Include `hadoop-azure` JAR in the classpath. See the requirements above for
 version details.
 
-#. Set up credentials.
+2. Set up credentials.
 
 You can set up your credentials in the [Spark configuration
 property](https://spark.apache.org/docs/latest/configuration.html).
@@ -600,12 +625,12 @@ along with Apache Spark 3.0 compiled and deployed with Hadoop 3.2.
 
 Here are the steps to configure Delta Lake on Azure Data Lake Storage Gen1.
 
-#. Include the JAR of the Maven artifact `hadoop-azure-datalake` in the
+1. Include the JAR of the Maven artifact `hadoop-azure-datalake` in the
 classpath. See the [requirements](#azure-blob-storage) for version details. In
 addition, you may also have to include JARs for Maven artifacts `hadoop-azure`
 and `wildfly-openssl`.
 
-#. Set up Azure Data Lake Storage Gen2 credentials.
+2. Set up Azure Data Lake Storage Gen2 credentials.
 
 <CodeTabs>
 
@@ -623,7 +648,7 @@ where `<storage-account-name>`, `<application-id>`, `<directory-id>` and
 `<password>` are details of the service principal we set as requirements
 earlier.
 
-#. Initialize the file system if needed
+3. Initialize the file system if needed
 
 <CodeTabs>
 
@@ -673,7 +698,7 @@ reading and writing from GCS.
 
 ### Configuration (GCS)
 
-#. For Delta Lake 1.2.0 and below, you must explicitly configure the LogStore
+1. For Delta Lake 1.2.0 and below, you must explicitly configure the LogStore
 implementation for the scheme `gs`.
 
 <CodeTabs>
@@ -684,7 +709,7 @@ spark.delta.logStore.gs.impl=io.delta.storage.GCSLogStore
 
 </CodeTabs>
 
-#. Include the JAR for `gcs-connector` in the classpath. See the
+2. Include the JAR for `gcs-connector` in the classpath. See the
 [documentation](https://cloud.google.com/dataproc/docs/tutorials/gcs-connector-spark-tutorial)
 for details on how to configure Spark with GCS.
 
@@ -706,8 +731,7 @@ spark.read.format("delta").load("gs://<bucket-name>/<path-to-delta-table>").show
   This support is new and experimental.
 </Info>
 
-You have to configure Delta Lake to use the correct `LogStore` for
-concurrently reading and writing.
+You have to configure Delta Lake to use the correct `LogStore` for concurrently reading and writing.
 
 ### Requirements (OCI)
 
@@ -722,7 +746,7 @@ concurrently reading and writing.
 
 ### Configuration (OCI)
 
-#. Configure LogStore implementation for the scheme `oci`.
+1. Configure LogStore implementation for the scheme `oci`.
 
 <CodeTabs>
 
@@ -732,12 +756,12 @@ spark.delta.logStore.oci.impl=io.delta.storage.OracleCloudLogStore
 
 </CodeTabs>
 
-#. Include the JARs for `delta-contribs` and `hadoop-oci-connector` in the
+2. Include the JARs for `delta-contribs` and `hadoop-oci-connector` in the
 classpath. See [Using the HDFS Connector with
 Spark](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/hdfsconnectorspark.htm)
 for details on how to configure Spark with OCI.
 
-#. Set the OCI Object Store credentials as explained in the
+3. Set the OCI Object Store credentials as explained in the
 [documentation](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/hdfsconnector.htm).
 
 ### Usage (OCI)
@@ -775,7 +799,7 @@ concurrently reading and writing.
 
 ### Configuration (IBM)
 
-#. Configure LogStore implementation for the scheme `cos`.
+1. Configure LogStore implementation for the scheme `cos`.
 
 <CodeTabs>
 
@@ -785,9 +809,9 @@ spark.delta.logStore.cos.impl=io.delta.storage.IBMCOSLogStore
 
 </CodeTabs>
 
-#. Include the JARs for `delta-contribs` and `Stocator` in the classpath.
+2. Include the JARs for `delta-contribs` and `Stocator` in the classpath.
 
-#. Configure `Stocator` with atomic write support by setting the following
+3. Configure `Stocator` with atomic write support by setting the following
 properties in the Hadoop configuration.
 
 <CodeTabs>
@@ -800,7 +824,7 @@ fs.stocator.cos.scheme=cos fs.cos.atomic.write=true
 
 </CodeTabs>
 
-#. Set up IBM COS credentials. The example below uses access keys with a service
+4. Set up IBM COS credentials. The example below uses access keys with a service
 named `service` (in Scala):
 
 <CodeTabs>
