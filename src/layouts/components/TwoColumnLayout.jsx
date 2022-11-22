@@ -43,6 +43,11 @@ const SidebarMenuLink = styled(Link)`
   }
 `;
 
+const SidebarMenu = styled(LinkList)`
+  position: sticky;
+  top: ${(props) => props.theme.spacing.md};
+`;
+
 const InnerToc = styled(TableOfContents)`
   margin-bottom: ${(props) => props.theme.spacing.md};
 `;
@@ -67,7 +72,7 @@ const TwoColumnLayout = (props) => {
         {hasSidebar && (
           <SidebarColumn>
             {sidebarMenu ? (
-              <LinkList
+              <SidebarMenu
                 links={sidebarMenu}
                 linkComponent={SidebarMenuLink}
                 currentPathname={currentPathname}
