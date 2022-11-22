@@ -2,8 +2,8 @@
 package = "@netlify/plugin-gatsby"
 
 [[redirects]]
-  from = "/2.1.1/*"
-  to = "https://d1urk4s4laun85.cloudfront.net/2.1.1/:splat"
+  from = "/2.1.1*"
+  to = "https://d1urk4s4laun85.cloudfront.net/2.1.1:splat"
   status = 200
   force = true
 
