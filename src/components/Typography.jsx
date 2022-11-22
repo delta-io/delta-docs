@@ -23,6 +23,11 @@ const headerStyles = (props) => `
   line-height: ${props.theme.lineHeightHeader};
   margin-top: ${scaleSize(1.5, props.density)}em;
   margin-bottom: ${scaleSize(0.5, props.density)}em;
+
+  &:hover .anchor-link {
+    color: #666;
+    opacity: 1;
+  }
 `;
 
 export const TypographyContainer = styled.div`
@@ -95,6 +100,14 @@ const HorizontalRule = styled.hr`
   background: ${(props) => props.theme.colors.border};
 `;
 
+const AnchorLink = styled.a`
+  color: #666;
+  opacity: 0.5;
+  position: absolute;
+  transform: translate(-1em, -2px);
+  width: 1em;
+`;
+
 const elements = {
   p: Paragraph,
   p2: Secondary,
@@ -132,9 +145,9 @@ const Typography = (props) => {
     const link = `#${anchor}`;
     return (
       <Element {...rest}>
-        <a href={link} className="anchor-link">
+        <AnchorLink href={link} className="anchor-link">
           §
-        </a>
+        </AnchorLink>
         {children}
       </Element>
     )
