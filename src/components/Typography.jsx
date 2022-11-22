@@ -110,15 +110,35 @@ const elements = {
   hr: HorizontalRule,
 };
 
+function getAnchor(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, '')
+    .replace(/[ ]/g, '-');
+}
+
 const Typography = (props) => {
-  const { variant, children, ...rest } = props;
+  const { variant, anchor, children, ...rest } = props;
 
   const Element = elements[variant];
 
-  return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <Element {...rest}>{children}</Element>
-  );
+  if (!anchor) { 
+    return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      <Element {...rest}>{children}</Element>
+    );
+  } else {
+    const anchor = getAnchor(children);
+    const link = `#${anchor}`;
+    return (
+      <Element {...rest}>
+        <a href={link} className="anchor-link">
+          §
+        </a>
+        {children}
+      </Element>
+    )
+  }
 };
 
 Typography.defaultProps = {
