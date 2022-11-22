@@ -22,6 +22,7 @@ const MainColumn = styled.div`
 const SidebarColumn = styled.div`
   display: none;
   border-right: 1px solid ${(props) => props.theme.colors.border};
+  padding-right: ${(props) => props.theme.spacing.md};
 
   ${(props) =>
     props.theme.mediaBreakpointUp("lg")(`
@@ -32,11 +33,9 @@ const SidebarColumn = styled.div`
 const SidebarMenuLink = styled(Link)`
   color: inherit;
   text-decoration: none;
-  text-transform: uppercase;
-  font-weight: ${(props) => props.theme.fontWeightBold};
 
   &.active {
-    color: ${(props) => props.theme.light.color};
+    color: ${(props) => props.theme.colors.primary};
   }
 
   &:hover {

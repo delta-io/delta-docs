@@ -2,82 +2,83 @@ const docs = [
   {
     url: "/",
     label: "Docs Home",
+    title: true,
+    icon: "home",
   },
   {
-    items: [
-      {
-        url: "/latest/delta-intro",
-        label: "Delta Intro",
-      },
-      {
-        url: "/latest/quick-start-oss",
-        label: "Quick Start",
-      },
-      {
-        url: "/latest/batch",
-        label: "Batch",
-      },
-      {
-        url: "/latest/streaming",
-        label: "Streaming",
-      },
-      {
-        url: "/latest/updates",
-        label: "Updates",
-      },
-      {
-        url: "/latest/utilities",
-        label: "Utilities",
-      },
-      {
-        url: "/latest/constraints",
-        label: "Constraints",
-      },
-      {
-        url: "/latest/versioning-oss",
-        label: "Versioning",
-      },
-      {
-        url: "/latest/delta-apidoc",
-        label: "Delta API Doc",
-      },
-      {
-        url: "/latest/getting-started",
-        label: "Getting Started",
-      },
-      {
-        url: "/latest/delta-storage-oss",
-        label: "Delta Storage",
-      },
-      {
-        url: "/latest/concurrency-control",
-        label: "Concurrency Control",
-      },
-      {
-        url: "/latest/best-practices",
-        label: "Best Practices",
-      },
-      {
-        url: "/latest/delta-faq",
-        label: "Delta FAQ",
-      },
-      {
-        url: "/latest/releases-oss",
-        label: "Releases",
-      },
-      {
-        url: "/latest/delta-resources",
-        label: "Delta Resources",
-      },
-      {
-        url: "/latest/delta-column-mapping",
-        label: "Delta Column Mapping",
-      },
-      {
-        url: "/latest/porting",
-        label: "Porting", // migration guide
-      },
-    ],
+    divider: true,
+  },
+  {
+    url: "/latest/delta-intro",
+    label: "Delta Intro",
+  },
+  {
+    url: "/latest/quick-start-oss",
+    label: "Quick Start",
+  },
+  {
+    url: "/latest/batch",
+    label: "Batch",
+  },
+  {
+    url: "/latest/streaming",
+    label: "Streaming",
+  },
+  {
+    url: "/latest/updates",
+    label: "Updates",
+  },
+  {
+    url: "/latest/utilities",
+    label: "Utilities",
+  },
+  {
+    url: "/latest/constraints",
+    label: "Constraints",
+  },
+  {
+    url: "/latest/versioning-oss",
+    label: "Versioning",
+  },
+  {
+    url: "/latest/delta-apidoc",
+    label: "Delta API Doc",
+  },
+  {
+    url: "/latest/getting-started",
+    label: "Getting Started",
+  },
+  {
+    url: "/latest/delta-storage-oss",
+    label: "Delta Storage",
+  },
+  {
+    url: "/latest/concurrency-control",
+    label: "Concurrency Control",
+  },
+  {
+    url: "/latest/best-practices",
+    label: "Best Practices",
+  },
+  {
+    url: "/latest/delta-faq",
+    label: "Delta FAQ",
+  },
+  {
+    url: "/latest/releases-oss",
+    label: "Releases",
+  },
+  {
+    url: "/latest/delta-resources",
+    label: "Delta Resources",
+  },
+  {
+    url: "/latest/delta-column-mapping",
+    label: "Delta Column Mapping",
+  },
+  {
+    url: "/latest/porting",
+    label: "Porting", // migration guide
   },
 ];
 
