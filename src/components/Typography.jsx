@@ -141,8 +141,8 @@ const Typography = (props) => {
       <Element {...rest}>{children}</Element>
     );
   } else {
-    const anchor = getAnchor(children);
-    const link = `#${anchor}`;
+    const anchorText = getAnchor(children);
+    const link = `#${anchorText}`;
     return (
       <Element {...rest}>
         <AnchorLink href={link} className="anchor-link">
