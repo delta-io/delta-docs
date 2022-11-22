@@ -124,7 +124,7 @@ const elements = {
 };
 
 function getAnchor(text) {
-  return text
+  return text.toString()
     .toLowerCase()
     .replace(/[^a-z0-9 ]/g, '')
     .replace(/[ ]/g, '-');
