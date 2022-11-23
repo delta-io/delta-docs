@@ -124,10 +124,11 @@ const elements = {
 };
 
 function getAnchor(text) {
-  return text.toString()
+  return text
+    .toString()
     .toLowerCase()
-    .replace(/[^a-z0-9 ]/g, '')
-    .replace(/[ ]/g, '-');
+    .replace(/[^a-z0-9 ]/g, "")
+    .replace(/[ ]/g, "-");
 }
 
 const Typography = (props) => {
@@ -135,7 +136,7 @@ const Typography = (props) => {
 
   const Element = elements[variant];
 
-  if (!anchor) { 
+  if (!anchor) {
     return (
       // eslint-disable-next-line react/jsx-props-no-spreading
       <Element {...rest}>{children}</Element>
@@ -150,7 +151,7 @@ const Typography = (props) => {
         </AnchorLink>
         {children}
       </Element>
-    )
+    );
   }
 };
 

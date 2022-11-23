@@ -41,7 +41,7 @@ const mdxComponents = {
   p: (props) => <Typography variant="p" {...props} />,
   h1: (props) => <Typography variant="h1" {...props} />,
   h2: (props) => <Typography variant="h2" anchor {...props} />,
-  h3: (props) => <Typography variant="h3"  anchor {...props} />,
+  h3: (props) => <Typography variant="h3" anchor {...props} />,
   h4: (props) => <Typography variant="h4" anchor {...props} />,
   h5: (props) => <Typography variant="h5" anchor {...props} />,
   h6: (props) => <Typography variant="h6" anchor {...props} />,
