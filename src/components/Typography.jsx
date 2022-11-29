@@ -23,6 +23,11 @@ const headerStyles = (props) => `
   line-height: ${props.theme.lineHeightHeader};
   margin-top: ${scaleSize(1.5, props.density)}em;
   margin-bottom: ${scaleSize(0.5, props.density)}em;
+
+  &:hover .anchor-link {
+    color: #666;
+    opacity: 1;
+  }
 `;
 
 export const TypographyContainer = styled.div`
@@ -95,6 +100,14 @@ const HorizontalRule = styled.hr`
   background: ${(props) => props.theme.colors.border};
 `;
 
+const AnchorLink = styled.a`
+  color: #666;
+  opacity: 0.5;
+  position: absolute;
+  transform: translate(-1em, -2px);
+  width: 1em;
+`;
+
 const elements = {
   p: Paragraph,
   p2: Secondary,
@@ -110,15 +123,36 @@ const elements = {
   hr: HorizontalRule,
 };
 
+function getAnchor(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, "")
+    .replace(/[ ]/g, "-");
+}
+
 const Typography = (props) => {
-  const { variant, children, ...rest } = props;
+  const { variant, anchor, children, ...rest } = props;
 
   const Element = elements[variant];
 
-  return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <Element {...rest}>{children}</Element>
-  );
+  if (!anchor) {
+    return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      <Element {...rest}>{children}</Element>
+    );
+  } else {
+    const anchorText = getAnchor(children);
+    const link = `#${anchorText}`;
+    return (
+      <Element {...rest}>
+        <AnchorLink href={link} className="anchor-link">
+          §
+        </AnchorLink>
+        {children}
+      </Element>
+    );
+  }
 };
 
 Typography.defaultProps = {

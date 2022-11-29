@@ -95,7 +95,7 @@ You can also create Delta tables using the Spark `DataFrameWriterV2` API.
 
 - **`DeltaTableBuilder` API**: You can also use the `DeltaTableBuilder` API in Delta Lake to create tables. Compared to the DataFrameWriter APIs, this API makes it easier to specify additional information like column comments, table properties, and [generated columns](#deltausegeneratedcolumns).
 
-> Note: This feature is new and is in Preview. 
+> Note: This feature is new and is in Preview.
 
 <CodeTabs>
 
@@ -173,7 +173,7 @@ See the [API documentation](https://docs.delta.io/latest/delta-apidoc.html) for 
 
 ### Partition data
 
-You can partition data to speed up queries or DML that have predicates involving the partition columns.  To partition data when you create a Delta table, specify a partition by columns. The following example partitions by gender.
+You can partition data to speed up queries or DML that have predicates involving the partition columns. To partition data when you create a Delta table, specify a partition by columns. The following example partitions by gender.
 
 <CodeTabs>
 
@@ -264,7 +264,7 @@ the table in the metastore automatically inherits the schema, partitioning, and 
 
 ### Use generated columns
 
-  This feature is new and is in Preview.
+This feature is new and is in Preview.
 
 Delta Lake supports generated columns which are a special type of columns whose values are automatically generated based on a user-specified function over other columns in the Delta table. When you write to a table with generated columns and you do not explicitly provide values for them, Delta Lake automatically computes the values. For example, you can automatically generate a date column (for partitioning the table by date) from the timestamp column; any writes into the table need only specify the data for the timestamp column. However, if you explicitly provide values for them, the values must satisfy the [constraint](https://delta.io/docs/spark/constraints) `(<value> <=> <generation expression>) IS TRUE` or the write will fail with an error.
 

@@ -2,84 +2,91 @@ const docs = [
   {
     url: "/",
     label: "Docs Home",
+    title: true,
+    icon: "home",
   },
   {
-    url: "/spark/",
-    label: "Delta Lake Spark",
-    items: [
-      {
-        url: "/spark/delta-intro",
-        label: "Delta Intro",
-      },
-      {
-        url: "/spark/quick-start-oss",
-        label: "Quick Start",
-      },
-      {
-        url: "/spark/batch",
-        label: "Batch",
-      },
-      {
-        url: "/spark/streaming",
-        label: "Streaming",
-      },
-      {
-        url: "/spark/updates",
-        label: "Updates",
-      },
-      {
-        url: "/spark/utilities",
-        label: "Utilities",
-      },
-      {
-        url: "/spark/constraints",
-        label: "Constraints",
-      },
-      {
-        url: "/spark/versioning-oss",
-        label: "Versioning",
-      },
-      {
-        url: "/spark/delta-apidoc",
-        label: "Delta API Doc",
-      },
-      {
-        url: "/spark/getting-started",
-        label: "Getting Started",
-      },
-      {
-        url: "/spark/delta-storage-oss",
-        label: "Delta Storage",
-      },
-      {
-        url: "/spark/concurrency-control",
-        label: "Concurrency Control",
-      },
-      {
-        url: "/spark/best-practices",
-        label: "Best Practices",
-      },
-      {
-        url: "/spark/delta-faq",
-        label: "Delta FAQ",
-      },
-      {
-        url: "/spark/releases-oss",
-        label: "Releases",
-      },
-      {
-        url: "/spark/delta-resources",
-        label: "Delta Resources",
-      },
-      {
-        url: "/spark/delta-column-mapping",
-        label: "Delta Column Mapping",
-      },
-      {
-        url: "/spark/porting",
-        label: "Porting", // migration guide
-      },
-    ],
+    divider: true,
+  },
+  {
+    url: "/latest/delta-intro",
+    label: "Introduction",
+  },
+  {
+    url: "/latest/quick-start",
+    label: "Quick Start",
+  },
+  {
+    url: "/latest/delta-batch",
+    label: "Table batch reads and writes",
+  },
+  {
+    url: "/latest/delta-streaming",
+    label: "Table streaming reads and writes",
+  },
+  {
+    url: "/latest/delta-update",
+    label: "Table deletes, updates, and merges",
+  },
+  {
+    url: "/latest/delta-change-data-feed",
+    label: "Change data feed",
+  },
+  {
+    url: "/latest/delta-utilities",
+    label: "Table utility commands",
+  },
+  {
+    url: "/latest/delta-constraints",
+    label: "Constraints",
+  },
+  {
+    url: "/latest/versioning",
+    label: "Table protocol versioning",
+  },
+  {
+    url: "/latest/delta-apidoc",
+    label: "Delta API Doc",
+  },
+  {
+    url: "/latest/delta-storage",
+    label: "Storage configuration",
+  },
+  {
+    url: "/latest/concurrency-control",
+    label: "Concurrency Control",
+  },
+  {
+    url: "/latest/integrations",
+    label: "Access Delta tables from external data processing engines",
+  },
+  {
+    url: "/latest/porting",
+    label: "Migration Guide",
+  },
+  {
+    url: "/latest/best-practices",
+    label: "Best Practices",
+  },
+  {
+    url: "/latest/delta-faq",
+    label: "Frequently asked questions (FAQ)",
+  },
+  {
+    url: "/latest/releases",
+    label: "Releases",
+  },
+  {
+    url: "/latest/delta-resources",
+    label: "Delta Lake Resources",
+  },
+  {
+    url: "/latest/optimizations-oss",
+    label: "Optimizations",
+  },
+  {
+    url: "/latest/table-properties",
+    label: "Delta table properties reference",
   },
 ];
 
