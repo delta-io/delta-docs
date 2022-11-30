@@ -21,6 +21,7 @@ This folder contains instructions and materials to get new users started with De
 Once the image has been built, you can then move on to running the quickstart in a notebook or shell.
 
 ## Choose the Delta Package version
+
 In the following instructions, the variable `${DELTA_PACKAGE_VERSION}` refers to the Delta Package version.
 
 The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark 3.3.1.
@@ -68,7 +69,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    ```python
    # Create Spark DataFrame
    data = spark.range(0, 5)
-   
+
    # Write Delta table
    data.write.format("delta").save("/tmp/delta-table")
 
@@ -120,7 +121,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 
    // Create Spark DataFrame
    val data = spark.range(0, 5)
-       
+
    // Write Delta table
    data.write.format("delta").save("/tmp/delta-table")
 
@@ -132,7 +133,6 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    ```
 
 5. Follow the quickstart [here](https://docs.delta.io/latest/quick-start.html#create-a-table&language-scala)
-
 
 6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/delta-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
 
@@ -165,22 +165,22 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    ```bash
    pip3 install pandas
    ```
-  
 
-4. Launch a *python* interactive shell session
+4. Launch a _python_ interactive shell session
 
    ```bash
    python3
    ```
-   > Note, the Delta Rust Python bindings is already installed in this docker.  To do this manually in your own environment, you can install `pip3 install deltalake`  
-   
+
+   > Note, the Delta Rust Python bindings is already installed in this docker. To do this manually in your own environment, you can install `pip3 install deltalake`
+
 5. Run some basic commands in the shell
 
    ```python
    import pandas as pd
    from deltalake.writer import write_deltalake
    from deltalake import DeltaTable
-   
+
    # Create Pandas DataFrame
    df = pd.DataFrame(range(5))
 
@@ -189,7 +189,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 
    # Read Delta Lake table
    dt = DeltaTable("/tmp/deltars-table")
-   
+
    # If you want to read the Delta table that you created in PySpark/Spark-shell previously
    dt = DeltaTable("/tmp/delta-table")
 
@@ -207,4 +207,3 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    4 -rw-r--r-- 1 NBuser 1610 Nov 30 04:42 0-8ec75750-f9f5-40e8-b098-f54a60fd2112-0.parquet
    4 drwxr-xr-x 2 NBuser 4096 Nov 30 04:42 _delta_log
    ```
-
