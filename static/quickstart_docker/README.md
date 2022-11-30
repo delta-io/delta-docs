@@ -20,11 +20,17 @@ This folder contains instructions and materials to get new users started with De
 
 Once the image has been built, you can then move on to running the quickstart in a notebook or shell.
 
+## Choose the Delta Package version
+In the following instructions, the variable `${DELTA_PACKAGE_VERSION}` refers to the Delta Package version.
+
+The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark 3.3.1.
+
 ## Choose an Interface
 
 - [Pyspark Jupyter Lab Notebook](#Pyspark-Jupyter-Lab-Notebook)
 - [Pyspark Shell](#Pyspark-Shell)
 - [Scala Shell](#Scala-Shell)
+- [Delta Rust Python bindings](#Delta-Rust-Python-bindings)
 
 ### Jupyter Lab Notebook
 
@@ -62,6 +68,8 @@ Once the image has been built, you can then move on to running the quickstart in
    ```python
    # Create Spark DataFrame
    data = spark.range(0, 5)
+   
+   # Write Delta table
    data.write.format("delta").save("/tmp/delta-table")
 
    # Read Delta table
@@ -73,21 +81,21 @@ Once the image has been built, you can then move on to running the quickstart in
 
 5. Continue with the quickstart [here](https://docs.delta.io/latest/quick-start.html#create-a-table&language-python)
 
-To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/delta-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
+6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/delta-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
 
-```bash
-$ ls -lsgA /tmp/delta-table
-total 36
-4 drwxr-xr-x 2 NBuser 4096 Oct 18 02:02 _delta_log
-4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00000-b968d89a-b299-401f-a6db-ba0c160633ab-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00000-b968d89a-b299-401f-a6db-ba0c160633ab-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00001-f0f8ea27-b522-4c2c-8fe3-7224fccacb91-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00001-f0f8ea27-b522-4c2c-8fe3-7224fccacb91-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00002-b8a1ea0d-0637-4432-8ab6-8ec864edb6b0-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00002-b8a1ea0d-0637-4432-8ab6-8ec864edb6b0-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser  486 Oct 18 02:02 part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet.crc
-```
+   ```bash
+   $ ls -lsgA /tmp/delta-table
+   total 36
+   4 drwxr-xr-x 2 NBuser 4096 Oct 18 02:02 _delta_log
+   4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00000-b968d89a-b299-401f-a6db-ba0c160633ab-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00000-b968d89a-b299-401f-a6db-ba0c160633ab-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00001-f0f8ea27-b522-4c2c-8fe3-7224fccacb91-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00001-f0f8ea27-b522-4c2c-8fe3-7224fccacb91-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00002-b8a1ea0d-0637-4432-8ab6-8ec864edb6b0-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00002-b8a1ea0d-0637-4432-8ab6-8ec864edb6b0-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  486 Oct 18 02:02 part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet.crc
+   ```
 
 ### Scala Shell
 
@@ -106,35 +114,97 @@ total 36
    --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
    ```
 
-4. ````scala
+4. Run some basic commands in the shell
 
-       // Create Spark DataFrame
-       val data = spark.range(0, 5)
-       data.write.format("delta").save("/tmp/delta-table")
+   ```scala
 
-       // Read Delta table
-       val df = spark.read.format("delta").load("/tmp/delta-table")
+   // Create Spark DataFrame
+   val data = spark.range(0, 5)
+       
+   // Write Delta table
+   data.write.format("delta").save("/tmp/delta-table")
 
-       // Show Delta table
-       df.show()
-       ```
+   // Read Delta table
+   val df = spark.read.format("delta").load("/tmp/delta-table")
 
-   ````
+   // Show Delta table
+   df.show()
+   ```
 
 5. Follow the quickstart [here](https://docs.delta.io/latest/quick-start.html#create-a-table&language-scala)
 
-To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/delta-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
 
-```bash
-$ ls -lsgA /tmp/delta-table
-total 36
-4 drwxr-xr-x 2 NBuser 4096 Oct 18 02:02 _delta_log
-4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00000-b968d89a-b299-401f-a6db-ba0c160633ab-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00000-b968d89a-b299-401f-a6db-ba0c160633ab-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00001-f0f8ea27-b522-4c2c-8fe3-7224fccacb91-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00001-f0f8ea27-b522-4c2c-8fe3-7224fccacb91-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00002-b8a1ea0d-0637-4432-8ab6-8ec864edb6b0-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00002-b8a1ea0d-0637-4432-8ab6-8ec864edb6b0-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser  486 Oct 18 02:02 part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet.crc
-```
+6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/delta-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
+
+   ```bash
+   $ ls -lsgA /tmp/delta-table
+   total 36
+   4 drwxr-xr-x 2 NBuser 4096 Oct 18 02:02 _delta_log
+   4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00000-b968d89a-b299-401f-a6db-ba0c160633ab-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00000-b968d89a-b299-401f-a6db-ba0c160633ab-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00001-f0f8ea27-b522-4c2c-8fe3-7224fccacb91-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00001-f0f8ea27-b522-4c2c-8fe3-7224fccacb91-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 18 02:02 part-00002-b8a1ea0d-0637-4432-8ab6-8ec864edb6b0-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00002-b8a1ea0d-0637-4432-8ab6-8ec864edb6b0-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  486 Oct 18 02:02 part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet.crc
+   ```
+
+### Delta Rust Python bindings
+
+1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
+
+2. Run a container from the built image with a bash entrypoint
+
+   ```bash
+   docker run --rm -it --entrypoint bash delta_quickstart
+   ```
+
+3. Install pandas (note, we've created an [issue](https://github.com/delta-io/delta-docs/issues/12) to pre-install pandas into this docker container)
+
+   ```bash
+   pip3 install pandas
+   ```
+  
+
+4. Launch a *python* interactive shell session
+
+   ```bash
+   python3
+   ```
+   > Note, the Delta Rust Python bindings is already installed in this docker.  To do this manually in your own environment, you can install `pip3 install deltalake`  
+   
+5. Run some basic commands in the shell
+
+   ```python
+   import pandas as pd
+   from deltalake.writer import write_deltalake
+   from deltalake import DeltaTable
+   
+   # Create Pandas DataFrame
+   df = pd.DataFrame(range(5))
+
+   # Write Delta Lake table
+   write_deltalake("/tmp/deltars-table", df)
+
+   # Read Delta Lake table
+   dt = DeltaTable("/tmp/deltars-table")
+   
+   # If you want to read the Delta table that you created in PySpark/Spark-shell previously
+   dt = DeltaTable("/tmp/delta-table")
+
+   # Show Delta table
+   dt.to_pandas()
+   ```
+
+6. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
+
+7. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/deltars-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
+
+   ```bash
+   $ ls -lsgA /tmp/deltars-table
+   total 8
+   4 -rw-r--r-- 1 NBuser 1610 Nov 30 04:42 0-8ec75750-f9f5-40e8-b098-f54a60fd2112-0.parquet
+   4 drwxr-xr-x 2 NBuser 4096 Nov 30 04:42 _delta_log
+   ```
+
