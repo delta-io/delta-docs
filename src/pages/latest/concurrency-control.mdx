@@ -6,9 +6,7 @@ description: Learn about the ACID transaction guarantees between reads and write
 DeltaLake provides ACID transaction guarantees between reads and writes.
 This means that:
 
-- Multiple writers across multiple clusters can simultaneously modify a table
-  partition and see a consistent snapshot view of the table and there will be a
-  serial order for these writes.
+- For supported [storage systems](/latest/delta-storage), multiple writers across multiple clusters can simultaneously modify a table partition and see a consistent snapshot view of the table and there will be a serial order for these writes.
 - Readers continue to see a consistent snapshot view of the table that the
 
   Databricks job started with, even when a table is modified during a job.
@@ -20,6 +18,16 @@ This means that:
 - Readers continue to see a consistent snapshot view of the table that the
   ApacheSpark job started with, even when a table is modified during a job.
 
+In this article:
+
+- [Optimistic concurrency control](/latest/concurrency-control#optimistic-concurrency-control)
+
+- [Write conflicts](/latest/concurrency-control#write-conflicts)
+
+- [Avoid conflicts using partitioning and disjoint command conditions](/latest/concurrency-control#avoid-conflicts-using-partitioning-and-disjoint-command-conditions)
+
+- [Conflict exceptions](/latest/concurrency-control#conflict-exceptions)
+
 ## Optimistic concurrency control
 
 DeltaLake uses [optimistic concurrency
@@ -28,9 +36,10 @@ provide transactional guarantees between writes. Under this mechanism, writes
 operate in three stages:
 
 1. **Read**: Reads (if needed) the latest available version of the table to
-   identify which files need to be modified (that is, rewritten). #. **Write**:
-   Stages all the changes by writing new data files. #. **Validate and commit**:
-   Before committing the changes, checks whether the proposed changes conflict
+   identify which files need to be modified (that is, rewritten).
+2. **Write**: Stages all the changes by writing new data files.
+
+3. **Validate and commit**: Before committing the changes, checks whether the proposed changes conflict
    with any other changes that may have been concurrently committed since the
    snapshot that was read. If there are no conflicts, all the staged changes are
    committed as a new versioned snapshot, and the write operation succeeds.
@@ -38,33 +47,15 @@ operate in three stages:
    modification exception rather than corrupting the table as would happen with
    the write operation on a Parquet table.
 
-The isolation level of a table defines the degree to which a transaction must be
-isolated from modifications made by concurrent operations. For information on
-the isolation levels supported by DeltaLake on Databricks, see
-[\_](optimizations/isolation-level.md).
-
 ## Write conflicts
 
-The following table describes which pairs of write
-operations can conflict in each [isolation
-level](optimizations/isolation-level.md).
+The following table describes which pairs of write operations can conflict. Compaction refers to [file compaction operation](/latest/best-practices#compact-files) written with the option dataChange set to false.
 
-|                                | **INSERT**                                                         | **UPDATE, DELTE, MERGE INTO**                      | **OPTIMIZE**                                       |
-| ------------------------------ | ------------------------------------------------------------------ | -------------------------------------------------- | -------------------------------------------------- |
-| **INSERT**                     | Cannot conflict                                                    |                                                    |                                                    |
-| **UPDATE, DELETE, MERGE INTO** | Can conflict in Serializable, cannot conflict in WriteSerializable | Can conflict in Serializable and WriteSerializable |                                                    |
-| **OPTIMIZE**                   | Cannot conflict                                                    | Can conflict in Serializable and WriteSerializable | Can conflict in Serializable and WriteSerializable |
-
-The following table describes which pairs of write
-operations can conflict. Compaction refers to [file compaction
-operation](best-practices.md#compact-files) written with the option `dataChange`
-set to `false`.
-
-|                                | **INSERT**      | **UPDATE, DELTE, MERGE INTO** | **COMPACTION** |
-| ------------------------------ | --------------- | ----------------------------- | -------------- |
-| **INSERT**                     | Cannot conflict |                               |                |
-| **UPDATE, DELETE, MERGE INTO** | Can conflict    | Can conflict                  |                |
-| **COMPACTION**                 | Cannot conflict | Can conflict                  | Can conflict   |
+|                                | **INSERT**      | **UPDATE, DELTE, MERGE INTO** | **OPTIMIZE** |
+| ------------------------------ | --------------- | ----------------------------- | ------------ |
+| **INSERT**                     | Cannot conflict |                               |              |
+| **UPDATE, DELETE, MERGE INTO** | Can conflict    | Can conflict                  |              |
+| **COMPACTION**                 | Cannot conflict | Can conflict                  | Can conflict |
 
 ## Avoid conflicts using partitioning and disjoint command conditions
 
@@ -89,13 +80,6 @@ This exception occurs when a concurrent operation adds files in the same
 partition (or anywhere in an unpartitioned table) that your operation reads. The
 file additions can be caused by `INSERT`, `DELETE`, `UPDATE`, or `MERGE`
 operations.
-
-With the default [isolation
-level](optimizations/isolation-level.md) of `WriteSerializable`, files added by
-_blind_ `INSERT` operations (that is, operations that blindly append data
-without reading any data) do not conflict with any operation, even if they touch
-the same partition (or anywhere in an unpartitioned table). If the isolation
-level is set to `Serializable`, then blind appends may conflict.
 
 This exception is often thrown during concurrent `DELETE`, `UPDATE`, or `MERGE`
 operations. While the concurrent operations may be physically updating different
@@ -172,6 +156,6 @@ at the same time.
 This exception can occur in the following cases:
 
 - When your Delta table is upgraded to a new version. For future operations to
-  succeed you may need to upgrade your DeltaLake version.
+  succeed you may need to upgrade your Delta Lake version.
 - When multiple writers are creating or replacing a table at the same time.
 - When multiple writers are writing to an empty path at the same time.
