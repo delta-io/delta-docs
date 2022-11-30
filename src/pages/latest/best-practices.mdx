@@ -189,7 +189,7 @@ There are multiple benefits with this approach:
   directory recursively or delete any files.
 - The old version of the table still exists. If you delete the wrong table you can easily retrieve the old data using [Time Travel](/latest/delta-batch#query-an-older-snapshot-of-a-table-time-travel).
 - It's an atomic operation. Concurrent queries can still read the table while you are deleting the table.
-- Because of DeltaLake ACID transaction guarantees, if overwriting the table fails, the table will be in its previous state.
+- Because of Delta Lake ACID transaction guarantees, if overwriting the table fails, the table will be in its previous state.
 
 In addition, if you want to delete old files to save storage cost after overwriting the table, you can use [VACUUM](/latest/delta-utility#delta-vacuum) to delete them. It's optimized for file deletion and usually faster than deleting the entire directory.
 
