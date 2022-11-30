@@ -13,10 +13,6 @@ provided by Apache Spark and Apache Hive.
 Delta Lake handles the following operations automatically, which you should
 never perform manually:
 
-- **`REFRESH TABLE`**: Delta tables always return the most up-to-date
-  information, so there is no need to manually call `REFRESH TABLE` after
-  changes.
-
 - **Add and remove partitions**: Delta Lake automatically tracks the set of
   partitions present in a table and updates the list as data is added or
   removed. As a result, there is no need to run `ALTER TABLE [ADD|DROP] PARTITION` or `MSCK`.
@@ -45,26 +41,7 @@ following operations, which bypass the transaction log:
   guide.
 
 - **External readers**: Directly reading the data stored in Delta Lake. For
-  information on how to read Delta tables, see [\_](integrations.md).
-
-- **External readers**: Directly reading the data stored in Delta Lake. For
-  information on how to read Delta tables, see [\_](integrations.md).
-
-- **External readers**: The data stored in Delta Lake is encoded as Parquet
-  files. However, accessing these files using an external reader is not safe.
-  You'll see duplicates and uncommitted data and the read may fail when someone
-  runs [\_](delta-utility.md#delta-vacuum).
-
-```
-<Info title="Note" level="info">
-
-Because the files are encoded in an open format, you always have the
-option to move the files outside Delta Lake. At that point, you can run
-`VACUUM RETAIN 0` and delete the transaction log. This leaves the table's files
-in a consistent state that can be read by the external reader of your choice.
-
-</Info>
-```
+  information on how to read Delta tables, see [Access Delta tables from external data processing engines](/latest/integrations).
 
 ### Example
 
@@ -83,11 +60,6 @@ The [first example](#save-as-delta-table) shows how to:
 The [second example](#convert-to-delta-table) shows how to use `CONVERT TO TABLE` to convert data from Parquet to Delta format without changing its
 original location, `/data-pipeline/`.
 
-Each of these examples create an [unmanaged
-table](/data/tables.md#managed-and-unmanaged-tables), where you continue to
-manage the data in its specified location. Databricks records the table's name
-and its specified location in the metastore.
-
 #### Save as Delta table
 
 1. Read the Parquet data into a DataFrame and then save the DataFrame's contents
@@ -102,8 +74,8 @@ data.write.format("delta").save("/tmp/delta/data-pipeline/")
 
 </CodeTabs>
 
-#. Create a Delta table named `events` that refers to the files in the new
-directory:
+2. Create a Delta table named `events` that refers to the files in the new
+   directory:
 
 <CodeTabs>
 
@@ -114,8 +86,6 @@ spark.sql("CREATE TABLE events USING DELTA LOCATION '/tmp/delta/data-pipeline/'"
 </CodeTabs>
 
 #### Convert to Delta table
-
-You have three options for converting a Parquet table to a Delta table:
 
 You have two options for converting a Parquet table to a Delta table:
 
@@ -141,24 +111,42 @@ CONVERT TO DELTA events
 
 </CodeTabs>
 
-- Convert a Parquet table to a Delta table:
-
-<CodeTabs>
-
-```sql
-CONVERT TO DELTA events
-```
-
-</CodeTabs>
-
-This assumes that the table named `events` is a Parquet table.
-
-For details, see [\_](delta-utility.md#convert-to-delta).
+For details, see [Convert a Parquet table to a Delta table](delta-utility.md#convert-to-delta).
 
 ## Migrate Delta Lake workloads to newer versions
 
 This section discusses any changes that may be required in the user code when
 migrating from older to newer versions of Delta Lake.
+
+### Delta Lake 1.2.1, 2.0.0, or 2.1.0 to Delta Lake 2.0.1, 2.1.1 or above
+
+Delta Lake 1.2.1, 2.0.0 and 2.1.0 have a bug in their DynamoDB-based S3 multi-cluster configuration implementations where an incorrect timestamp value was written to DynamoDB. This caused [DynamoDB’s TTL](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html) feature to cleanup completed items before it was safe to do so. This has been fixed in Delta Lake versions 2.0.1 and 2.1.1, and the TTL attribute has been renamed from `commitTime` to `expireTime`.
+
+If you already have TTL enabled on your DynamoDB table using the old attribute, you need to disable TTL for that attribute and then enable it for the new one. You may need to wait an hour between these two operations, as TTL settings changes may take some time to propagate. See the DynamoDB docs [here](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/time-to-live-ttl-before-you-start.html). If you don’t do this, DyanmoDB’s TTL feature will not remove any new and expired entries. There is no risk of data loss.
+
+```bash
+# Disable TTL on old attribute
+aws dynamodb update-time-to-live \
+  --region <region> \
+  --table-name <table-name> \
+  --time-to-live-specification "Enabled=false, AttributeName=commitTime"
+
+# Enable TTL on new attribute
+aws dynamodb update-time-to-live \
+  --region <region> \
+  --table-name <table-name> \
+  --time-to-live-specification "Enabled=true, AttributeName=expireTime"
+```
+
+### Delta Lake 2.0 or below to Delta Lake 2.1 or above
+
+When calling `CONVERT TO DELTA` on a catalog table Delta Lake 2.1 infers the data schema from the catalog. In version 2.0 and below, Delta Lake infers the data schema from the data. This means in Delta 2.1 data columns that are not defined in the original catalog table will not be present in the converted Delta table. This behavior can be disabled by setting the Spark session configuration `spark.databricks.delta.convert.useCatalogSchema=false`.
+
+### Delta Lake 1.2 or below to Delta Lake 2.0 or above
+
+Delta Lake 2.0.0 introduced a behavior change for [DROP CONSTRAINT](/latest/delta-constraints#check-constraint). In version 1.2 and below, no error was thrown when trying to drop a non-existent constraint. In version 2.0.0 and above, the behavior is changed to throw a constraint not exists error. To avoid the error, use `IF EXISTS` construct (for example, `ALTER TABLE` events `DROP CONSTRAINT IF EXISTS constraint_name`). There is no change in behavior in dropping an existing constraint.
+
+Delta Lake 2.0.0 introduced support for [Dynamic Partition Overwrites](/latest/delta-batch#overwrite). In version 1.2 and below, enabling dynamic partition overwrite mode in either the Spark session configuration or a DataFrameWriter option was a no-op, and writes in `overwrite` mode replaced all existing data in every partition of the table. In version 2.0.0 and above, when dynamic partition overwrite mode is enabled, Delta Lake replaces all existing data in each logical partition for which the write will commit new data.
 
 ### Delta Lake 1.1 or below to Delta Lake 1.2 or above
 
@@ -180,11 +168,7 @@ If the name of a partition column in a Delta table contains invalid characters
 [SPARK-36271](https://issues.apache.org/jira/browse/SPARK-36271). However, this
 should be rare as you cannot create such tables by using Delta Lake 0.6 and
 above. If you still have such legacy tables, you can overwrite your tables with
-new valid column names by using Delta Lake 1.0 and below before upgrading
-
-{" "}
-
-Delta Lake to 1.1 and above, such as the following:
+new valid column names by using Delta Lake 1.0 and below before upgrading to Delta Lake to 1.1 and above, such as the following:
 
 <CodeTabs>
 
@@ -217,7 +201,7 @@ spark.read
 ### Delta Lake 0.6 or below to Delta Lake 0.7 or above
 
 If you are using `DeltaTable` APIs in Scala, Java, or Python to
-[update](delta-update.md) or [run utility operations](delta-utility.md) on them,
+[update](/latest/delta-update) or [run utility operations](/latest/delta-utility) on them,
 then you may have to add the following configurations when creating the
 `SparkSession` used to perform those operations.
 
