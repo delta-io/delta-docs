@@ -4,6 +4,30 @@ description: Learn the answers to frequently asked questions about Delta Lake.
 menu: docs
 ---
 
+_In this article:_
+
+- [What is Delta Lake?](/latest/delta-faq.html#what-is-delta-lake)
+
+- [How is Delta Lake related to Apache Spark?](/latest/delta-faq.html#how-is-delta-lake-related-to-apache-spark)
+
+- [What format does Delta Lake use to store data?](/latest/delta-faq.html#what-format-does-delta-lake-use-to-store-data)
+
+- [How can I read and write data with Delta Lake?](/latest/delta-faq.html#how-can-i-read-and-write-data-with-delta-lake)
+
+- [Where does Delta Lake store the data?](/latest/delta-faq.html#where-does-delta-lake-store-the-data)
+
+- [Can I copy my Delta Lake table to another location?](/latest/delta-faq.html#can-i-copy-my-delta-lake-table-to-another-location)
+
+- [Can I stream data directly into and from Delta tables?](/latest/delta-faq.html#can-i-stream-data-directly-into-and-from-delta-tables)
+
+- [Does Delta Lake support writes or reads using the Spark Streaming DStream API?](/latest/delta-faq.html#does-delta-lake-support-writes-or-reads-using-the-spark-streaming-dstream-api)
+
+- [When I use Delta Lake, will I be able to port my code to other Spark platforms easily?](/latest/delta-faq.html#when-i-use-delta-lake-will-i-be-able-to-port-my-code-to-other-spark-platforms-easily)
+
+- [Does Delta Lake support multi-table transactions?](/latest/delta-faq.html#does-delta-lake-support-multi-table-transactions)
+
+- [How can I change the type of a column?](/latest/delta-faq.html#how-can-i-change-the-type-of-a-column)
+
 ## What is Delta Lake?
 
 [Delta Lake](https://delta.io/) is an [open source storage
@@ -12,10 +36,6 @@ lakes](https://databricks.com/discover/data-lakes/introduction). Delta Lake
 provides ACID transactions, scalable metadata handling, and unifies streaming
 and batch data processing. Delta Lake runs on top of your existing data lake
 and is fully compatible with Apache Spark APIs.
-
-Delta Lake on Databricks allows you to configure Delta Lake based on your
-workload patterns and provides optimized layouts and indexes for fast
-interactive queries.
 
 ## How is Delta Lake related to Apache Spark?
 
@@ -34,8 +54,8 @@ provide ACID transactions.
 
 You can use your favorite Apache Spark APIs to read and write data with
 
-Delta Lake. See [\_](delta-batch.md#deltadataframereads) and
-[\_](delta-batch.md#deltadataframewrites).
+Delta Lake. See [Read a table](/latest/delta-batch#deltadataframereads) and
+[Write to a table](/latest/delta-batch#deltadataframewrites).
 
 ## Where does Delta Lake store the data?
 
@@ -49,62 +69,22 @@ Yes you can copy your Delta Lake table to another location. Remember to copy
 files without changing the timestamps to ensure that the time travel with
 timestamps will be consistent.
 
-## Why is Delta Lake data I deleted still stored in S3?
-
-    If you are using Delta Lake and you have enabled bucket versioning on the S3 bucket, you have two entities managing table files: Delta Lake and AWS. To ensure that data is fully deleted you must:
-
-    - [Clean up](delta-utility.md#delta-vacuum) deleted files that are no longer in the Delta Lake transaction log using `VACUUM`.
-    - Enable an S3 lifecycle policy for versioned objects that ensures that old versions of deleted files are purged.
-
-    ## Why does a table show old data after I delete Delta Lake files with `rm -rf` and create a new table in the same location?
-
-    Deletes on S3 are only eventually consistent. Thus after deleting a table old versions of the transaction log may still be visible for a while. To avoid this, do not reuse a table path after deleting it. Instead we recommend that you use transactional mechanisms like `DELETE FROM`, `overwrite`, and `overwriteSchema` to delete and update tables. See [Best practice to replace a table](best-practices.md#delta-replace-table).
-
 ## Can I stream data directly into and from Delta tables?
 
 Yes, you can use Structured Streaming to directly write data into Delta tables
 and read from Delta tables. See [Stream data into Delta
-tables](delta-streaming.md#stream-sink) and [Stream data from Delta
-tables](delta-streaming.md#stream-source).
+tables](/latest/delta-streaming#stream-sink) and [Stream data from Delta
+tables](/latest/delta-streaming#stream-source).
 
 ## Does Delta Lake support writes or reads using the Spark Streaming DStream API?
 
-Delta does not support the DStream API. We recommend [\_](delta-streaming.md).
+Delta does not support the DStream API. We recommend [Table streaming reads and writes](/latest/delta-streaming).
 
 ## When I use Delta Lake, will I be able to port my code to other Spark platforms easily?
 
 Yes. When you use Delta Lake, you are using open Apache Spark APIs so you
 can easily port your code to other Spark platforms. To port your code, replace
 `delta` format with `parquet` format.
-
-## How do Delta tables compare to Hive SerDe tables?
-
-Delta tables are managed to a greater degree. In particular, there are several
-Hive SerDe parameters that Delta Lake manages on your behalf that you should
-never specify manually:
-
-- `ROWFORMAT`
-- `SERDE`
-- `OUTPUTFORMAT` AND `INPUTFORMAT`
-- `COMPRESSION`
-- `STORED AS`
-
-## What DDL and DML features does Delta Lake not support?
-
-- Unsupported DDL features:
-  - `ANALYZE TABLE PARTITION`
-  - `ALTER TABLE [ADD|DROP] PARTITION`
-  - `ALTER TABLE RECOVER PARTITIONS`
-  - `ALTER TABLE SET SERDEPROPERTIES`
-  - `CREATE TABLE LIKE`
-  - `INSERT OVERWRITE DIRECTORY`
-  - `LOAD DATA`
-- Unsupported DML features:
-  - `INSERT INTO [OVERWRITE]` table with static partitions
-  - `INSERT OVERWRITE TABLE` for table with dynamic partitions
-  - Bucketing
-  - Specifying a schema when reading from a table
-  - Specifying target partitions using `PARTITION (part_spec)` in `TRUNCATE TABLE`
 
 ## Does Delta Lake support multi-table transactions?
 
@@ -115,103 +95,3 @@ Delta Lake supports transactions at the _table_ level.
 
 Changing a column's type or dropping a column requires rewriting the table. For
 an example, see [Change column type](delta-batch.md#change-column-type).
-
-<a id="multi-cluster"></a>
-
-## What does it mean that Delta Lake supports multi-cluster writes?
-
-It means that Delta Lake does locking to make sure that queries writing to a
-table from multiple clusters at the same time won't corrupt the table. However,
-it does not mean that if there is a write conflict (for example, update and
-delete the same thing) that they will both succeed. Instead, one of writes will
-fail atomically and the error will tell you to retry the operation.
-
-## Can I modify a Delta table from different workspaces?
-
-Yes, you can concurrently modify the same Delta table from different workspaces.
-Moreover, if one process is writing from a workspace, readers in other
-workspaces will see a consistent view.
-
-## What are the limitations of multi-cluster writes?
-
-The following features are not supported when running in this mode:
-
-- [SparkR](/spark/latest/sparkr/index.md) using DBR 7.5 and below. Writing to a
-  Delta table using SparkR in DBR 7.6 and above supports multi-cluster writes.
-- [spark-submit
-  jobs](/dev-tools/api/latest/examples.md#spark-submit-api-example) using DBR
-  7.2 and below. Running a spark-submit job using DBR 7.3 and above supports
-  multi-cluster writes.
-- [Server-Side Encryption with Customer-Provided Encryption
-  Keys](https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html)
-- S3 paths with credentials in a cluster that cannot access [AWS Security Token
-  Service](https://docs.aws.amazon.com/STS/latest/APIReference/Welcome.html)
-
-You can disable multi-cluster writes by setting
-`spark.databricks.delta.multiClusterWrites.enabled` to `false`. If they are
-disabled, writes to a single table _must_ originate from a single cluster.
-
-<Info title="Important!" level="warning">
-  You cannot concurrently modify the same Delta table from _different_
-  workspaces.
-</Info>
-
-<Info title="Important!" level="warning">
-    The following cases are not recommended as ACID guarantee may be broken and cause _data corruption_ or _data loss_ issues:
-
-    - Modify the same Delta table from _different_ workspaces concurrently.
-    - Disable `spark.databricks.delta.multiClusterWrites.enabled` but modify the same Delta table from _multiple_ clusters concurrently.
-
-</Info>
-
-## Can I access Delta tables outside of DBR?
-
-There are two cases to consider: external reads and external writes.
-
-- External reads: Delta tables store data encoded in an open format (Parquet),
-  allowing other tools that understand this format to read the data. For
-  information on how to read Delta tables, see [\_](integrations.md).
-
-- External reads: Delta tables store data encoded in an open format (Parquet),
-  allowing other tools that understand this format to read the data. However,
-  since other tools do not support the Delta Lake transaction log, it is
-  likely that they will incorrectly read stale deleted data, uncommitted data,
-  or the partial results of failed transactions.
-
-  In cases where the data is static (that is, there are no active jobs writing
-  to the table), you can use `VACUUM` with a retention of `ZERO HOURS` to clean
-  up any stale Parquet files that are not currently part of the table. This
-  operation puts the Parquet files present in DBFS into a consistent state such
-  that they can now be read by external tools.
-
-  However, Delta Lake relies on stale snapshots for the following
-  functionality, which will fail when using `VACUUM` with zero retention
-  allowance:
-
-  - Snapshot isolation for readers: Long running jobs will continue to read a
-    consistent snapshot from the moment the jobs started, even if the table is
-    modified concurrently. Running `VACUUM` with a retention less than length of
-    these jobs can cause them to fail with a `FileNotFoundException`.
-  - Streaming from Delta tables: Streams read from the original files written
-    into a table in order to ensure exactly once processing. When combined with
-    `OPTIMIZE`, `VACUUM` with zero retention can remove these files before the
-    stream has time to processes them, causing it to fail.
-
-  For these reasons Databricks recommends using this technique only on static
-  data sets that must be read by external tools.
-
-- External reads: Delta tables store data encoded in an open format (Parquet),
-  allowing other tools that understand this format to read the data. For
-  information on how to read Delta tables, see [\_](integrations.md).
-
-* External writes: Delta Lake maintains additional metadata in a transaction
-  log to enable [ACID](https://wikipedia.org/wiki/ACID) transactions and
-  snapshot isolation for readers. To ensure the transaction log is updated
-  correctly and the proper validations are performed, writer implementations
-  must strictly adhere to the [Delta Transaction
-  Protocol](https://github.com/delta-io/delta/blob/master/PROTOCOL.md).
-  Delta Lake in DBR ensures ACID guarantees based on the Delta Transaction
-  Protocol. Whether [non-Spark Delta connectors that write to Delta
-  tables](https://delta.io/connectors/) can write with ACID guarantees depends
-  on the connector implementation. For information, see [\_](integrations.md)
-  and the integration-specific documentation on their write guarantees.
