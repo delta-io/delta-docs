@@ -86,42 +86,42 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    ```
 
 <details>
-  <summary>Click for more examples including files information and time travel</summary>
+  <summary><b>Click for more examples including files information and time travel</b></summary>
 
-  1. Review the files
-  ```
-  # List files for the Delta table
-  dt.files()
-
-  ## Output
-  ['0-0ba7c7af-28bd-4125-84a4-acab9898b2dc-0.parquet', '1-00e32c3a-d7ec-484f-a347-29d9f54c1a6c-0.parquet']
-  ```
-
-  2. Review history
-  ```
-  # Review history
-   dt.history()
-
-  ## Output
-  [{'delta-rs': '0.5.0', 'timestamp': 1670708720583}, {'clientVersion': 'delta-rs.0.5.0', 'operation': 'delta-rs.Write', 'operationParameters': {'mode': 'Append', 'partitionBy': [], 'predicate': None}, 'timestamp': 1670708731359}]
-  ```
-
-  3. Time Travel (load older version of table)
-  ```
-  # Load initial version of table
-  dt.load_version(0)
-
-  # Show table
-  dt.to_pandas()
-
-  ## Output
-      0
-   0  0
-   1  1
-   2  2
-   3  3
-   4  4  
+   1. Review the files
    ```
+   # List files for the Delta table
+   dt.files()
+
+   ## Output
+   ['0-0ba7c7af-28bd-4125-84a4-acab9898b2dc-0.parquet', '1-00e32c3a-d7ec-484f-a347-29d9f54c1a6c-0.parquet']
+   ```
+
+   2. Review history
+   ```
+   # Review history
+      dt.history()
+
+   ## Output
+   [{'delta-rs': '0.5.0', 'timestamp': 1670708720583}, {'clientVersion': 'delta-rs.0.5.0', 'operation': 'delta-rs.Write', 'operationParameters': {'mode': 'Append', 'partitionBy': [], 'predicate': None}, 'timestamp': 1670708731359}]
+   ```
+
+   3. Time Travel (load older version of table)
+   ```
+   # Load initial version of table
+   dt.load_version(0)
+
+   # Show table
+   dt.to_pandas()
+
+   ## Output
+         0
+      0  0
+      1  1
+      2  2
+      3  3
+      4  4  
+      ```
 </details>
 
 5. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
