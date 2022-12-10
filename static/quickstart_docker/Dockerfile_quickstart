@@ -11,7 +11,7 @@ USER root
 ARG DELTA_CORE_VERSION="2.1.0"
 
 RUN pip install --no-cache-dir delta-spark==${DELTA_CORE_VERSION} \
-jupyterlab deltalake
+jupyterlab deltalake pandas
 
 FROM delta as startup
 
@@ -21,7 +21,8 @@ ARG WORKDIR=/opt/spark/work-dir
 ENV DELTA_PACKAGE_VERSION=delta-core_2.12:2.1.0
 
 RUN groupadd -r ${GROUP} && useradd -r -m -g ${GROUP} ${NBuser}
-
+RUN apt-get update
+RUN apt-get -y install vim
 
 COPY --chown=${NBuser} startup.sh "${HOME}"
 COPY --chown=${NBuser} quickstart.ipynb "${HOME}"
@@ -30,4 +31,5 @@ RUN chown -R ${NBuser}:${GROUP} /home/${NBuser}/ \
 
 USER ${NBuser}
 
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENTRYPOINT ["bash", "startup.sh"]

@@ -160,13 +160,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    docker run --rm -it --entrypoint bash delta_quickstart
    ```
 
-3. Install pandas (note, we've created an [issue](https://github.com/delta-io/delta-docs/issues/12) to pre-install pandas into this docker container)
-
-   ```bash
-   pip3 install pandas
-   ```
-
-4. Launch a _python_ interactive shell session
+3. Launch a _python_ interactive shell session
 
    ```bash
    python3
@@ -174,7 +168,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 
    > Note, the Delta Rust Python bindings is already installed in this docker. To do this manually in your own environment, you can install `pip3 install deltalake`
 
-5. Run some basic commands in the shell
+4. Run some basic commands in the shell
 
    ```python
    import pandas as pd
@@ -197,9 +191,9 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    dt.to_pandas()
    ```
 
-6. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
+5. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
 
-7. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/deltars-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
+6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/deltars-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
 
    ```bash
    $ ls -lsgA /tmp/deltars-table
