@@ -76,7 +76,9 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 
    # Show Delta table
    dt.to_pandas()
+   ```
 
+   ```
    ## Output
        0
    0   0
@@ -92,7 +94,8 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
   ```
   # List files for the Delta table
   dt.files()
-
+  ```
+  ```
   ## Output
   ['0-0ba7c7af-28bd-4125-84a4-acab9898b2dc-0.parquet', '1-00e32c3a-d7ec-484f-a347-29d9f54c1a6c-0.parquet']
   ```
@@ -100,8 +103,9 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
   2. Review history
   ```
   # Review history
-   dt.history()
-
+  dt.history()
+  ```
+  ```  
   ## Output
   [{'delta-rs': '0.5.0', 'timestamp': 1670708720583}, {'clientVersion': 'delta-rs.0.5.0', 'operation': 'delta-rs.Write', 'operationParameters': {'mode': 'Append', 'partitionBy': [], 'predicate': None}, 'timestamp': 1670708731359}]
   ```
@@ -113,7 +117,8 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 
   # Show table
   dt.to_pandas()
-
+  ```
+  ```  
   ## Output
       0
    0  0
