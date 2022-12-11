@@ -87,34 +87,34 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
   <summary><b>Click for more examples including files information and time travel</b></summary>
 
   1. Review the files
-  ```
+  ```python
   # List files for the Delta table
   dt.files()
   ```
-  ```
+  ```python
   ## Output
   ['0-0ba7c7af-28bd-4125-84a4-acab9898b2dc-0.parquet', '1-00e32c3a-d7ec-484f-a347-29d9f54c1a6c-0.parquet']
   ```
 
   2. Review history
-  ```
+  ```python
   # Review history
   dt.history()
   ```
-  ```  
+  ```python  
   ## Output
   [{'delta-rs': '0.5.0', 'timestamp': 1670708720583}, {'clientVersion': 'delta-rs.0.5.0', 'operation': 'delta-rs.Write', 'operationParameters': {'mode': 'Append', 'partitionBy': [], 'predicate': None}, 'timestamp': 1670708731359}]
   ```
 
   3. Time Travel (load older version of table)
-  ```
+  ```python
   # Load initial version of table
   dt.load_version(0)
 
   # Show table
   dt.to_pandas()
   ```
-  ```  
+  ```python  
   ## Output
       0
    0  0
@@ -260,11 +260,11 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 1. This example uses the table generated in the [Delta Rust Python bindings](#Delta-Rust-Python-bindings) section.  Please ensure you have already executed this step otherwise the example will not work.
 
 2. Execute the script `examples/read_delta_table.rs` to review the Delta table metadata.
-```
+```bash
 cd rs
 cargo run --example read_delta_table
 ```
-```
+```bash
 ## Output
 === Delta Table Metadata from Transaction Log ===
 DeltaTable(/tmp/deltars-table)
@@ -282,15 +282,15 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
 
 
 1. Start the `roapi` API using the following command.  Note, the API calls are pushed to the `nohup.out` file.
-```
+```bash
 nohup roapi --table 'deltars_table=/tmp/deltars_table/,format=delta' --table 'covid19_nyt=/opt/spark/work-dir/rs/data/COVID-19_NYT,format=delta' &
 ```
 
 2. Check the schema of the two Delta tables
-```
+```bash
 curl localhost:8080/api/schema
 ```
-```
+```bash
 ## Output
 {
    "covid19_nyt":{"fields":[{"name":"date","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"county","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"state","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"fips","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"cases","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"deaths","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false}]},
@@ -300,19 +300,19 @@ curl localhost:8080/api/schema
 ```
 
 3. Query the `deltars_table`
-```
+```bash
 curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
 ```
-```
+```bash
 ## Output
 [{"0":6},{"0":7},{"0":8},{"0":9},{"0":10},{"0":0},{"0":1},{"0":2},{"0":3},{"0":4}]
 ```
 
 4. Query the `covid19_nyt` table
-```
+```bash
 curl -X POST -d "SELECT cases, county, date FROM covid19_nyt LIMIT 5" localhost:8080/api/sql
 ```
-```
+```bash
 ## Output
 [
    {"cases":987,"county":"San Benito","date":"2020-08-25"},
@@ -322,4 +322,3 @@ curl -X POST -d "SELECT cases, county, date FROM covid19_nyt LIMIT 5" localhost:
    {"cases":16565,"county":"San Joaquin","date":"2020-08-25"}
 ]
 ```
-
