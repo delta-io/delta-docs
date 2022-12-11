@@ -11,10 +11,9 @@ This folder contains instructions and materials to get new users started with De
 2. Navigate to the cloned folder
 3. Navigate to the quickstart_docker folder
 4. open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
-5. Execute the following
+5. Execute the following from the `static/quickstart_docker` folder
 
    ```bash
-   cd quickstart_docker
    docker build -t delta_quickstart -f Dockerfile_quickstart .
    ```
 
@@ -27,11 +26,119 @@ In the following instructions, the variable `${DELTA_PACKAGE_VERSION}` refers to
 The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark 3.3.1.
 
 ## Choose an Interface
-
+- [Delta Rust Python bindings](#Delta-Rust-Python-bindings)
 - [Pyspark Jupyter Lab Notebook](#Pyspark-Jupyter-Lab-Notebook)
 - [Pyspark Shell](#Pyspark-Shell)
 - [Scala Shell](#Scala-Shell)
-- [Delta Rust Python bindings](#Delta-Rust-Python-bindings)
+- [Rust API](#delta-rust-api)
+- [ROAPI](#optional-roapi)
+
+
+### Delta Rust Python bindings
+1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
+
+2. Run a container from the built image with a bash entrypoint
+
+   ```bash
+   docker run --rm -it --entrypoint bash delta_quickstart
+   ```
+
+3. Launch a _python_ interactive shell session
+
+   ```bash
+   python3
+   ```
+
+   > Note, the Delta Rust Python bindings is already installed in this docker. To do this manually in your own environment, you can install `pip3 install deltalake`
+
+4. Run some basic commands in the shell
+
+   ```python
+   import pandas as pd
+   from deltalake.writer import write_deltalake
+   from deltalake import DeltaTable
+
+   # Create Pandas DataFrame
+   df = pd.DataFrame(range(5))
+
+   # Write Delta Lake table
+   write_deltalake("/tmp/deltars_table", df)
+
+   # Append new data
+   df = pd.DataFrame(range(6, 11))
+   write_deltalake("/tmp/deltars_table", df, mode="append")
+
+   # Read Delta Lake table
+   dt = DeltaTable("/tmp/deltars_table")
+
+   # Show Delta table
+   dt.to_pandas()
+   ```
+
+   ```
+   ## Output
+       0
+   0   0
+   ... ...
+   8   9
+   9  10
+   ```
+
+<details>
+  <summary><b>Click for more examples including files information and time travel</b></summary>
+
+  1. Review the files
+  ```python
+  # List files for the Delta table
+  dt.files()
+  ```
+  ```python
+  ## Output
+  ['0-0ba7c7af-28bd-4125-84a4-acab9898b2dc-0.parquet', '1-00e32c3a-d7ec-484f-a347-29d9f54c1a6c-0.parquet']
+  ```
+
+  2. Review history
+  ```python
+  # Review history
+  dt.history()
+  ```
+  ```python  
+  ## Output
+  [{'delta-rs': '0.5.0', 'timestamp': 1670708720583}, {'clientVersion': 'delta-rs.0.5.0', 'operation': 'delta-rs.Write', 'operationParameters': {'mode': 'Append', 'partitionBy': [], 'predicate': None}, 'timestamp': 1670708731359}]
+  ```
+
+  3. Time Travel (load older version of table)
+  ```python
+  # Load initial version of table
+  dt.load_version(0)
+
+  # Show table
+  dt.to_pandas()
+  ```
+  ```python  
+  ## Output
+      0
+   0  0
+   1  1
+   2  2
+   3  3
+   4  4  
+   ```
+</details>
+
+5. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
+
+6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/deltars-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
+
+   ```bash
+   $ ls -lsgA /tmp/deltars_table
+   total 12
+   4 -rw-r--r-- 1 NBuser 1610 Dec 10 21:45 0-0ba7c7af-28bd-4125-84a4-acab9898b2dc-0.parquet
+   4 -rw-r--r-- 1 NBuser 1612 Dec 10 21:45 1-00e32c3a-d7ec-484f-a347-29d9f54c1a6c-0.parquet
+   4 drwxr-xr-x 2 NBuser 4096 Dec 10 21:45 _delta_log   
+   ```
+
+7. [Optional] Skip ahead to try out the [Delta Rust API](#delta-rust-api) and [ROAPI](#optional-roapi)
 
 ### Jupyter Lab Notebook
 
@@ -150,54 +257,70 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet.crc
    ```
 
-### Delta Rust Python bindings
+### Delta Rust API
 
-1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
+1. This example uses the table generated in the [Delta Rust Python bindings](#Delta-Rust-Python-bindings) section.  Please ensure you have already executed this step otherwise the example will not work.
 
-2. Run a container from the built image with a bash entrypoint
+2. Execute the script `examples/read_delta_table.rs` to review the Delta table metadata.
+```bash
+cd rs
+cargo run --example read_delta_table
+```
+```bash
+## Output
+=== Delta Table Metadata from Transaction Log ===
+DeltaTable(/tmp/deltars-table)
+        version: 1
+        metadata: GUID=f35c21e6-83a1-45c4-8e21-f038b28e26dc, name=None, description=None, partitionColumns=[], createdTime=Some(1670713319287), configuration={}
+        min_version: read=1, write=1
+        files count: 2
+```
 
-   ```bash
-   docker run --rm -it --entrypoint bash delta_quickstart
-   ```
 
-3. Launch a _python_ interactive shell session
+#### [Optional] ROAPI
+You can query your Delta Lake table with [Apache Arrow](https://github.com/apache/arrow) and [Datafusion](https://github.com/apache/arrow-datafusion) using [ROAPI](https://roapi.github.io/docs/config/dataset-formats/delta.html) which is pre-installed in this docker.
 
-   ```bash
-   python3
-   ```
+> Note, If you need to do this in your environment, run the command `pip3 install roapi`
 
-   > Note, the Delta Rust Python bindings is already installed in this docker. To do this manually in your own environment, you can install `pip3 install deltalake`
 
-4. Run some basic commands in the shell
+1. Start the `roapi` API using the following command.  Note, the API calls are pushed to the `nohup.out` file.
+```bash
+nohup roapi --table 'deltars_table=/tmp/deltars_table/,format=delta' --table 'covid19_nyt=/opt/spark/work-dir/rs/data/COVID-19_NYT,format=delta' &
+```
 
-   ```python
-   import pandas as pd
-   from deltalake.writer import write_deltalake
-   from deltalake import DeltaTable
+2. Check the schema of the two Delta tables
+```bash
+curl localhost:8080/api/schema
+```
+```bash
+## Output
+{
+   "covid19_nyt":{"fields":[{"name":"date","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"county","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"state","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"fips","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"cases","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"deaths","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false}]},
 
-   # Create Pandas DataFrame
-   df = pd.DataFrame(range(5))
+   "deltars_table":{"fields":[{"name":"0","data_type":"Int64","nullable":true,"dict_id":0,"dict_is_ordered":false}]}
+}
+```
 
-   # Write Delta Lake table
-   write_deltalake("/tmp/deltars-table", df)
+3. Query the `deltars_table`
+```bash
+curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
+```
+```bash
+## Output
+[{"0":6},{"0":7},{"0":8},{"0":9},{"0":10},{"0":0},{"0":1},{"0":2},{"0":3},{"0":4}]
+```
 
-   # Read Delta Lake table
-   dt = DeltaTable("/tmp/deltars-table")
-
-   # If you want to read the Delta table that you created in PySpark/Spark-shell previously
-   dt = DeltaTable("/tmp/delta-table")
-
-   # Show Delta table
-   dt.to_pandas()
-   ```
-
-5. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
-
-6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/deltars-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
-
-   ```bash
-   $ ls -lsgA /tmp/deltars-table
-   total 8
-   4 -rw-r--r-- 1 NBuser 1610 Nov 30 04:42 0-8ec75750-f9f5-40e8-b098-f54a60fd2112-0.parquet
-   4 drwxr-xr-x 2 NBuser 4096 Nov 30 04:42 _delta_log
-   ```
+4. Query the `covid19_nyt` table
+```bash
+curl -X POST -d "SELECT cases, county, date FROM covid19_nyt LIMIT 5" localhost:8080/api/sql
+```
+```bash
+## Output
+[
+   {"cases":987,"county":"San Benito","date":"2020-08-25"},
+   {"cases":45666,"county":"San Bernardino","date":"2020-08-25"},
+   {"cases":37057,"county":"San Diego","date":"2020-08-25"},
+   {"cases":8984,"county":"San Francisco","date":"2020-08-25"},
+   {"cases":16565,"county":"San Joaquin","date":"2020-08-25"}
+]
+```
