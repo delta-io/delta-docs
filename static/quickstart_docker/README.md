@@ -31,6 +31,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 - [Pyspark Jupyter Lab Notebook](#Pyspark-Jupyter-Lab-Notebook)
 - [Pyspark Shell](#Pyspark-Shell)
 - [Scala Shell](#Scala-Shell)
+- [Rust API](#delta-rust-api)
 
 
 ### Delta Rust Python bindings
@@ -65,14 +66,10 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 
    # Append new data
    df = pd.DataFrame(range(6, 11))
-   write_deltalake("/tmp/deltars-table", df, mode="append")
+   write_deltalake("/tmp/deltars_table", df, mode="append")
 
    # Read Delta Lake table
-   dt = DeltaTable("/tmp/deltars-table")
-
-   # If you want to read the Delta table that you created in PySpark/Spark-shell previously 
-   # Uncomment the following line and run this one instead
-   #dt = DeltaTable("/tmp/delta-table")
+   dt = DeltaTable("/tmp/deltars_table")
 
    # Show Delta table
    dt.to_pandas()
@@ -135,9 +132,10 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 
    ```bash
    $ ls -lsgA /tmp/deltars-table
-   total 8
-   4 -rw-r--r-- 1 NBuser 1610 Nov 30 04:42 0-8ec75750-f9f5-40e8-b098-f54a60fd2112-0.parquet
-   4 drwxr-xr-x 2 NBuser 4096 Nov 30 04:42 _delta_log
+   total 12
+   4 -rw-r--r-- 1 NBuser 1610 Dec 10 21:45 0-0ba7c7af-28bd-4125-84a4-acab9898b2dc-0.parquet
+   4 -rw-r--r-- 1 NBuser 1612 Dec 10 21:45 1-00e32c3a-d7ec-484f-a347-29d9f54c1a6c-0.parquet
+   4 drwxr-xr-x 2 NBuser 4096 Dec 10 21:45 _delta_log   
    ```
 
 
@@ -257,4 +255,71 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    4 -rw-r--r-- 1 NBuser  486 Oct 18 02:02 part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet
    4 -rw-r--r-- 1 NBuser   12 Oct 18 02:02 .part-00003-ba20f466-8cb6-4827-9c10-218e8933f0f7-c000.snappy.parquet.crc
    ```
+
+### Delta Rust API
+1. This example uses the table generated in the [Delta Rust Python bindings](#Delta-Rust-Python-bindings) section.  Please ensure you have already executed this step otherwise the example will not work.
+
+2. Rust is already installed in this docker and you will execute the script `examples/read_delta_table.rs` using the following command
+```
+cd rs
+cargo run --example read_delta_table
+```
+```
+## Output
+=== Delta Table Metadata from Transaction Log ===
+DeltaTable(/tmp/deltars-table)
+        version: 1
+        metadata: GUID=f35c21e6-83a1-45c4-8e21-f038b28e26dc, name=None, description=None, partitionColumns=[], createdTime=Some(1670713319287), configuration={}
+        min_version: read=1, write=1
+        files count: 2
+```
+
+
+#### [Optional] Query your Delta Lake table using ROAPI
+You can query your Delta Lake table with [Apache Arrow](https://github.com/apache/arrow) and [Datafusion](https://github.com/apache/arrow-datafusion) using [ROAPI](https://roapi.github.io/docs/config/dataset-formats/delta.html) which is pre-installed in this docker container.
+
+> Note, If you need to do this in your environment, run the command `pip3 install roapi`
+
+
+1. Start the `roapi` API using the following command.  Note, the API calls are pushed to the `nohup.out` file.
+```
+nohup roapi --table 'deltars_table=/tmp/deltars_table/,format=delta' --table 'covid19_nyt=/opt/spark/work-dir/rs/data/COVID-19_NYT,format=delta' &
+```
+
+2. Check the schema of the two Delta tables
+```
+curl localhost:8080/api/schema
+```
+```
+## Output
+{
+   "covid19_nyt":{"fields":[{"name":"date","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"county","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"state","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"fips","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"cases","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"deaths","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false}]},
+
+   "deltars_table":{"fields":[{"name":"0","data_type":"Int64","nullable":true,"dict_id":0,"dict_is_ordered":false}]}
+}
+```
+
+3. Query the `deltars_table`
+```
+curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
+```
+```
+## Output
+[{"0":6},{"0":7},{"0":8},{"0":9},{"0":10},{"0":0},{"0":1},{"0":2},{"0":3},{"0":4}]
+```
+
+4. Query the `covid19_nyt` table
+```
+curl -X POST -d "SELECT cases, county, date FROM covid19_nyt LIMIT 5" localhost:8080/api/sql
+```
+```
+## Output
+[
+   {"cases":987,"county":"San Benito","date":"2020-08-25"},
+   {"cases":45666,"county":"San Bernardino","date":"2020-08-25"},
+   {"cases":37057,"county":"San Diego","date":"2020-08-25"},
+   {"cases":8984,"county":"San Francisco","date":"2020-08-25"},
+   {"cases":16565,"county":"San Joaquin","date":"2020-08-25"}
+]
+```
 
