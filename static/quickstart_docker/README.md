@@ -258,8 +258,15 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    ```
 
 ### Delta Rust API
+1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-1. Execute `examples/read_delta_table.rs` to review the Delta table metadata and files of the `covid19_nyt` Delta table.
+2. Run a container from the built image with a bash entrypoint
+
+   ```bash
+   docker run --rm -it --entrypoint bash delta_quickstart
+   ```
+
+3. Execute `examples/read_delta_table.rs` to review the Delta table metadata and files of the `covid19_nyt` Delta table.
 ```bash
 cd rs
 cargo run --example read_delta_table
@@ -288,7 +295,7 @@ DeltaTable(../quickstart_docker/rs/data/COVID-19_NYT)
 ```
 
 
-2. Execute `examples/read_delta_datafusion.rs` to query the `covid19_nyt` Delta table using `datafusion`
+4. Execute `examples/read_delta_datafusion.rs` to query the `covid19_nyt` Delta table using `datafusion`
 ```bash
 cargo run --example read_delta_datafusion
 ```
@@ -329,18 +336,26 @@ cargo run --example read_delta_datafusion
 ]
 ```
 
-#### [Optional] ROAPI
+### [Optional] ROAPI
 You can query your Delta Lake table with [Apache Arrow](https://github.com/apache/arrow) and [Datafusion](https://github.com/apache/arrow-datafusion) using [ROAPI](https://roapi.github.io/docs/config/dataset-formats/delta.html) which is pre-installed in this docker.
 
 > Note, If you need to do this in your environment, run the command `pip3 install roapi`
 
+1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-1. Start the `roapi` API using the following command.  Note, the API calls are pushed to the `nohup.out` file.
+2. Run a container from the built image with a bash entrypoint
+
+   ```bash
+   docker run --rm -it --entrypoint bash delta_quickstart
+   ```
+
+
+3. Start the `roapi` API using the following command.  Note, the API calls are pushed to the `nohup.out` file.
 ```bash
 nohup roapi --table 'deltars_table=/tmp/deltars_table/,format=delta' --table 'covid19_nyt=/opt/spark/work-dir/rs/data/COVID-19_NYT,format=delta' &
 ```
 
-2. Check the schema of the two Delta tables
+4. Check the schema of the two Delta tables
 ```bash
 curl localhost:8080/api/schema
 ```
@@ -353,7 +368,7 @@ curl localhost:8080/api/schema
 }
 ```
 
-3. Query the `deltars_table`
+5. Query the `deltars_table`
 ```bash
 curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
 ```
@@ -362,7 +377,7 @@ curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
 [{"0":6},{"0":7},{"0":8},{"0":9},{"0":10},{"0":0},{"0":1},{"0":2},{"0":3},{"0":4}]
 ```
 
-4. Query the `covid19_nyt` table
+6. Query the `covid19_nyt` table
 ```bash
 curl -X POST -d "SELECT cases, county, date FROM covid19_nyt LIMIT 5" localhost:8080/api/sql
 ```
