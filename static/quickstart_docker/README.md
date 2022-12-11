@@ -62,7 +62,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    df = pd.DataFrame(range(5))
 
    # Write Delta Lake table
-   write_deltalake("/tmp/deltars-table", df)
+   write_deltalake("/tmp/deltars_table", df)
 
    # Append new data
    df = pd.DataFrame(range(6, 11))
@@ -131,7 +131,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/deltars-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
 
    ```bash
-   $ ls -lsgA /tmp/deltars-table
+   $ ls -lsgA /tmp/deltars_table
    total 12
    4 -rw-r--r-- 1 NBuser 1610 Dec 10 21:45 0-0ba7c7af-28bd-4125-84a4-acab9898b2dc-0.parquet
    4 -rw-r--r-- 1 NBuser 1612 Dec 10 21:45 1-00e32c3a-d7ec-484f-a347-29d9f54c1a6c-0.parquet
@@ -257,9 +257,10 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    ```
 
 ### Delta Rust API
+
 1. This example uses the table generated in the [Delta Rust Python bindings](#Delta-Rust-Python-bindings) section.  Please ensure you have already executed this step otherwise the example will not work.
 
-2. Rust is already installed in this docker and you will execute the script `examples/read_delta_table.rs` using the following command
+2. Execute the script `examples/read_delta_table.rs` to review the Delta table metadata.
 ```
 cd rs
 cargo run --example read_delta_table
@@ -276,7 +277,7 @@ DeltaTable(/tmp/deltars-table)
 
 
 #### [Optional] Query your Delta Lake table using ROAPI
-You can query your Delta Lake table with [Apache Arrow](https://github.com/apache/arrow) and [Datafusion](https://github.com/apache/arrow-datafusion) using [ROAPI](https://roapi.github.io/docs/config/dataset-formats/delta.html) which is pre-installed in this docker container.
+You can query your Delta Lake table with [Apache Arrow](https://github.com/apache/arrow) and [Datafusion](https://github.com/apache/arrow-datafusion) using [ROAPI](https://roapi.github.io/docs/config/dataset-formats/delta.html) which is pre-installed in this docker.
 
 > Note, If you need to do this in your environment, run the command `pip3 install roapi`
 
