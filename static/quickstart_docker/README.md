@@ -26,15 +26,15 @@ In the following instructions, the variable `${DELTA_PACKAGE_VERSION}` refers to
 The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark 3.3.1.
 
 ## Choose an Interface
-- [Delta Rust Python bindings](#Delta-Rust-Python-bindings)
-- [Pyspark Jupyter Lab Notebook](#Pyspark-Jupyter-Lab-Notebook)
-- [Pyspark Shell](#Pyspark-Shell)
-- [Scala Shell](#Scala-Shell)
+- [delta-rs Python](#delta-rs-python)
+- [Juypter Lab Notebook](#jupyter-lab-notebook)
+- [PySpark Shell](#pyspark-shell)
+- [Scala Shell](#scala-shell)
 - [Rust API](#delta-rust-api)
 - [ROAPI](#optional-roapi)
 
 
-### Delta Rust Python bindings
+### delta-rs Python
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
 2. Run a container from the built image with a bash entrypoint
@@ -137,6 +137,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/deltars-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
 
 <details><summary>Click to view output</summary>
+
 ```bash
 $ ls -lsgA /tmp/deltars_table
 total 12
@@ -200,6 +201,7 @@ total 12
 6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/delta-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
 
 <details><summary>Click to view output</summary>
+
 ```bash
 $ ls -lsgA /tmp/delta-table
 total 36
@@ -254,6 +256,8 @@ total 36
 6. To verify that you have a Delta table, you can list the contents within the folder of your Delta table. For example, in the previous code, you saved the table in /tmp/delta-table. Once you close your pyspark process, run a list command in your Docker shell and you should get something similar to below.
 
 <details><summary>Click to view output</summary>
+
+
 ```bash
 $ ls -lsgA /tmp/delta-table
 total 36
@@ -411,6 +415,7 @@ curl localhost:8080/api/schema
    ```
 
 <details><summary>Click to view output</summary>
+
 ```bash
 curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
 
@@ -425,7 +430,9 @@ curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
    ```
 
 <details><summary>Click to view output</summary>
+
 ```bash
+
 curl -X POST -d "SELECT cases, county, date FROM covid19_nyt LIMIT 5" localhost:8080/api/sql
 
 [
@@ -436,4 +443,5 @@ curl -X POST -d "SELECT cases, county, date FROM covid19_nyt LIMIT 5" localhost:
    {"cases":16565,"county":"San Joaquin","date":"2020-08-25"}
 ]
 ```
+
 </details>
