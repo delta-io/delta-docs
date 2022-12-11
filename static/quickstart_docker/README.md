@@ -31,6 +31,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 - [Pyspark Shell](#Pyspark-Shell)
 - [Scala Shell](#Scala-Shell)
 - [Rust API](#delta-rust-api)
+- [ROAPI](#optional-roapi)
 
 
 ### Delta Rust Python bindings
@@ -137,6 +138,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    4 drwxr-xr-x 2 NBuser 4096 Dec 10 21:45 _delta_log   
    ```
 
+7. [Optional] Skip ahead to try out the [Delta Rust API](#delta-rust-api) and [ROAPI](#optional-roapi)
 
 ### Jupyter Lab Notebook
 
@@ -275,7 +277,7 @@ DeltaTable(/tmp/deltars-table)
 ```
 
 
-#### [Optional] Query your Delta Lake table using ROAPI
+#### [Optional] ROAPI
 You can query your Delta Lake table with [Apache Arrow](https://github.com/apache/arrow) and [Datafusion](https://github.com/apache/arrow-datafusion) using [ROAPI](https://roapi.github.io/docs/config/dataset-formats/delta.html) which is pre-installed in this docker.
 
 > Note, If you need to do this in your environment, run the command `pip3 install roapi`
