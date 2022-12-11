@@ -11,10 +11,9 @@ This folder contains instructions and materials to get new users started with De
 2. Navigate to the cloned folder
 3. Navigate to the quickstart_docker folder
 4. open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
-5. Execute the following
+5. Execute the following from the `static/quickstart_docker` folder
 
    ```bash
-   cd quickstart_docker
    docker build -t delta_quickstart -f Dockerfile_quickstart .
    ```
 
