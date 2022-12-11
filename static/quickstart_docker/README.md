@@ -273,31 +273,37 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    ```bash
    cargo run --example read_delta_table
    ```
-   <details>
-      <summary><b>Click to view the output</b></summary>
-      ```bash
-      ## Output
-      === Delta table metadata ===
-      DeltaTable(../quickstart_docker/rs/data/COVID-19_NYT)
-         version: 0
-         metadata: GUID=7245fd1d-8a6d-4988-af72-92a95b646511, name=None, description=None, partitionColumns=[], createdTime=Some(1619121484605), configuration={}
-         min_version: read=1, write=2
-         files count: 8
+
+<details><summary>Click to view output</summary>
+<p>
+
+#### View output
+
+```bash
+cargo run --example blah
+=== Delta table metadata ===
+DeltaTable(../quickstart_docker/rs/data/COVID-19_NYT)
+   version: 0
+   metadata: GUID=7245fd1d-8a6d-4988-af72-92a95b646511, name=None, description=None, partitionColumns=[], createdTime=Some(1619121484605), configuration={}
+   min_version: read=1, write=2
+   files count: 8
 
 
-      === Delta table files ===
-      [
-         Path { raw: "part-00000-a496f40c-e091-413a-85f9-b1b69d4b3b4e-c000.snappy.parquet" }, 
-         Path { raw: "part-00001-9d9d980b-c500-4f0b-bb96-771a515fbccc-c000.snappy.parquet" }, 
-         Path { raw: "part-00002-8826af84-73bd-49a6-a4b9-e39ffed9c15a-c000.snappy.parquet" }, 
-         Path { raw: "part-00003-539aff30-2349-4b0d-9726-c18630c6ad90-c000.snappy.parquet" }, 
-         Path { raw: "part-00004-1bb9c3e3-c5b0-4d60-8420-23261f58a5eb-c000.snappy.parquet" }, 
-         Path { raw: "part-00005-4d47f8ff-94db-4d32-806c-781a1cf123d2-c000.snappy.parquet" }, 
-         Path { raw: "part-00006-d0ec7722-b30c-4e1c-92cd-b4fe8d3bb954-c000.snappy.parquet" }, 
-         Path { raw: "part-00007-4582392f-9fc2-41b0-ba97-a74b3afc8239-c000.snappy.parquet" }
-      ]
-      ```
-   </details>
+=== Delta table files ===
+[
+   Path { raw: "part-00000-a496f40c-e091-413a-85f9-b1b69d4b3b4e-c000.snappy.parquet" }, 
+   Path { raw: "part-00001-9d9d980b-c500-4f0b-bb96-771a515fbccc-c000.snappy.parquet" }, 
+   Path { raw: "part-00002-8826af84-73bd-49a6-a4b9-e39ffed9c15a-c000.snappy.parquet" }, 
+   Path { raw: "part-00003-539aff30-2349-4b0d-9726-c18630c6ad90-c000.snappy.parquet" }, 
+   Path { raw: "part-00004-1bb9c3e3-c5b0-4d60-8420-23261f58a5eb-c000.snappy.parquet" }, 
+   Path { raw: "part-00005-4d47f8ff-94db-4d32-806c-781a1cf123d2-c000.snappy.parquet" }, 
+   Path { raw: "part-00006-d0ec7722-b30c-4e1c-92cd-b4fe8d3bb954-c000.snappy.parquet" }, 
+   Path { raw: "part-00007-4582392f-9fc2-41b0-ba97-a74b3afc8239-c000.snappy.parquet" }
+]
+```
+
+</p>
+</details>
 
 
 4. Execute `examples/read_delta_datafusion.rs` to query the `covid19_nyt` Delta table using `datafusion`
