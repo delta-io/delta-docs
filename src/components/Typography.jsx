@@ -102,10 +102,11 @@ const HorizontalRule = styled.hr`
 
 const AnchorLink = styled.a`
   color: #666;
-  opacity: 0.5;
+  opacity: 0.3;
   position: absolute;
-  transform: translate(-1em, -2px);
-  width: 1em;
+  transform: translate(-1em, -2px) scale(0.7, 0.7);
+  margin-left: 10px;
+  text-decoration: none;
 `;
 
 const elements = {
