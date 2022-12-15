@@ -14,7 +14,7 @@ You can remove files no longer referenced by a Delta table and are older than th
 threshold by running the `vacuum` command on the table. `vacuum` is not triggered automatically. The
 default retention threshold for the files is 7 days. To change this behavior, see [Data retention](/latest/delta-batch/#data-retention).
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
 
 - `vacuum` removes all files from directories not managed by Delta Lake, ignoring directories beginning with _. If you are storing additional metadata like Structured Streaming checkpoints within a Delta table directory, use a directory name such as `_checkpoints`.
 
@@ -423,7 +423,7 @@ You can easily convert a Delta table back to a Parquet table using the following
 
 You can restore a Delta table to its earlier state by using the `RESTORE` command. A Delta table internally maintains historic versions of the table that enable it to be restored to an earlier state. A version corresponding to the earlier state or a timestamp of when the earlier state was created are supported as options by the RE`STORE command.
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
 
 - You can restore an already restored table.
 - Restoring a table to an older version where the data files were deleted manually or by `vacuum` will fail. Restoring to this version partially is still possible if `spark.sql.files.ignoreMissingFiles` is set to `true`.
@@ -474,7 +474,7 @@ deltaTable.restoreToTimestamp("2019-02-14") // restore to a specific timestamp
 
 </CodeTabs>
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
 
 Restore is considered a data-changing operation. Delta Lake log entries added by the RESTORE command contain dataChange set to true. If there is a downstream application, such as a Structured streaming job that processes the updates to a Delta Lake table, the data change log entries added by the restore operation are considered as new data updates, and processing them may result in duplicate data.
 

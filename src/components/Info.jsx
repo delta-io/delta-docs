@@ -21,6 +21,11 @@ const levelStyles = {
     backgroundColor: color(colors.danger).lighten(0.9),
     textColor: color(colors.danger).darken(0.5),
   },
+  tip: {
+    borderColor: colors.mediumGreen,
+    backgroundColor: colors.lightGreen,
+    textColor: colors.darkGreen,
+  },
 };
 
 const BlockTitle = styled(Typography)`

@@ -93,7 +93,11 @@ You can also create Delta tables using the Spark `DataFrameWriterV2` API.
 
 - **`DeltaTableBuilder` API**: You can also use the `DeltaTableBuilder` API in Delta Lake to create tables. Compared to the DataFrameWriter APIs, this API makes it easier to specify additional information like column comments, table properties, and [generated columns](#deltausegeneratedcolumns).
 
-> Note: This feature is new and is in Preview.
+<Info title="Note" level="info">
+
+This feature is new and is in Preview.
+
+</Info>
 
 <CodeTabs>
 
@@ -270,7 +274,7 @@ When you run `CREATE TABLE` with a `LOCATION` that _already_ contains data store
 
 - If you specify _any configuration_ (schema, partitioning, or table properties), Delta Lake verifies that the specification exactly matches the configuration of the existing data.
 
-  <Info title="Important" level="info">
+  <Info title="Important!" level="warning">
     If the specified configuration does not _exactly_ match the configuration of
     the data, Delta Lake throws an exception that describes the discrepancy.
   </Info>
@@ -295,7 +299,7 @@ When you run `CREATE TABLE` with a `LOCATION` that _already_ contains data store
 
 Delta Lake supports generated columns which are a special type of columns whose values are automatically generated based on a user-specified function over other columns in the Delta table. When you write to a table with generated columns and you do not explicitly provide values for them, Delta Lake automatically computes the values. For example, you can automatically generate a date column (for partitioning the table by date) from the timestamp column; any writes into the table need only specify the data for the timestamp column. However, if you explicitly provide values for them, the values must satisfy the [constraint](https://delta.io/docs/spark/constraints) `(<value> <=> <generation expression>) IS TRUE` or the write will fail with an error.
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
   Tables created with generated columns have a higher table writer protocol
   version than the default. See [Table protocol versioning](/latest/versioning)
   to understand table protocol versioning and what it means to have a higher
@@ -824,10 +828,10 @@ You’ll receive an error if the `DataFrameWriter` options have both dynamic par
 
 </Info>
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
 Validate that the data written with dynamic partition overwrite touches only the expected partitions. A single row in the incorrect partition can lead to unintentionally overwriting an entire partition. We recommend using `replaceWhere` to specify which data to overwrite.
 
-If a partition has been accidentally overwritten, you can use [TODO: Restore a Delta table to an earlier state](/latest/delta-utility/#restore-a-delta-table-to-an-earlier-state) to undo the change.
+If a partition has been accidentally overwritten, you can use [Restore a Delta table to an earlier state](/latest/delta-utility/#restore-a-delta-table-to-an-earlier-state) to undo the change.
 
 </Info>
 
@@ -873,7 +877,7 @@ The above combination of options needs to be unique for each new data that is be
 - Any attempt to write data with `txnAppId = dailyETL` and `txnVersion` as `23422` or less is ignored because the `txnVersion` is less than the last recorded `txnVersion` in the table.
 - Attempt to write data with `txnAppId:txnVersion` as `anotherETL:23424` is successful writing data to the table as it contains a different `txnAppId` compared to the same option value in last ingested data.
 
-<Info title="Warning" level="info">
+<Info title="Warning!" level="danger">
   This solution assumes that the data being written to Delta table(s) in
   multiple retries of the job is same. If a write attempt in a Delta table
   succeeds but due to some downstream failure there is a second write attempt
@@ -953,7 +957,7 @@ Delta Lake lets you update the schema of a table. The following types of changes
 
 You can make these changes explicitly using DDL or implicitly using DML.
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
   When you update a Delta table schema, streams that read from that table
   terminate. If you want the stream to continue you must restart it.
 </Info>
@@ -1007,7 +1011,7 @@ the schema after is:
 | +-field2
 ```
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
   Adding nested columns is supported only for structs. Arrays and maps are not
   supported.
 </Info>
@@ -1140,7 +1144,7 @@ Then the schema after is:
 
 To drop columns as a metadata-only operation without rewriting any data files, you must enable column mapping for the table. See [enable column mapping](/latest/versioning/#column-mapping).
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
   Dropping a column from metadata does not delete the underlying data for the
   column in files.
 </Info>

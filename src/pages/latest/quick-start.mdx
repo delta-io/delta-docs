@@ -20,7 +20,7 @@ steps in this guide on your local machine in the following two ways:
    Alternatively, you can use the [examples provided in the Github
    repository](https://github.com/delta-io/delta/tree/master/examples).
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
   For all of the following instructions, make sure to install the correct
   version of Spark or PySpark that is compatible with Delta Lake `$VERSION$`.
   See the [release compatibility matrix](releases-oss.md) for details.
@@ -169,7 +169,7 @@ data.write().format("delta").save("/tmp/delta-table");
 These operations create a new Delta table using the schema that was _inferred_
 from your DataFrame. For the full set of options available when you create a new
 Delta table, see [Create a table](/latest/delta-batch/#create-a-table) and
-[TODO: Write to a table](delta-batch.md#deltadataframewrites).
+[Write to a table](/latest/delta-batch/#write-to-a-table).
 
 <Info title="Note" level="info">
 

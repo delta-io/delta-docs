@@ -11,6 +11,9 @@ export const colors = {
   info: "#00add4",
   warning: "#ffda47",
   danger: "red",
+  lightGreen: "#E6F6E6",
+  mediumGreen: "#0F9401",
+  darkGreen: "#023100",
 };
 
 // Color mixins

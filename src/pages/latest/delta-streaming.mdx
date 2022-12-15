@@ -94,7 +94,7 @@ You can use the following options to specify the starting point of the Delta Lak
 
 You cannot set both options at the same time; you can use only one of them. They take effect only when starting a new streaming query. If a streaming query has started and the progress has been recorded in its checkpoint, these options are ignored.
 
-<Info title="Important" level="info">
+<Info title="Important!" level="warning">
   Although you can start the streaming source from a specified version or
   timestamp, the schema of the streaming source is always the latest schema of
   the Delta table. You must ensure there is no incompatible schema change to the

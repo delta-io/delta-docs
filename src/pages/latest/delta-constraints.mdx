@@ -5,7 +5,7 @@ menu: docs
 
 Delta tables support standard SQL constraint management clauses that ensure that the quality and integrity of data added to a table is automatically verified. When a constraint is violated, Delta Lake throws an InvariantViolationException to signal that the new data can’t be added.
 
-<Info title="Important">
+<Info title="Important!" level="warning">
 Adding a constraint automatically upgrades the table writer protocol version. See [Table protocol versioning](/latest/versioning) to understand table protocol versioning and what it means to upgrade the protocol version.
 </Info>
 

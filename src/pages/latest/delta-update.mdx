@@ -70,7 +70,7 @@ See the [Delta API documentation](/latest/delta-apidoc) for details.
   vacuumed. See [vacuum](/latest/delta-utility/#delta-vacuum) for details.
 </Info>
 
-<Info title="Tip" level="info">
+<Info title="Tip" level="tip">
   When possible, provide predicates on the partition columns for a partitioned
   Delta table as such predicates can significantly speed up the operation.
 </Info>
@@ -155,7 +155,7 @@ deltaTable.update(
 
 See the [Delta Lake APIs](/latest/delta-apidoc) for details.
 
-<Info title="Tip" level="info">
+<Info title="Tip" level="tip">
   Similar to delete, update operations can get a significant speedup with
   predicates on partitions.
 </Info>
@@ -291,7 +291,7 @@ import org.apache.spark.sql.functions;
 import java.util.HashMap;
 
 DeltaTable deltaTable = DeltaTable.forPath(spark, "/tmp/delta/people-10m")
-Dataset <Row> dfUpdates = spark.read("delta").load("/tmp/delta/people-10m-updates")
+Dataset<Row> dfUpdates = spark.read("delta").load("/tmp/delta/people-10m-updates")
 
 deltaTable
   .as("people")
