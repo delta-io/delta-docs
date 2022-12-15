@@ -291,7 +291,7 @@ import org.apache.spark.sql.functions;
 import java.util.HashMap;
 
 DeltaTable deltaTable = DeltaTable.forPath(spark, "/tmp/delta/people-10m")
-Dataset<Row> dfUpdates = spark.read("delta").load("/tmp/delta/people-10m-updates")
+Dataset <Row> dfUpdates = spark.read("delta").load("/tmp/delta/people-10m-updates")
 
 deltaTable
   .as("people")
@@ -435,13 +435,11 @@ Delta `MERGE INTO` supports resolving struct fields by name and evolving schemas
 
 Here are a few examples of the effects of merge operations with and without schema evolution for arrays of structs.
 
-```
 | Source schema                                             | Target schema                                  | Behavior without schema evolution (default)                                                   | Behavior with schema evolutionBehavior with schema evolution                                                                                                                                                                                                               |
 | --------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| array<struct<b: string, a: string>>                       | array<struct<a: int, b: int>>                  | The table schema remains unchanged. Columns will be resolved by name and updated or inserted. | The table schema remains unchanged. Columns will be resolved by name and updated or inserted.                                                                                                                                                                              |
-| array<struct<a: int, c: string, d: string>>               | array<struct<a: string, b: string>>            | `update` and `insert` throw errors because `c` and `d` do not exist in the target table.      | The table schema is changed to array<struct<a: string, b: string, c: string, d: string>>. `c` and `d` are inserted as `NULL` for existing entries in the target table. `update` and `insert` fill entries in the source table with `a` casted to string and `b` as `NULL`. |
-| array<struct<a: string, b: struct<c: string, d: string>>> | array<struct<a: string, b: struct<c: string>>> | `update` and `insert` throw errors because `d` does not exist in the target table.            | The target table schema is changed to array<struct<a: string, b: struct<c: string, d: string>>>. `d` is inserted as `NULL` for existing entries in the target table.                                                                                                       |
-```
+| `array<struct<b: string, a: string>>`                      | `array<struct<a: int, b: int>>`                | The table schema remains unchanged. Columns will be resolved by name and updated or inserted. | The table schema remains unchanged. Columns will be resolved by name and updated or inserted.                                                                                                                                                                              |
+| `array<struct<a: int, c: string, d: string>>`               | `array<struct<a: string, b: string>>`           | `update` and `insert` throw errors because `c` and `d` do not exist in the target table.      | The table schema is changed to `array<struct<a: string, b: string, c: string, d: string>>`. `c` and `d` are inserted as `NULL` for existing entries in the target table. `update` and `insert` fill entries in the source table with `a` casted to string and `b` as `NULL`. |
+| `array<struct<a: string, b: struct<c: string, d: string>>>` | `array<struct<a: string, b: struct<c: string>>>` | `update` and `insert` throw errors because `d` does not exist in the target table.            | The target table schema is changed to `array<struct<a: string, b: struct<c: string, d: string>>>`. `d` is inserted as `NULL` for existing entries in the target table.                                                                                                       |
 
 ### Performance tuning
 
