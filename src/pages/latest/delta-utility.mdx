@@ -6,21 +6,26 @@ menu: docs
 
 Delta tables support a number of utility operations.
 
-For many Delta Lake operations, you enable integration with Apache Spark DataSourceV2 and Catalog APIs (since 3.0) by setting configurations when you create a new `SparkSession`. See [sql support](https://delta.io/docs/spark/#sql-support).
-
-<a id="delta-vacuum"></a>
-
-<a href="#remove-files-no-longer-referenced-by-a-delta-table"></a>
+For many Delta Lake operations, you enable integration with Apache Spark DataSourceV2 and Catalog APIs (since 3.0) by setting configurations when you create a new `SparkSession`. See [Configure SparkSession](/latest/delta-batch/#configure-sparksession).
 
 ## Remove files no longer referenced by a Delta table
 
 You can remove files no longer referenced by a Delta table and are older than the retention
 threshold by running the `vacuum` command on the table. `vacuum` is not triggered automatically. The
-default retention threshold for the files is 7 days. To change this behavior, see [data retention](https://delta.io/docs/spark/batch#data-retention).
+default retention threshold for the files is 7 days. To change this behavior, see [Data retention](/latest/delta-batch/#data-retention).
 
-- `vacuum` deletes only data files, not log files. Log files are deleted automatically and asynchronously after checkpoint operations. The default retention period of log files is 30 days, configurable through the `delta.logRetentionDuration` property which you set with the `ALTER TABLE SET TBLPROPERTIES` SQL method. See [table properties](https://delta.io/docs/spark/batch#table-properties). - The ability to [time travel](https://delta.io/docs/spark/batch#deltatimetravel) back to a version older than the retention period is lost after running `vacuum`.
+<Info title="Important" level="info">
+
+- `vacuum` removes all files from directories not managed by Delta Lake, ignoring directories beginning with _. If you are storing additional metadata like Structured Streaming checkpoints within a Delta table directory, use a directory name such as `_checkpoints`.
+
+- `vacuum` deletes only data files, not log files. Log files are deleted automatically and asynchronously after checkpoint operations. The default retention period of log files is 30 days, configurable through the `delta.logRetentionDuration` property which you set with the `ALTER TABLE SET TBLPROPERTIES SQL` method. See [Table properties](/latest/delta-batch/#table-properties).
+
+- The ability to time travel back to a version older than the retention period is lost after running vacuum.
+
+</Info>
 
 <CodeTabs>
+
 ```sql
 VACUUM eventsTable   -- vacuum files not required by versions older than the default retention period
 
@@ -28,10 +33,9 @@ VACUUM '/data/events' -- vacuum files in path-based table
 
 VACUUM delta.`/data/events/`
 
-VACUUM delta.`/data/events/` RETAIN 100 HOURS -- vacuum files not required by versions more than 100 hours old
+VACUUM delta.`/data/events/` RETAIN 100 HOURS  -- vacuum files not required by versions more than 100 hours old
 
-VACUUM eventsTable DRY RUN -- do dry run to get the list of files to be deleted
-
+VACUUM eventsTable DRY RUN    -- do dry run to get the list of files to be deleted
 ````
 
 ```python
@@ -68,19 +72,17 @@ deltaTable.vacuum(100);     // vacuum files not required by versions more than 1
 
 </CodeTabs>
 
-When using `VACUUM`, to configure Spark to delete files in parallel (based on the number of shuffle partitions) set the session configuration `"spark.databricks.delta.vacuum.parallelDelete.enabled"` to `"true"` .
+<Info title="Note" level="info">
+When using `VACUUM`, to configure Spark to delete files in parallel (based on the number of shuffle partitions) set the session configuration `"spark.databricks.delta.vacuum.parallelDelete.enabled"` to `"true"`.
+</Info>
 
-See the [Delta API documentation](https://docs.delta.io/latest/delta-apidoc.html) for Scala, Java, and Python syntax details.
+See the [Delta Lake APIs](/latest/delta-apidoc) for Scala, Java, and Python syntax details.
 
-/shared/delta-retention-warning.md
+<Info title="Warning" level="info">
+It is recommended that you set a retention interval to be at least 7 days, because old snapshots and uncommitted files can still be in use by concurrent readers or writers to the table. If `VACUUM` cleans up active files, concurrent readers can fail or, worse, tables can be corrupted when `VACUUM` deletes files that have not yet been committed. You must choose an interval that is longer than the longest running concurrent transaction and the longest period that any stream can lag behind the most recent update to the table.
+</Info>
 
-Delta Lake has a safety check to prevent you from running a dangerous `VACUUM`
-command. If you are certain that there are no operations being performed on
-this table that take longer than the retention interval you plan to specify,
-you can turn off this safety check by setting the Spark configuration property
-`spark.databricks.delta.retentionDurationCheck.enabled` to `false`.
-
-<a id="delta-history"></a>
+Delta Lake has a safety check to prevent you from running a dangerous `VACUUM` command. If you are certain that there are no operations being performed on this table that take longer than the retention interval you plan to specify, you can turn off this safety check by setting the Spark configuration property `spark.databricks.delta.retentionDurationCheck.enabled` to `false`.
 
 ## Retrieve Delta table history
 
@@ -131,7 +133,7 @@ DataFrame lastOperationDF = deltaTable.history(1);    // fetch the last operatio
 
 </CodeTabs>
 
-See the [Delta API documentation](https://docs.delta.io/latest/delta-apidoc.html) for Scala/Java/Python syntax details.
+See the [Delta Lake APIs](/latest/delta-apidoc) for Scala, Java, and Python syntax details.
 
 ### History schema
 
@@ -167,27 +169,32 @@ The output of the `history` operation has the following columns.
 +-------+-------------------+------+--------+---------+--------------------+----+--------+---------+-----------+--------------+-------------+--------------------+
 ```
 
-- Some of the columns may be nulls because the corresponding information may not be available in your environment. - Columns added in the future will always be added after the last column.
+<Info title="Note" level="info">
 
-<a id="delta-history-metrics"></a>
+- Some of the columns may be nulls because the corresponding information may not be available in your environment.
+
+- Columns added in the future will always be added after the last column
+
+</Info>
 
 ### Operation metrics keys
 
 The `history` operation returns a collection of operations metrics in the `operationMetrics` column map.
+
 The following table lists the map key definitions by operation.
 
 | Operation                                                         | Metric Name            | Description                                                                    |
 | ----------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------ |
-| WRITE, CREATE TABLE AS SELECT, REPLACE TABLE AS SELECT, COPY INTO |                        |                                                                                |
+| `WRITE`, `CREATE TABLE AS SELECT`, `REPLACE TABLE AS SELECT`, `COPY INTO` |                        |                                                                                |
 |                                                                   | numFiles               | Number of files written.                                                       |
 |                                                                   | numOutputBytes         | Size in bytes of the written contents.                                         |
 |                                                                   | numOutputRows          | Number of rows written.                                                        |
-| STREAMING UPDATE                                                  |                        |                                                                                |
+| `STREAMING UPDATE `                                                 |                        |                                                                                |
 |                                                                   | numAddedFiles          | Number of files added.                                                         |
 |                                                                   | numRemovedFiles        | Number of files removed.                                                       |
 |                                                                   | numOutputRows          | Number of rows written.                                                        |
 |                                                                   | numOutputBytes         | Size of write in bytes.                                                        |
-| DELETE                                                            |                        |                                                                                |
+| `DELETE`                                                            |                        |                                                                                |
 |                                                                   | numAddedFiles          | Number of files added. Not provided when partitions of the table are deleted.  |
 |                                                                   | numRemovedFiles        | Number of files removed.                                                       |
 |                                                                   | numDeletedRows         | Number of rows removed. Not provided when partitions of the table are deleted. |
@@ -195,10 +202,10 @@ The following table lists the map key definitions by operation.
 |                                                                   | executionTimeMs        | Time taken to execute the entire operation.                                    |
 |                                                                   | scanTimeMs             | Time taken to scan the files for matches.                                      |
 |                                                                   | rewriteTimeMs          | Time taken to rewrite the matched files.                                       |
-| TRUNCATE                                                          |                        |                                                                                |
+| `TRUNCATE`                                                          |                        |                                                                                |
 |                                                                   | numRemovedFiles        | Number of files removed.                                                       |
 |                                                                   | executionTimeMs        | Time taken to execute the entire operation.                                    |
-| MERGE                                                             |                        |                                                                                |
+| `MERGE`                                                             |                        |                                                                                |
 |                                                                   | numSourceRows          | Number of rows in the source DataFrame.                                        |
 |                                                                   | numTargetRowsInserted  | Number of rows inserted into the target table.                                 |
 |                                                                   | numTargetRowsUpdated   | Number of rows updated in the target table.                                    |
@@ -210,7 +217,7 @@ The following table lists the map key definitions by operation.
 |                                                                   | executionTimeMs        | Time taken to execute the entire operation.                                    |
 |                                                                   | scanTimeMs             | Time taken to scan the files for matches.                                      |
 |                                                                   | rewriteTimeMs          | Time taken to rewrite the matched files.                                       |
-| UPDATE                                                            |                        |                                                                                |
+| `UPDATE`                                                            |                        |                                                                                |
 |                                                                   | numAddedFiles          | Number of files added.                                                         |
 |                                                                   | numRemovedFiles        | Number of files removed.                                                       |
 |                                                                   | numUpdatedRows         | Number of rows updated.                                                        |
@@ -218,7 +225,11 @@ The following table lists the map key definitions by operation.
 |                                                                   | executionTimeMs        | Time taken to execute the entire operation.                                    |
 |                                                                   | scanTimeMs             | Time taken to scan the files for matches.                                      |
 |                                                                   | rewriteTimeMs          | Time taken to rewrite the matched files.                                       |
-| OPTIMIZE                                                          |                        |                                                                                |
+| `FSCK` |  |  |
+|  | numRemovedFiles | Number of files removed. |
+| `CONVERT` |  |  |
+|  | numConvertedFiles | Number of Parquet files that have been converted. |
+| `OPTIMIZE`                                                          |                        |                                                                                |
 |                                                                   | numAddedFiles          | Number of files added.                                                         |
 |                                                                   | numRemovedFiles        | Number of files optimized.                                                     |
 |                                                                   | numAddedBytes          | Number of bytes added after the table was optimized.                           |
@@ -228,7 +239,7 @@ The following table lists the map key definitions by operation.
 |                                                                   | p50FileSize            | Median file size after the table was optimized.                                |
 |                                                                   | p75FileSize            | Size of the 75th percentile file after the table was optimized.                |
 |                                                                   | maxFileSize            | Size of the largest file after the table was optimized.                        |
-| RESTORE                                                           |                        |                                                                                |
+| `RESTORE`                                                           |                        |                                                                                |
 |                                                                   | tableSizeAfterRestore  | Table size in bytes after restore.                                             |
 |                                                                   | numOfFilesAfterRestore | Number of files in the table after restore.                                    |
 |                                                                   | numRemovedFiles        | Number of files removed by the restore operation.                              |
@@ -236,17 +247,46 @@ The following table lists the map key definitions by operation.
 |                                                                   | removedFilesSize       | Size in bytes of files removed by the restore.                                 |
 |                                                                   | restoredFilesSize      | Size in bytes of files added by the restore.                                   |
 
-<a id="delta-detail"></a>
 
 ## Retrieve Delta table details
 
 You can retrieve detailed information about a Delta table (for example, number of files, data size) using `DESCRIBE DETAIL`.
+
+<CodeTabs>
 
 ```sql
 DESCRIBE DETAIL '/data/events/'
 
 DESCRIBE DETAIL eventsTable
 ```
+
+```python
+from delta.tables import *
+
+deltaTable = DeltaTable.forPath(spark, pathToTable)
+
+detailDF = deltaTable.detail()
+```
+
+```scala
+import io.delta.tables._
+
+val deltaTable = DeltaTable.forPath(spark, pathToTable)
+
+val detailDF = deltaTable.detail()
+```
+
+```java
+import io.delta.tables.*;
+
+DeltaTable deltaTable = DeltaTable.forPath(spark, pathToTable);
+
+DataFrame detailDF = deltaTable.detail();
+```
+
+</CodeTabs>
+
+See the [Delta Lake APIs](/latest/delta-apidoc) for Scala, Java, and Python syntax details.
 
 ### Detail schema
 
@@ -280,13 +320,14 @@ The output of this operation has only one row with the following schema.
 
 ## Generate a manifest file
 
-You can a generate manifest file for a Delta table that can be used by other processing engines (that is, other than Apache Spark) to read the Delta table.
-
-`sql GENERATE symlink_format_manifest FOR TABLE delta.` `<path-to-delta-table>`
-
-See [sql support](https://delta.io/docs/spark/batch#sql-support) for the steps to enable support for SQL commands in Apache Spark.
+You can a generate manifest file for a Delta table that can be used by other processing engines (that is, other than Apache Spark) to read the Delta table. For example, to generate a manifest file that can be used by Presto and Athena to read a Delta table, you run the following:
 
 <CodeTabs>
+
+```sql
+GENERATE symlink_format_manifest FOR TABLE delta.`<path-to-delta-table>`
+```
+
 ```python
 deltaTable = DeltaTable.forPath(<path-to-delta-table>)
 deltaTable.generate("symlink_format_manifest")
@@ -302,24 +343,35 @@ DeltaTable deltaTable = DeltaTable.forPath(<path-to-delta-table>);
 deltaTable.generate("symlink_format_manifest");
 ```
 
-</CodeTabs>
+See [Configure SparkSession](/latest/delta-batch/#configure-sparksession) for the steps to enable support for SQL commands in Apache Spark.
 
-<a id="convert-to-delta"></a>
+</CodeTabs>
 
 ## Convert a Parquet table to a Delta table
 
 Convert a Parquet table to a Delta table in-place. This command lists all the files in the directory, creates a Delta Lake transaction log that tracks these files, and automatically infers the data schema by reading the footers of all Parquet files. If your data is partitioned, you must specify the schema of the partition columns as a DDL-formatted string (that is, `<column-name1> <type>, <column-name2> <type>, ...`).
 
+By default, this command will collect per-file statistics (e.g. minimum and maximum values for each column). These statistics will be used at query time to provide faster queries. You can disable this statistics collection in the SQL API using `NO STATISTICS`.
+
+<Info title="Note" level="info">
+
 If a Parquet table was created by Structured Streaming, the listing of files can be avoided by using the `_spark_metadata` sub-directory as the source of truth for files contained in the table setting the SQL configuration `spark.databricks.delta.convert.useMetadataLog` to `true`.
+
+</Info>
 
 <CodeTabs>
 ```sql
 -- Convert unpartitioned Parquet table at path '<path-to-table>'
 CONVERT TO DELTA parquet.`<path-to-table>`
 
+-- Convert unpartitioned Parquet table and disable statistics collection
+CONVERT TO DELTA parquet.`<path-to-table>` NO STATISTICS
+
 -- Convert partitioned Parquet table at path '<path-to-table>' and partitioned by integer columns named 'part' and 'part2'
 CONVERT TO DELTA parquet.`<path-to-table>` PARTITIONED BY (part int, part2 int)
 
+-- Convert partitioned Parquet table and disable statistics collection
+CONVERT TO DELTA parquet.`<path-to-table>` NO STATISTICS PARTITIONED BY (part int, part2 int)
 ````
 
 ```python
@@ -354,11 +406,98 @@ DeltaTable deltaTable = DeltaTable.convertToDelta(spark, "parquet.`<path-to-tabl
 
 </CodeTabs>
 
+<Info title="Note" level="info">
+
 Any file not tracked by Delta Lake is invisible and can be deleted when you run `vacuum`. You should avoid updating or appending data files during the conversion process. After the table is converted, make sure all writes go through Delta Lake.
+
+</Info>
 
 ## Convert a Delta table to a Parquet table
 
 You can easily convert a Delta table back to a Parquet table using the following steps:
 
-1. If you have performed Delta Lake operations that can change the data files (for example, `delete` or `merge`), run [vacuum](#delta-vacuum) with retention of 0 hours to delete all data files that do not belong to the latest version of the table.
+1. If you have performed Delta Lake operations that can change the data files (for example, `delete` or `merge`), run [vacuum](#remove-files-no-longer-referenced-by-a-delta-table) with retention of 0 hours to delete all data files that do not belong to the latest version of the table.
 2. Delete the `_delta_log` directory in the table directory.
+
+## Restore a Delta table to an earlier state
+
+You can restore a Delta table to its earlier state by using the `RESTORE` command. A Delta table internally maintains historic versions of the table that enable it to be restored to an earlier state. A version corresponding to the earlier state or a timestamp of when the earlier state was created are supported as options by the RE`STORE command.
+
+<Info title="Important" level="info">
+
+- You can restore an already restored table.
+- Restoring a table to an older version where the data files were deleted manually or by `vacuum` will fail. Restoring to this version partially is still possible if `spark.sql.files.ignoreMissingFiles` is set to `true`.
+- The timestamp format for restoring to an earlier state is `yyyy-MM-dd HH:mm:ss`. Providing only a date(`yyyy-MM-dd`) string is also supported.
+
+</Info>
+
+<CodeTabs>
+
+```sql
+RESTORE TABLE db.target_table TO VERSION AS OF <version>
+RESTORE TABLE delta.`/data/target/` TO TIMESTAMP AS OF <timestamp>
+```
+
+```python
+from delta.tables import *
+
+deltaTable = DeltaTable.forPath(spark, <path-to-table>)  # path-based tables, or
+deltaTable = DeltaTable.forName(spark, <table-name>)    # Hive metastore-based tables
+
+deltaTable.restoreToVersion(0) # restore table to oldest version
+
+deltaTable.restoreToTimestamp('2019-02-14') # restore to a specific timestamp
+```
+
+```scala
+import io.delta.tables._
+
+val deltaTable = DeltaTable.forPath(spark, <path-to-table>)
+val deltaTable = DeltaTable.forName(spark, <table-name>)
+
+deltaTable.restoreToVersion(0) // restore table to oldest version
+
+deltaTable.restoreToTimestamp("2019-02-14") // restore to a specific timestamp
+```
+
+```java
+import io.delta.tables.*;
+
+DeltaTable deltaTable = DeltaTable.forPath(spark, <path-to-table>);
+DeltaTable deltaTable = DeltaTable.forName(spark, <table-name>);
+
+deltaTable.restoreToVersion(0) // restore table to oldest version
+
+deltaTable.restoreToTimestamp("2019-02-14") // restore to a specific timestamp
+```
+
+
+</CodeTabs>
+
+<Info title="Important" level="info">
+
+Restore is considered a data-changing operation. Delta Lake log entries added by the RESTORE command contain dataChange set to true. If there is a downstream application, such as a Structured streaming job that processes the updates to a Delta Lake table, the data change log entries added by the restore operation are considered as new data updates, and processing them may result in duplicate data.
+
+For example:
+
+| Table Version | Operation | Delta Log updates | Records in data change log updates |
+| - | - | - | - |
+| 0 | `INSERT` | `AddFile(/path/to/file-1, dataChange = true)` | (name = Viktor, age = 29, (name = George, age = 55) |
+| 1 | `INSERT` | `AddFile(/path/to/file-2, dataChange = true)` | (name = George, age = 39) |
+| 2 | `OPTIMIZE` | `AddFile(/path/to/file-3, dataChange = false)`, `RemoveFile(/path/to/file-1)`, `RemoveFile(/path/to/file-2)` | (No records as Optimize compaction does not change the data in the table) |
+| 3 | `RESTORE(version=1)` | `RemoveFile(/path/to/file-3)`, `AddFile(/path/to/file-1, dataChange = true)`, `AddFile(/path/to/file-2, dataChange = true)` | (name = Viktor, age = 29), (name = George, age = 55), (name = George, age = 39) |
+
+In the preceding example, the `RESTORE` command results in updates that were already seen when reading the Delta table version 0 and 1. If a streaming query was reading this table, then these files will be considered as newly added data and will be processed again.
+
+</Info>
+
+### Restore Metrics
+
+`RESTORE` reports the following metrics as a single row DataFrame once the operation is complete:
+
+- `table_size_after_restore`: The size of the table after restoring.
+- `num_of_files_after_restore`: The number of files in the table after restoring.
+- `num_removed_files`: Number of files removed (logically deleted) from the table.
+- `num_restored_files`: Number of files restored due to rolling back.
+- `removed_files_size`: Total size in bytes of the files that are removed from the table.
+- `restored_files_size`: Total size in bytes of the files that are restored.

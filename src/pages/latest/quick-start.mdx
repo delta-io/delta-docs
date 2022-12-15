@@ -20,6 +20,18 @@ steps in this guide on your local machine in the following two ways:
    Alternatively, you can use the [examples provided in the Github
    repository](https://github.com/delta-io/delta/tree/master/examples).
 
+<Info title="Important" level="info">
+  For all of the following instructions, make sure to install the correct
+  version of Spark or PySpark that is compatible with Delta Lake `$VERSION$`.
+  See the [release compatibility matrix](releases-oss.md) for details.
+</Info>
+
+### Prerequisite: set up Java
+
+As mentioned in the official Apache Spark installation instructions [here](https://spark.apache.org/docs/latest/index.html#downloading), make sure you have a valid Java version installed (8, 11, or 17) and that Java is configured correctly on your system using either the system PATH or JAVA_HOME environmental variable.
+
+Windows users should follow the instructions in this blog, making sure to use the correct version of Apache Spark that is compatible with Delta Lake 2.2.0.
+
 ### Set up interactive shell
 
 To use Delta Lake interactively within the Spark Scala or Python shell, you
@@ -27,18 +39,21 @@ need a local installation of Apache Spark. Depending on whether you want to
 use Python or Scala, you can set up either PySpark or the Spark shell,
 respectively.
 
-<Info title="Important" level="info">
+#### Spark SQL Shell
 
-For all of the following instructions, make sure to install the
-correct version of Spark or PySpark that is compatible with Delta Lake
-`$VERSION$`. See the [release compatibility matrix](releases-oss.md) for
-details.
+Download the [compatible version](/latest/releases) of Apache Spark by following instructions from [Downloading Spark](https://spark.apache.org/downloads.html), either using pip or by downloading and extracting the archive and running spark-sql in the extracted directory.
 
-</Info>
+<CodeTabs>
+
+```bash
+bin/spark-sql --packages io.delta:delta-core_2.12:<compatible-spark-version> --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
+```
+
+</CodeTabs>
 
 #### PySpark Shell
 
-1. Install the PySpark version that is [compatible](releases-oss.md) with the Delta Lake version by running the following:
+1. Install the PySpark version that is [compatible](/latest/releases) with the Delta Lake version by running the following:
 
 <CodeTabs>
 
@@ -124,6 +139,10 @@ and so on, to `delta`.
 
 <CodeTabs>
 
+```SQL
+CREATE TABLE delta.`/tmp/delta-table` USING DELTA AS SELECT col1 as id FROM VALUES 0,1,2,3,4;
+```
+
 ```python
 data = spark.range(0, 5)
 data.write.format("delta").save("/tmp/delta-table")
@@ -149,13 +168,13 @@ data.write().format("delta").save("/tmp/delta-table");
 
 These operations create a new Delta table using the schema that was _inferred_
 from your DataFrame. For the full set of options available when you create a new
-Delta table, see [\_](delta-batch.md#ddlcreatetable) and
-[\_](delta-batch.md#deltadataframewrites).
+Delta table, see [Create a table](/latest/delta-batch/#create-a-table) and
+[TODO: Write to a table](delta-batch.md#deltadataframewrites).
 
 <Info title="Note" level="info">
 
 This quickstart uses local paths for Delta table locations. For
-configuring HDFS or cloud storage for Delta tables, see [delta storage](/docs/spark/delta-storage-oss).
+configuring HDFS or cloud storage for Delta tables, see [delta storage](/latest/delta-storage).
 
 </Info>
 
@@ -165,6 +184,10 @@ You read data in your Delta table by specifying the path to the files:
 `"/tmp/delta-table"`:
 
 <CodeTabs>
+
+```SQL
+SELECT * FROM delta.`/tmp/delta-table`;
+```
 
 ```python
 df = spark.read.format("delta").load("/tmp/delta-table")
@@ -192,6 +215,11 @@ table:
 ### Overwrite
 
 <CodeTabs>
+
+```SQL
+INSERT OVERWRITE delta.`/tmp/delta-table` SELECT col1 as id FROM VALUES 5,6,7,8,9;
+```
+
 ```python
 data = spark.range(5, 10)
 data.write.format("delta").mode("overwrite").save("/tmp/delta-table")
@@ -219,6 +247,27 @@ Delta Lake provides programmatic APIs to conditional update, delete, and
 merge (upsert) data into tables. Here are a few examples.
 
 <CodeTabs>
+
+```SQL
+-- Update every even value by adding 100 to it
+UPDATE delta.`/tmp/delta-table` SET id = id + 100 WHERE id % 2 == 0;
+
+-- Delete very even value
+DELETE FROM delta.`/tmp/delta-table` WHERE id % 2 == 0;
+
+-- Upsert (merge) new data
+CREATE TEMP VIEW newData AS SELECT col1 AS id FROM VALUES 1,3,5,7,9,11,13,15,17,19;
+
+MERGE INTO delta.`/tmp/delta-table` AS oldData
+USING newData
+ON oldData.id = newData.id
+WHEN MATCHED
+  THEN UPDATE SET id = newData.id
+WHEN NOT MATCHED
+  THEN INSERT (id) VALUES (newData.id);
+
+SELECT * FROM delta.`/tmp/delta-table`;
+```
 
 ```python
 from delta.tables import *
@@ -323,7 +372,7 @@ deltaTable.toDF().show();
 You should see that some of the existing rows have been updated and new rows
 have been inserted.
 
-For more information on these operations, see [\_](delta-update.md).
+For more information on these operations, see [Table delets, updates, and merges](/latestl/delta-update).
 
 ## Read older versions of data using time travel
 
@@ -332,6 +381,10 @@ you want to access the data that you overwrote, you can query a snapshot of the
 table before you overwrote the first set of data using the `versionAsOf` option.
 
 <CodeTabs>
+
+```SQL
+SELECT * FROM delta.`/tmp/delta-table` VERSION AS OF 0;
+```
 
 ```python
 df = spark.read.format("delta").option("versionAsOf", 0).load("/tmp/delta-table")
@@ -354,7 +407,7 @@ You should see the first set of data, from before you overwrote it. Time travel
 takes advantage of the power of the Delta Lake transaction log to access data
 that is no longer in the table. Removing the version 0 option (or specifying
 version 1) would let you see the newer data again. For more information, see
-[Query an older snapshot of a table (time travel)](delta-batch.md#deltatimetravel).
+[Query an older snapshot of a table (time travel)](/latest/delta-batch/#deltatimetravel).
 
 ## Write a stream of data to a table
 
@@ -397,7 +450,7 @@ You can stop the stream by running `stream.stop()` in the same terminal that
 started the stream.
 
 For more information about Delta Lake integration with Structured Streaming,
-see [\_](delta-streaming.md). See also the [Structured Streaming Programming
+see [Table streaming reads and writes](/latest/delta-streaming). See also the [Structured Streaming Programming
 Guide](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html)
 on the Apache Spark website.
 
@@ -408,7 +461,7 @@ table as streaming source. For example, you can start another streaming query
 that prints all the changes made to the Delta table. You can specify which
 version Structured Streaming should start from by providing the
 `startingVersion` or `startingTimestamp` option to get changes from that point
-onwards. See [Structured Streaming](delta-streaming.md#specify-initial-position)
+onwards. See [Structured Streaming](/latest/delta-streaming/#specify-initial-position)
 for details.
 
 <CodeTabs>

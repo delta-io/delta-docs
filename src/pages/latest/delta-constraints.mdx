@@ -3,7 +3,11 @@ title: Constraints
 menu: docs
 ---
 
-Delta tables support standard SQL constraint management clauses that ensure that the quality and integrity of data added to a table is automatically verified. When a constraint is violated, Delta Lake throws an `InvariantViolationException` to signal that the new data can't be added.
+Delta tables support standard SQL constraint management clauses that ensure that the quality and integrity of data added to a table is automatically verified. When a constraint is violated, Delta Lake throws an InvariantViolationException to signal that the new data can’t be added.
+
+<Info title="Important">
+Adding a constraint automatically upgrades the table writer protocol version. See [Table protocol versioning](/latest/versioning) to understand table protocol versioning and what it means to upgrade the protocol version.
+</Info>
 
 Two types of constraints are supported:
 
@@ -17,23 +21,23 @@ You specify `NOT NULL` constraints in the schema when you create a table and dro
 <CodeTabs>
 
 ```sql
-CREATE TABLE default.people10m (
-  id INT NOT NULL,
-  firstName STRING,
-  middleName STRING NOT NULL,
-  lastName STRING,
-  gender STRING,
-  birthDate TIMESTAMP,
-  ssn STRING,
-  salary INT
-) USING DELTA;
+> CREATE TABLE default.people10m (
+    id INT NOT NULL,
+    firstName STRING,
+    middleName STRING NOT NULL,
+    lastName STRING,
+    gender STRING,
+    birthDate TIMESTAMP,
+    ssn STRING,
+    salary INT
+  ) USING DELTA;
 
-ALTER TABLE default.people10m CHANGE COLUMN middleName DROP NOT NULL;
+> ALTER TABLE default.people10m CHANGE COLUMN middleName DROP NOT NULL;
 ```
 
 </CodeTabs>
 
-If you specify a `NOT NULL` constraint on a column nested within a struct, the parent struct is also constrained to not be null. However, columns nested within array or map types do not accept `NOT NULL` constraints.
+If you specify a `NOT NULL` constraint on a column nested within a struct, the parent struct is also constrained to not be `null`. However, columns nested within array or map types do not accept `NOT NULL` constraints.
 
 ## CHECK constraint
 
@@ -42,19 +46,19 @@ You manage `CHECK` constraints using the `ALTER TABLE ADD CONSTRAINT` and `ALTER
 <CodeTabs>
 
 ```sql
-CREATE TABLE default.people10m (
-  id INT,
-  firstName STRING,
-  middleName STRING,
-  lastName STRING,
-  gender STRING,
-  birthDate TIMESTAMP,
-  ssn STRING,
-  salary INT
-) USING DELTA;
+> CREATE TABLE default.people10m (
+   id INT,
+   firstName STRING,
+   middleName STRING,
+   lastName STRING,
+   gender STRING,
+   birthDate TIMESTAMP,
+   ssn STRING,
+   salary INT
+ ) USING DELTA;
 
-ALTER TABLE default.people10m ADD CONSTRAINT dateWithinRange CHECK (birthDate > '1900-01-01');
-ALTER TABLE default.people10m DROP CONSTRAINT dateWithinRange;
+> ALTER TABLE default.people10m ADD CONSTRAINT dateWithinRange CHECK (birthDate > '1900-01-01');
+> ALTER TABLE default.people10m DROP CONSTRAINT dateWithinRange;
 ```
 
 </CodeTabs>
@@ -64,11 +68,11 @@ ALTER TABLE default.people10m DROP CONSTRAINT dateWithinRange;
 <CodeTabs>
 
 ```sql
-ALTER TABLE default.people10m ADD CONSTRAINT validIds CHECK (id > 1 and id < 99999999);
+> ALTER TABLE default.people10m ADD CONSTRAINT validIds CHECK (id > 1 and id < 99999999);
 
-DESCRIBE DETAIL default.people10m;
+> DESCRIBE DETAIL default.people10m;
 
-SHOW TBLPROPERTIES default.people10m;
+> SHOW TBLPROPERTIES default.people10m;
 ```
 
 </CodeTabs>
