@@ -4,3 +4,4 @@
 /public
 /coverage
 /package-lock.json
+*.mdx
