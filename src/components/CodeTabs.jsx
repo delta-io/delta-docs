@@ -39,9 +39,14 @@ const CodeTabs = (props) => {
         child.type.name === "pre"
     )
     .map((codeBlock) => {
-      const lang =
+      let lang =
         codeBlock.props.children.props.className.match(/language-(\w+)/)?.[1] ??
         "txt";
+      if (lang.toLowerCase() === "sql") {
+        lang = lang.toUpperCase();
+      } else {
+        lang = lang.charAt(0).toUpperCase() + lang.slice(1);
+      }
       return [lang, codeBlock];
     });
 
