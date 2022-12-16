@@ -633,7 +633,7 @@ new_customers_count = count - last_week_count
 
 To time travel to a previous version, you must retain _both_ the log and the data files for that version.
 
-The data files backing a Delta table are _never_ deleted automatically; data files are deleted only when you run [VACUUM](/latest/delta-utility/#delta-vacuum). `VACUUM` _does not_ delete Delta log files; log files are automatically cleaned up after checkpoints are written.
+The data files backing a Delta table are _never_ deleted automatically; data files are deleted only when you run [VACUUM](/latest/delta-utility/#remove-files-no-longer-referenced-by-a-delta-table). `VACUUM` _does not_ delete Delta log files; log files are automatically cleaned up after checkpoints are written.
 
 By default you can time travel to a Delta table up to 30 days old unless you have:
 
