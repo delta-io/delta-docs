@@ -9,10 +9,6 @@ const docs = [
     divider: true,
   },
   {
-    url: "/latest/delta-intro",
-    label: "Introduction",
-  },
-  {
     url: "/latest/quick-start",
     label: "Quick Start",
   },
@@ -33,7 +29,7 @@ const docs = [
     label: "Change data feed",
   },
   {
-    url: "/latest/delta-utilities",
+    url: "/latest/delta-utility",
     label: "Table utility commands",
   },
   {
