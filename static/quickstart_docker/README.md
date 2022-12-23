@@ -381,16 +381,20 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
 2. Run a container from the built image with a bash entrypoint
 
    ```bash
-   docker run --rm -it --entrypoint bash delta_quickstart
+   docker run --rm -it -p 8080:8080 --entrypoint bash delta_quickstart
    ```
+3. Start the `roapi` API using the following command.  Notes: 
+
+   + the API calls are pushed to the `nohup.out` file.
+   + if you haven't created the `deltars_table` in your container create it via the shell options above (python, pyspark, scala) or via the jupyter lab quickstart notebook.  Alternatively you may omit the following from the command:
+   `--table 'deltars_table=/tmp/deltars_table/,format=delta'` as well as any steps that call the `deltars_table`
 
 
-3. Start the `roapi` API using the following command.  Note, the API calls are pushed to the `nohup.out` file.
    ```bash
-   nohup roapi --table 'deltars_table=/tmp/deltars_table/,format=delta' --table 'covid19_nyt=/opt/spark/work-dir/rs/data/COVID-19_NYT,format=delta' &
+   nohup roapi --addr-http 0.0.0.0:8080 --table 'deltars_table=/tmp/deltars_table/,format=delta' --table 'covid19_nyt=/opt/spark/work-dir/rs/data/COVID-19_NYT,format=delta' &
    ```
 
-4. Check the schema of the two Delta tables
+4. Open another shell and check the schema of the two Delta tables
    ```bash
    curl localhost:8080/api/schema
    ```
