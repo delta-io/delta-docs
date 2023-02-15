@@ -9,7 +9,7 @@ menu: docs
 
 The transaction log for a Delta table contains protocol versioning information
 that supports Delta Lake evolution. Delta Lake tracks minimum [reader and writer
-versions](/latest/delta-utility/#detail-schema) separately.
+versions](/latest/delta-utility#detail-schema) separately.
 
 Delta Lake guarantees _backward compatibility_. A higher protocol version of
 the
@@ -32,7 +32,7 @@ also set the default protocol versions by setting the SQL configurations:
 To upgrade a table to a newer protocol version, use the
 `DeltaTable.upgradeTableProtocol` method:
 
-<Info title="Warning" level="info">
+<Info title="Warning" level="warning">
 Protocol version upgrades are irreversible, and upgrading the protocol version may break the existing Delta Lake table readers, writers, or both. Therefore, we recommend you upgrade specific tables only when needed, such as to opt-in to new features in Delta Lake. You should also check to make sure that all of your current and future production tools support Delta Lake tables with the new protocol version.
 </Info>
 
@@ -45,7 +45,7 @@ ALTER TABLE <table_identifier> SET TBLPROPERTIES('delta.minReaderVersion' = '1',
 ```python
 from delta.tables import DeltaTable
 delta = DeltaTable.forPath(spark, "path_to_table") # or DeltaTable.forName
-delta.upgradeTableProtocol(1, 3) # upgrades to readerVersion=1, writerVersion=3
+delta.upgradeTableProtocol(1, 3) # Upgrades to readerVersion=1, writerVersion=3
 ```
 
 ```scala
@@ -69,13 +69,17 @@ delta.upgradeTableProtocol(1, 3) // Upgrades to readerVersion=1, writerVersion=3
 
 See [Requirements for Readers](https://github.com/delta-io/delta/blob/master/PROTOCOL.md#requirements-for-readers) and [Writer Version Requirements](https://github.com/delta-io/delta/blob/master/PROTOCOL.md#writer-version-requirements) in the [delta-io/delta](https://github.com/delta-io/delta) repo on the GitHub website.
 
-### Column mapping
+## Column mapping
 
-[Column mapping feature](https://github.com/delta-io/delta/blob/master/PROTOCOL.md#column-mapping) allows Delta table columns and the underlying Parquet file columns to use different names. This enables Delta schema evolution operations such as [RENAME COLUMN](/latest/delta-batch/#rename-columns) on a Delta table without the need to rewrite the underlying Parquet files. It also allows users to name Delta table columns by using [characters that are not allowed](/latest/delta-batch/#use-special-characters-in-column-names) by Parquet, such as spaces, so that users can directly ingest CSV or JSON data into Delta without the need to rename columns due to previous character constraints.
+<Info title="Note" level="info">
+This feature is available in Delta Lake 1.2.0 and above. This feature is currently experimental with [known limitations](#known-limitations).
+</Info>
+
+[Column mapping feature](https://github.com/delta-io/delta/blob/master/PROTOCOL.md#column-mapping) allows Delta table columns and the underlying Parquet file columns to use different names. This enables Delta schema evolution operations such as [RENAME COLUMN](/latest/delta-batch/#rename-columns) and [DROP COLUMNS](/latest/delta-batch#drop-columns)  on a Delta table without the need to rewrite the underlying Parquet files. It also allows users to name Delta table columns by using [characters that are not allowed](/latest/delta-batch/#use-special-characters-in-column-names) by Parquet, such as spaces, so that users can directly ingest CSV or JSON data into Delta without the need to rename columns due to previous character constraints.
 
 Column mapping requires upgrading the Delta Lake table protocol.
 
-<Info title="Warning" level="info">
+<Info title="Warning" level="warning">
 Protocol version upgrades are irreversible, and upgrading the protocol version may break the existing Delta Lake table readers, writers, or both. Therefore, we recommend you upgrade specific tables only when needed, such as to opt-in to new features in Delta Lake. You should also check to make sure that all of your current and future production tools support Delta Lake tables with the new protocol version.
 </Info>
 
@@ -92,7 +96,7 @@ ALTER TABLE <table_name> SET TBLPROPERTIES (
 
 </CodeTabs>
 
-## Known limitations
+### Known limitations
 - In Delta Lake 2.0.0, [Spark Structured Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html) and [Change data feed](/latest/delta-change-data-feed) reads are explicitly blocked on a column mapping enabled table.
 
-- The Delta table protocol specifies two modes of column mapping, by name and by id. Currently in Delta Lake only the name mode is supported.
+- The Delta table protocol specifies two modes of column mapping, by `name` and by `id`. Currently in Delta Lake only the `name` mode is supported.
