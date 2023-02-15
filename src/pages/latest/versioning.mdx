@@ -32,7 +32,7 @@ also set the default protocol versions by setting the SQL configurations:
 To upgrade a table to a newer protocol version, use the
 `DeltaTable.upgradeTableProtocol` method:
 
-<Info title="Warning" level="warning">
+<Info title="Warning" level="danger">
 Protocol version upgrades are irreversible, and upgrading the protocol version may break the existing Delta Lake table readers, writers, or both. Therefore, we recommend you upgrade specific tables only when needed, such as to opt-in to new features in Delta Lake. You should also check to make sure that all of your current and future production tools support Delta Lake tables with the new protocol version.
 </Info>
 
@@ -79,7 +79,7 @@ This feature is available in Delta Lake 1.2.0 and above. This feature is current
 
 Column mapping requires upgrading the Delta Lake table protocol.
 
-<Info title="Warning" level="warning">
+<Info title="Warning" level="danger">
 Protocol version upgrades are irreversible, and upgrading the protocol version may break the existing Delta Lake table readers, writers, or both. Therefore, we recommend you upgrade specific tables only when needed, such as to opt-in to new features in Delta Lake. You should also check to make sure that all of your current and future production tools support Delta Lake tables with the new protocol version.
 </Info>
 

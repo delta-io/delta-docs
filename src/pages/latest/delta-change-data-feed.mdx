@@ -15,7 +15,7 @@ You can read the change events in batch queries using DataFrame APIs (that is, `
 
 Change Data Feed is not enabled by default. The following use cases should drive when you enable the change data feed.
 
-- **Silver and Gold tables**: Improve Delta performance by processing only row-level changes following initial MERGE, UPDATE, or DELETE operations to accelerate and simplify ETL and ELT operations.
+- **Silver and Gold tables**: Improve Delta performance by processing only row-level changes following initial `MERGE`, `UPDATE`, or `DELETE` operations to accelerate and simplify ETL and ELT operations.
 - **Transmit changes**: Send a change data feed to downstream systems such as Kafka or RDBMS that can use it to incrementally process in later stages of data pipelines.
 - **Audit trail table**: Capture the change data feed as a Delta table provides perpetual storage and efficient query capability to see all changes over time, including when deletes occur and what updates were made.
 
@@ -216,7 +216,7 @@ In addition to the data columns, change data contains metadata columns that iden
 | `_commit_version` | Long | The Delta log or table version containing the change. |
 | `_commit_timestamp` | Timestamp | The timestamp associated when the commit was created. | 
 
-**(1)** preimage is the value before the update, postimage is the value after the update.
+**(1)** `preimage` is the value before the update, `postimage` is the value after the update.
 
 ## Frequently asked questions (FAQ)
 
