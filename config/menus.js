@@ -9,13 +9,6 @@ const docs = [
     divider: true,
   },
   {
-    url: "/latest/delta-intro",
-    label: "Introduction"
-  },
-  {
-    divider: true,
-  },
-  {
     url: "/latest/quick-start",
     label: "Quick Start",
   },
