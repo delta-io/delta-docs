@@ -1,0 +1,170 @@
+---
+title: Delta Standalone
+width: full
+menu: docs
+---
+
+The Delta Standalone library is a single-node Java library that can be used to read from and write to Delta tables. 
+Specifically, this library provides APIs to interact with a table's metadata in the transaction log, implementing the [Delta Transaction Log Protocol](https://github.com/delta-io/delta/blob/master/PROTOCOL.md) to achieve the transactional guarantees of the Delta Lake format.
+Notably, this project doesn't depend on Apache Spark and has only a few transitive dependencies. 
+Therefore, it can be used by any processing engine or application to access Delta tables.
+
+
+## Use cases
+
+Delta Standalone is optimized for cases when you want to read and write Delta tables by using a non-Spark engine of your choice. 
+It is a “low-level” library, and we encourage developers to contribute open-source, higher-level connectors for their desired engines that use Delta Standalone for all Delta Lake metadata interaction. 
+You can find a Hive source connector and Flink sink connector in the [Delta Lake Connectors](https://github.com/delta-io/connectors) repository, and additional connectors are in development.
+
+### Caveats
+
+Delta Standalone minimizes memory usage in the JVM by loading the Delta Lake transaction log incrementally, using an iterator. 
+However, Delta Standalone runs in a single JVM, and is limited to the processing and memory capabilities of that JVM. 
+Users must configure the JVM to avoid out of memory (OOM) issues.
+
+Delta Standalone does provide basic APIs for reading Parquet data, but does not include APIs for writing Parquet data. 
+Users must write out new Parquet data files themselves and then use Delta Standalone to commit those changes to the Delta table and make the new data visible to readers.
+
+## APIs
+
+Delta Standalone provides classes and entities to read data, query metadata, and commit to the transaction log. 
+A few of them are highlighted here and with their key interfaces. 
+See the [Java API](https://delta-io.github.io/connectors/latest/delta-standalone/api/java/index.html) docs for the full set of classes and entities.
+
+### DeltaLog
+
+[DeltaLog](https://delta-io.github.io/connectors/latest/delta-standalone/api/java/io/delta/standalone/DeltaLog.html) is the main interface for programmatically interacting with the metadata in the transaction log of a Delta table.
+
+- Instantiate a `DeltaLog` with `DeltaLog.forTable(hadoopConf, path)` and pass in the path of the root location of the Delta table.
+- Access the current snapshot with `DeltaLog::snapshot`.
+- Get the latest snapshot, including any new data files that were added to the log, with `DeltaLog::update`.
+- Get the snapshot at some historical state of the log with `DeltaLog::getSnapshotForTimestampAsOf` or `DeltaLog::getSnapshotForVersionAsOf`.
+- Start a new transaction to commit to the transaction log by using `DeltaLog::startTransaction`.
+- Get all metadata actions without computing a full Snapshot using `DeltaLog::getChanges`.
+
+### Snapshot
+
+- A [Snapshot](https://delta-io.github.io/connectors/latest/delta-standalone/api/java/io/delta/standalone/Snapshot.html) represents the state of the table at a specific version.
+- Get a list of the metadata files by using `Snapshot::getAllFiles`.
+- For a memory-optimized iterator over the metadata files, use `Snapshot::scan` to get a `DeltaScan` (as described later), optionally by passing in a `predicate` for partition filtering.
+- Read actual data with `Snapshot::open`, which returns an iterator over the rows of the Delta table.
+
+### OptimisticTransaction
+
+The main class for committing a set of updates to the transaction log is [OptimisticTransaction](https://delta-io.github.io/connectors/latest/delta-standalone/api/java/io/delta/standalone/OptimisticTransaction.html).
+During a transaction, all reads must go through the `OptimisticTransaction` instance rather than the `DeltaLog` in order to detect logical conflicts and concurrent updates.
+
+- Read metadata files during a transaction with `OptimisticTransaction::markFilesAsRead`, which returns a `DeltaScan` of files that match the `readPredicate`.
+- Commit to the transaction log with `OptimisticTransaction::commit`.
+- Get the latest version committed for a given application ID (for example, for idempotency) with `OptimisticTransaction::txnVersion`. (Note that this API requires users to commit `SetTransaction` actions.)
+- Update the medadata of the table upon committing with `OptimisticTransaction::updateMetadata`.
+
+### DeltaScan
+
+[DeltaScan](https://delta-io.github.io/connectors/latest/delta-standalone/api/java/io/delta/standalone/DeltaScan.html) is a wrapper class for the files inside a `Snapshot` that match a given `readPredicate`.
+
+- Access the files that match the partition filter portion of the `readPredicate` with `DeltaScan::getFiles`. This returns a memory-optimized iterator over the metadata files in the table.
+- To further filter the returned files on non-partition columns, get the portion of input predicate not applied with `DeltaScan::getResidualPredicate`.
+
+## API compatibility
+
+The only public APIs currently provided by Delta Standalone are in the `io.delta.standalone `package.
+Classes and methods in the `io.delta.standalone.internal` package are considered internal and are subject to change across minor and patch releases.
+
+## Project setup
+You can add the Delta Standalone library as a dependency by using your preferred build tool.
+Delta Standalone depends upon the hadoop-client and parquet-hadoop packages. 
+Example build files are listed in the following sections.
+
+### Environment requirements
+- JDK 8 or above.
+- Scala 2.11 or 2.12.
+
+### Build files
+
+#### Maven
+
+Replace the version of `hadoop-client` with the one you are using.
+
+Scala 2.12:
+
+```XML
+<dependency>
+  <groupId>io.delta</groupId>
+  <artifactId>delta-standalone_2.12</artifactId>
+  <version>0.6.0</version>
+</dependency>
+<dependency>
+  <groupId>org.apache.hadoop</groupId>
+  <artifactId>hadoop-client</artifactId>
+  <version>3.1.0</version>
+</dependency>
+```
+
+Scala 2.11:
+
+```XML
+<dependency>
+  <groupId>io.delta</groupId>
+  <artifactId>delta-standalone_2.11</artifactId>
+  <version>0.6.0</version>
+</dependency>
+<dependency>
+  <groupId>org.apache.hadoop</groupId>
+  <artifactId>hadoop-client</artifactId>
+  <version>3.1.0</version>
+</dependency>
+```
+
+#### SBT
+
+Replace the version of `hadoop-client` with the one you are using.
+
+```
+libraryDependencies ++= Seq(
+  "io.delta" %% "delta-standalone" % "0.6.0",
+  "org.apache.hadoop" % "hadoop-client" % "3.1.0)
+```
+
+#### `ParquetSchemaConverter` caveat
+
+Delta Standalone shades its own Parquet dependencies so that it works out-of-the-box and reduces dependency conflicts in your environment.
+However, if you would like to use utility class `io.delta.standalone.util.ParquetSchemaConverter`, then you must provide your own version of `org.apache.parquet:parquet-hadoop`.
+
+### Storage configuration
+
+Delta Lake ACID guarantees are based on the atomicity and durability guarantees of the storage system. 
+Not all storage systems provide all the necessary guarantees.
+
+Because storage systems do not necessarily provide all of these guarantees out-of-the-box, Delta Lake transactional operations typically go through the [LogStore API](https://github.com/delta-io/delta/blob/master/storage/src/main/java/io/delta/storage/LogStore.java) instead of accessing the storage system directly.
+To provide the ACID guarantees for different storage systems, you may have to use different LogStore implementations.
+This section covers how to configure Delta Standalone for various storage systems. 
+There are two categories of storage systems:
+
+
+- **Storage systems with built-in support**: 
+    For some storage systems, you do not need additional configurations. 
+    Delta Standalone uses the scheme of the path (that is, `s3a` in `s3a://path`) to dynamically identify the storage system and use the corresponding `LogStore` implementation that provides the transactional guarantees. 
+    However, for S3, there are additional caveats on concurrent writes. 
+    See the [section on S3](#amazon-s3-configuration) for details.
+
+- **Other storage systems**: The `LogStore`, similar to Apache Spark, uses the Hadoop `FileSystem` API to perform reads and writes. 
+    Delta Standalone supports concurrent reads on any storage system that provides an implementation of the `FileSystem` API. 
+    For concurrent writes with transactional guarantees, there are two cases based on the guarantees provided by the `FileSystem` implementation.
+    If the implementation provides consistent listing and atomic renames-without-overwrite (that is, `rename(... , overwrite = false)` will either generate the target file atomically or fail if it already exists with `java.nio.file.FileAlreadyExistsException`), then the default `LogStore` implementation using renames will allow concurrent writes with guarantees. 
+    Otherwise, you must configure a custom implementation of `LogStore` by setting the following Hadoop configuration when you instantiate a `DeltaLog` with `DeltaLog.forTable(hadoopConf, path)`:
+
+    ```Java
+    delta.logStore.<scheme>.impl=<full-qualified-class-name>
+    ```
+
+    Here, `<scheme>` is the scheme of the paths of your storage system. 
+    This configures Delta Standalone to dynamically use the given LogStore implementation only for those paths.
+    You can have multiple such configurations for different schemes in your application, thus allowing it to simultaneously read and write from different storage systems.
+
+    <Info title="Note" level="info">
+    - Before version 0.5.0, Delta Standalone supported configuring LogStores by setting `io.delta.standalone.LOG_STORE_CLASS_KEY`.
+        This approach is now deprecated.
+        Setting this configuration will use the configured `LogStore` for all paths, thereby disabling the dynamic scheme-based delegation.
+    </Info>
+
