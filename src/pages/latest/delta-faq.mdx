@@ -6,27 +6,27 @@ menu: docs
 
 _In this article:_
 
-- [What is Delta Lake?](/latest/delta-faq.html#what-is-delta-lake)
+- [What is Delta Lake?](/latest/delta-faq#what-is-delta-lake)
 
-- [How is Delta Lake related to Apache Spark?](/latest/delta-faq.html#how-is-delta-lake-related-to-apache-spark)
+- [How is Delta Lake related to Apache Spark?](/latest/delta-faq#how-is-delta-lake-related-to-apache-spark)
 
-- [What format does Delta Lake use to store data?](/latest/delta-faq.html#what-format-does-delta-lake-use-to-store-data)
+- [What format does Delta Lake use to store data?](/latest/delta-faq#what-format-does-delta-lake-use-to-store-data)
 
-- [How can I read and write data with Delta Lake?](/latest/delta-faq.html#how-can-i-read-and-write-data-with-delta-lake)
+- [How can I read and write data with Delta Lake?](/latest/delta-faq#how-can-i-read-and-write-data-with-delta-lake)
 
-- [Where does Delta Lake store the data?](/latest/delta-faq.html#where-does-delta-lake-store-the-data)
+- [Where does Delta Lake store the data?](/latest/delta-faq#where-does-delta-lake-store-the-data)
 
-- [Can I copy my Delta Lake table to another location?](/latest/delta-faq.html#can-i-copy-my-delta-lake-table-to-another-location)
+- [Can I copy my Delta Lake table to another location?](/latest/delta-faq#can-i-copy-my-delta-lake-table-to-another-location)
 
-- [Can I stream data directly into and from Delta tables?](/latest/delta-faq.html#can-i-stream-data-directly-into-and-from-delta-tables)
+- [Can I stream data directly into and from Delta tables?](/latest/delta-faq#can-i-stream-data-directly-into-and-from-delta-tables)
 
-- [Does Delta Lake support writes or reads using the Spark Streaming DStream API?](/latest/delta-faq.html#does-delta-lake-support-writes-or-reads-using-the-spark-streaming-dstream-api)
+- [Does Delta Lake support writes or reads using the Spark Streaming DStream API?](/latest/delta-faq#does-delta-lake-support-writes-or-reads-using-the-spark-streaming-dstream-api)
 
-- [When I use Delta Lake, will I be able to port my code to other Spark platforms easily?](/latest/delta-faq.html#when-i-use-delta-lake-will-i-be-able-to-port-my-code-to-other-spark-platforms-easily)
+- [When I use Delta Lake, will I be able to port my code to other Spark platforms easily?](/latest/delta-faq#when-i-use-delta-lake-will-i-be-able-to-port-my-code-to-other-spark-platforms-easily)
 
-- [Does Delta Lake support multi-table transactions?](/latest/delta-faq.html#does-delta-lake-support-multi-table-transactions)
+- [Does Delta Lake support multi-table transactions?](/latest/delta-faq#does-delta-lake-support-multi-table-transactions)
 
-- [How can I change the type of a column?](/latest/delta-faq.html#how-can-i-change-the-type-of-a-column)
+- [How can I change the type of a column?](/latest/delta-faq#how-can-i-change-the-type-of-a-column)
 
 ## What is Delta Lake?
 
@@ -54,8 +54,8 @@ provide ACID transactions.
 
 You can use your favorite Apache Spark APIs to read and write data with
 
-Delta Lake. See [Read a table](/latest/delta-batch#deltadataframereads) and
-[Write to a table](/latest/delta-batch#deltadataframewrites).
+Delta Lake. See [Read a table](/latest/delta-batch#read-a-table) and
+[Write to a table](/latest/delta-batch#write-to-a-table).
 
 ## Where does Delta Lake store the data?
 
@@ -73,8 +73,8 @@ timestamps will be consistent.
 
 Yes, you can use Structured Streaming to directly write data into Delta tables
 and read from Delta tables. See [Stream data into Delta
-tables](/latest/delta-streaming#stream-sink) and [Stream data from Delta
-tables](/latest/delta-streaming#stream-source).
+tables](/latest/delta-streaming#delta-table-as-a-sink) and [Stream data from Delta
+tables](/latest/delta-streaming#delta-table-as-a-source).
 
 ## Does Delta Lake support writes or reads using the Spark Streaming DStream API?
 
@@ -94,4 +94,4 @@ Delta Lake supports transactions at the _table_ level.
 ## How can I change the type of a column?
 
 Changing a column's type or dropping a column requires rewriting the table. For
-an example, see [Change column type](delta-batch.md#change-column-type).
+an example, see [Change column type](/latest/delta-batch/#change-column-type-or-name).
