@@ -3,6 +3,8 @@ title: Streaming Reads and Writes
 menu: docs
 ---
 
+import initialSnapshotImg from '/static/images/delta/delta-initial-snapshot-data-drop.png';
+
 Delta Lake is deeply integrated with [Spark Structured Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html) through `readStream` and `writeStream`. Delta Lake overcomes many of the limitations typically associated with streaming systems and files, including:
 
 - Maintaining "exactly-once" processing with more than one stream (or concurrent batch jobs)
@@ -83,7 +85,7 @@ If you update a `user_email` with the `UPDATE` statement, the file containing th
 
 You can use the following options to specify the starting point of the Delta Lake streaming source without processing the entire table.
 
-- `startingVersion`: The Delta Lake version to start from. All table changes starting from this version (inclusive) will be read by the streaming source. You can obtain the commit versions from the `version` column of the [DESCRIBE HISTORY](https://delta.io/docs/spark/utilities#delta-history) command output.
+- `startingVersion`: The Delta Lake version to start from. All table changes starting from this version (inclusive) will be read by the streaming source. You can obtain the commit versions from the `version` column of the [DESCRIBE HISTORY](/latest/delta-utility#delta-history) command output.
 
   - To return only the latest changes, specify `latest`.
 
@@ -140,6 +142,12 @@ You can avoid the data drop issue by enabling the following option:
 - `withEventTimeOrder`: Whether the initial snapshot should be processed with event time order.
 
 With event time order enabled, the event time range of initial snapshot data is divided into time buckets. Each micro batch processes a bucket by filtering data within the time range. The `maxFilesPerTrigger` and `maxBytesPerTrigger` configuration options are still applicable to control the microbatch size but only in an approximate way due to the nature of the processing.
+
+The graphic below shows this process:
+
+<img src={initialSnapshotImg} alt="Initial Snapshot" style={{ width:"100%" }} />
+<br/>
+<br/>
 
 Notable information about this feature:
 
@@ -273,7 +281,7 @@ The preceding example continuously updates a table that contains the aggregate n
 
 For applications with more lenient latency requirements, you can save computing resources with one-time triggers. Use these to update summary aggregation tables on a given schedule, processing only new data that has arrived since the last update.
 
-## Idempotent table writes in `foreachBatch`
+## Idempotent table writes in <code>foreachBatch</code>
 
 <Info title="Note" level="info">
   Available in Delta Lake 2.0.0 and above.
@@ -290,14 +298,14 @@ Delta table uses the combination of `txnAppId` and `txnVersion` to identify dupl
 
 If a batch write is interrupted with a failure, rerunning the batch uses the same application and batch ID, which would help the runtime correctly identify duplicate writes and ignore them. Application ID (`txnAppId`) can be any user-generated unique string and does not have to be related to the stream ID.
 
-<Info title="Warning" level="info">
+<Info title="Warning!" level="danger">
   If you delete the streaming checkpoint and restart the query with a new
   checkpoint, you must provide a different `appId`; otherwise, writes from the
   restarted query will be ignored because it will contain the same `txnAppId`
   and the batch ID would start from 0.
 </Info>
 
-The same `DataFrameWriter` options can be used to achieve the idempotent writes in non-Streaming job. For details [Idempotent writes](/latest/delta-batch/#idempotent-writes).
+The same `DataFrameWriter` options can be used to achieve the idempotent writes in non-Streaming job. For details see [Idempotent writes](/latest/delta-batch/#idempotent-writes).
 
 <CodeTabs>
 
