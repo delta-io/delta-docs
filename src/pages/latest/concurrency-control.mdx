@@ -7,16 +7,7 @@ DeltaLake provides ACID transaction guarantees between reads and writes.
 This means that:
 
 - For supported [storage systems](/latest/delta-storage), multiple writers across multiple clusters can simultaneously modify a table partition and see a consistent snapshot view of the table and there will be a serial order for these writes.
-- Readers continue to see a consistent snapshot view of the table that the
-
-  Databricks job started with, even when a table is modified during a job.
-
-- For supported [storage systems](delta-storage.md), multiple writers across
-  multiple clusters can simultaneously modify a table partition and see a
-  consistent snapshot view of the table and there will be a serial order for
-  these writes.
-- Readers continue to see a consistent snapshot view of the table that the
-  ApacheSpark job started with, even when a table is modified during a job.
+- Readers continue to see a consistent snapshot view of the table that the Apache Spark job started with, even when a table is modified during a job.
 
 In this article:
 
