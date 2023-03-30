@@ -59,13 +59,13 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    from deltalake import DeltaTable
 
    # Create Pandas DataFrame
-   df = pd.DataFrame(range(5))
+   df = pd.DataFrame({"data": range(5)})
 
    # Write Delta Lake table
    write_deltalake("/tmp/deltars_table", df)
 
    # Append new data
-   df = pd.DataFrame(range(6, 11))
+   df = pd.DataFrame({"data": range(6, 11)})
    write_deltalake("/tmp/deltars_table", df, mode="append")
 
    # Read Delta Lake table
@@ -82,7 +82,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    dt.to_pandas() 
 
    ## Output
-       0
+       data
    0   0
    ... ...
    8   9
@@ -123,7 +123,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
   ```
   ```python  
   ## Output
-      0
+      data
    0  0
    1  1
    2  2
