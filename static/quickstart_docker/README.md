@@ -7,6 +7,8 @@ Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta La
 1. [Build the image](#Build-the-Image)
 2. [Choose an interface](#Choose-an-Interface)
 
+> Note: Python version available in this Docker image is 3.8.10 and is available as `python3`.
+
 ## Build the Image
 
 1. Clone this repo
@@ -51,7 +53,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
    python3
    ```
 
-   > Note, the Delta Rust Python bindings are already installed in this docker. To do this manually in your own environment, you can install `pip3 install deltalake`
+   > Note: The Delta Rust Python bindings are already installed in this docker. To do this manually in your own environment, you can install `pip3 install deltalake==0.6.4`
 
 4. Run some basic commands in the shell
 
@@ -121,8 +123,7 @@ The current version is `delta-core_2.12:2.1.0` which corresponds to Apache Spark
 
   # Show table
   dt.to_pandas()
-  ```
-  ```python  
+
   ## Output
       0
    0  0
@@ -391,7 +392,7 @@ cargo run --example read_delta_datafusion
 ### [Optional] ROAPI
 You can query your Delta Lake table with [Apache Arrow](https://github.com/apache/arrow) and [Datafusion](https://github.com/apache/arrow-datafusion) using [ROAPI](https://roapi.github.io/docs/config/dataset-formats/delta.html) which is pre-installed in this docker.
 
-> Note, If you need to do this in your environment, run the command `pip3 install roapi`
+> Note: If you need to do this in your environment, run the command `pip3 install roapi==0.8.1`
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
