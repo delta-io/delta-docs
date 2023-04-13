@@ -1,17 +1,20 @@
-ARG BASE_CONTAINER=yikunkero/spark:latest
+# This docker image uses a base container with Apache Spark v3.3.1
+ARG BASE_CONTAINER=yikunkero/spark:3.3.1-scala2.12-java11-python3-r-ubuntu
 
 FROM $BASE_CONTAINER as spark
 
-LABEL maintainer="Andrew Bauman"
+LABEL maintainer="Prashanth Babu"
 
 FROM spark as delta
 
 USER root
 
+# Docker image was created and tested with Delta Lake v2.1.0
 ARG DELTA_CORE_VERSION="2.1.0"
 
-RUN pip install --no-cache-dir delta-spark==${DELTA_CORE_VERSION} \
-jupyterlab deltalake pandas roapi
+# We are explicitly pinning the versions of various libraries which this Docker image runs on
+RUN pip install --quiet --no-cache-dir delta-spark==${DELTA_CORE_VERSION} \
+deltalake==0.6.4 jupyterlab==3.5.1 pandas==1.5.2 roapi==0.8.1
 
 FROM delta as startup
 
@@ -21,8 +24,8 @@ ARG WORKDIR=/opt/spark/work-dir
 ENV DELTA_PACKAGE_VERSION=delta-core_2.12:2.1.0
 
 RUN groupadd -r ${GROUP} && useradd -r -m -g ${GROUP} ${NBuser}
-RUN apt-get update
-RUN apt-get -y install vim
+RUN apt-get -qq update
+RUN apt-get -qq -y install vim
 
 COPY --chown=${NBuser} startup.sh "${WORKDIR}"
 COPY --chown=${NBuser} quickstart.ipynb "${WORKDIR}"
