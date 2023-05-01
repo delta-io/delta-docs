@@ -653,7 +653,7 @@ By default you can time travel to a Delta table up to 30 days old unless you hav
   a version that is less than the retention interval. Delta Lake requires all
   consecutive log entries since the previous checkpoint to time travel to a
   particular version. For example, with a table initially consisting of log
-  entries for versions [0, 19] and a checkpoint at verison 10, if the log entry
+  entries for versions [0, 19] and a checkpoint at version 10, if the log entry
   for version 0 is cleaned up, then you cannot time travel to versions [1, 9].
   Increasing the table property `delta.logRetentionDuration` can help avoid
   these situations.
