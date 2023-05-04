@@ -1,7 +1,8 @@
-### Dockerfile for Delta Lake quickstart
+## Dockerfile for Delta Lake quickstart
 
-# This docker image uses a base container with Apache Spark v3.3.1
-ARG BASE_CONTAINER=yikunkero/spark:3.3.1-scala2.12-java11-python3-r-ubuntu
+# This docker image uses the official Docker image of [OSS] Apache Spark v3.3.2 as the base container
+# Note: Python version in this image is 3.9.2 and is available as `python3`.
+ARG BASE_CONTAINER=apache/spark-py:v3.3.2
 
 FROM $BASE_CONTAINER as spark
 
@@ -12,12 +13,11 @@ FROM spark as delta
 USER root
 
 # Docker image was created and tested with the versions of following packages.
-# Note: Python version in this image is 3.8.10 and is available as `python3`.
-ARG DELTA_SPARK_VERSION="2.1.0"
-ARG DELTALAKE_VERSION="0.6.4"
-ARG JUPYTERLAB_VERSION="3.5.1"
-ARG PANDAS_VERSION="1.5.2"
-ARG ROAPI_VERSION="0.8.1"
+ARG DELTA_SPARK_VERSION="2.3.0"
+ARG DELTALAKE_VERSION="0.8.1"
+ARG JUPYTERLAB_VERSION="3.6.3"
+ARG PANDAS_VERSION="1.5.3"
+ARG ROAPI_VERSION="0.9.0"
 
 # We are explicitly pinning the versions of various libraries which this Docker image runs on.
 RUN pip install --quiet --no-cache-dir delta-spark==${DELTA_SPARK_VERSION} \
@@ -28,11 +28,12 @@ FROM delta as startup
 ARG NBuser=NBuser
 ARG GROUP=NBuser
 ARG WORKDIR=/opt/spark/work-dir
-ENV DELTA_PACKAGE_VERSION=delta-core_2.12:2.1.0
+
+ENV DELTA_PACKAGE_VERSION=delta-core_2.12:${DELTA_SPARK_VERSION}
 
 RUN groupadd -r ${GROUP} && useradd -r -m -g ${GROUP} ${NBuser}
-RUN apt-get -qq update
-RUN apt-get -qq -y install vim
+RUN apt -qq update
+RUN apt -qq -y install vim curl
 
 COPY --chown=${NBuser} startup.sh "${WORKDIR}"
 COPY --chown=${NBuser} quickstart.ipynb "${WORKDIR}"
