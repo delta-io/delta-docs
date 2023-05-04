@@ -28,6 +28,7 @@ FROM delta as startup
 ARG NBuser=NBuser
 ARG GROUP=NBuser
 ARG WORKDIR=/opt/spark/work-dir
+
 ENV DELTA_PACKAGE_VERSION=delta-core_2.12:${DELTA_SPARK_VERSION}
 
 RUN groupadd -r ${GROUP} && useradd -r -m -g ${GROUP} ${NBuser}

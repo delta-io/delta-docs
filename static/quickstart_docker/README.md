@@ -434,6 +434,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
 > Note: Run the below steps in the shell launched in the previous step
 
 5. Check the schema of the two Delta Lake tables
+
    ```bash
    curl localhost:8080/api/schema
    ```
