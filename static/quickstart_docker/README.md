@@ -320,6 +320,8 @@ total 36
    cargo run --example read_delta_table
    ```
 
+> If using [Delta Lake DockerHub](https://go.delta.io/dockerhub), sometimes the Rust environment hasn't been configured. To resolve this, run the command `source "$HOME/.cargo/env"`
+
 <details><summary>Click to view output</summary>
 <p>
 
