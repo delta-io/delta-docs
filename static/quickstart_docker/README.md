@@ -13,6 +13,8 @@ Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta La
 
 ## Build the Image
 
+> Note, you can also download the image from https://go.delta.io/dockerhub
+
 1. Clone this repo
 2. Navigate to the cloned folder
 3. Navigate to the `quickstart_docker` folder
