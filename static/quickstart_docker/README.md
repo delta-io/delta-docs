@@ -1,4 +1,4 @@
-# README for Delta Lake quickstart with Docker
+# Delta Lake Quickstart Docker
 
 This folder contains instructions and materials to get new users started with Delta Lake and work through the quickstart materials using a self-contained Docker image.
 
@@ -6,14 +6,16 @@ This folder contains instructions and materials to get new users started with De
 
 Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta Lake installed, run a container, and follow the quickstart in an interactive notebook or shell with any of the options like Python, PySpark, Scala Spark or even Rust.
 
-1. [Build the image](#Build-the-Image)
+1. [Working with Docker](#docker-image)
+   1. [Build the image](#Build-the-Image)
+   2. [Docker Hub](#docker-hub)
 2. [Choose an interface](#Choose-an-Interface)
 
 > Note: Python version available in this Docker image is 3.9.2 and is available as `python3`.
 
-## Build the Image
+## Working with Docker
 
-> Note, you can also download the image from https://go.delta.io/dockerhub
+### Build the Image
 
 1. Clone this repo
 2. Navigate to the cloned folder
@@ -25,7 +27,46 @@ Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta La
    docker build -t delta_quickstart -f Dockerfile_delta_quickstart .
    ```
 
-Once the image has been built, you can then move on to running the quickstart in a notebook or shell.
+#### Build Entry Point
+Your entry point for this locally built docker file is
+
+   ```bash
+   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
+   ```
+
+
+### Docker Hub
+
+You can also download the image from DockerHub at [Delta Lake DockerHub](https://go.delta.io/dockerhub)
+
+Note, there are different versions of the Delta Lake docker
+
+| Tag | Platform | Python | Rust | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI |
+| ----- | ---- | ---- |--- | ---| --- |  --- |  --- | --- |
+| 0.8.1_2.3.0 | amd64 | 0.8.1 | latest | 2.3.0 | 3.3.2 | 3.6.3 | 1.5.3 | 0.9.0 |
+| 0.8.1_2.3.0_arm64 | arm64 | 0.8.1 | latest | 2.3.0 | 3.3.2 | 3.6.3 | 1.5.3 | 0.9.0 |
+
+** Note, the arm64 version is built for ARM64 platforms like Mac M1
+
+Download the appropriate tag, e.g.:
+* `docker pull deltaio/delta-docker:0.8.1_2.3.0` for the standard Linux docker 
+* `docker pull deltaio/delta-docker:0.8.1_2.3.0_arm64` for running this optimally on your Mac M1
+
+
+#### Image Entry Point
+
+Your entry point for the Docker Hub image is:
+
+   ```bash
+   # Running locally on Mac M1
+   docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:0.8.1_2.3.0_arm64
+
+   # Running on Linux VM
+   docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:0.8.1_2.3.0
+   ```
+
+
+Once the image has been built or you ahve downloaded the correct image, you can then move on to running the quickstart in a notebook or shell.
 
 ## Choose the Delta Package version
 
@@ -46,11 +87,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint
-
-   ```bash
-   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
-   ```
+2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a _python_ interactive shell session with `python3`
 
@@ -169,7 +206,11 @@ total 12
 2. Run a container from the built image with a Juypter Lab entrypoint
 
    ```bash
+   # Build entry point
    docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickstart
+
+   # Image entry point (M1)
+   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 -entrypoint bash deltaio/delta-docker:0.8.1_2.3.0_arm64
    ```
 
 3. Running the above command gives a JupyterLab notebook URL, copy that URL and launch a browser to follow along the notebook and run each cell.
@@ -179,11 +220,8 @@ total 12
 ### PySpark Shell
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
-2. Run a container from the built image with a bash entrypoint
 
-   ```bash
-   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
-   ```
+2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a pyspark interactive shell session
 
@@ -243,11 +281,8 @@ total 36
 ### Scala Shell
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
-2. Run a container from the built image with a bash entrypoint
 
-   ```bash
-   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
-   ```
+2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a scala interactive shell session
 
@@ -308,11 +343,7 @@ total 36
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint
-
-   ```bash
-   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
-   ```
+2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Execute `examples/read_delta_table.rs` to review the Delta Lake table metadata and files of the `covid19_nyt` Delta Lake table.
    ```bash
@@ -413,11 +444,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint
-
-   ```bash
-   docker run --name delta_quickstart --rm -it -p 8080:8080 --entrypoint bash delta_quickstart
-   ```
+2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Start the `roapi` API using the following command. Notes:
 

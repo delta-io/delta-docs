@@ -44,4 +44,5 @@ RUN chown -R ${NBuser}:${GROUP} /home/${NBuser}/ \
 USER ${NBuser}
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+source "$HOME/.cargo/env"
 ENTRYPOINT ["bash", "startup.sh"]
