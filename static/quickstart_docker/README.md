@@ -28,12 +28,12 @@ Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta La
    ```
 
 #### Build Entry Point
+
 Your entry point for this locally built docker file is
 
-   ```bash
-   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
-   ```
-
+```bash
+docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
+```
 
 ### Docker Hub
 
@@ -41,30 +41,29 @@ You can also download the image from DockerHub at [Delta Lake DockerHub](https:/
 
 Note, there are different versions of the Delta Lake docker
 
-| Tag | Platform | Python | Rust | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI |
-| ----- | ---- | ---- |--- | ---| --- |  --- |  --- | --- |
-| 0.8.1_2.3.0 | amd64 | 0.8.1 | latest | 2.3.0 | 3.3.2 | 3.6.3 | 1.5.3 | 0.9.0 |
-| 0.8.1_2.3.0_arm64 | arm64 | 0.8.1 | latest | 2.3.0 | 3.3.2 | 3.6.3 | 1.5.3 | 0.9.0 |
+| Tag               | Platform | Python | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI |
+| ----------------- | -------- | ------ | ------ | ----------- | ----- | ---------- | ------ | ----- |
+| 0.8.1_2.3.0       | amd64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| 0.8.1_2.3.0_arm64 | arm64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
 
-** Note, the arm64 version is built for ARM64 platforms like Mac M1
+\*\* Note, the arm64 version is built for ARM64 platforms like Mac M1
 
 Download the appropriate tag, e.g.:
-* `docker pull deltaio/delta-docker:0.8.1_2.3.0` for the standard Linux docker 
-* `docker pull deltaio/delta-docker:0.8.1_2.3.0_arm64` for running this optimally on your Mac M1
 
+- `docker pull deltaio/delta-docker:0.8.1_2.3.0` for the standard Linux docker
+- `docker pull deltaio/delta-docker:0.8.1_2.3.0_arm64` for running this optimally on your Mac M1
 
 #### Image Entry Point
 
 Your entry point for the Docker Hub image is:
 
-   ```bash
-   # Running locally on Mac M1
-   docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:0.8.1_2.3.0_arm64
+```bash
+# Running locally on Mac M1
+docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:0.8.1_2.3.0_arm64
 
-   # Running on Linux VM
-   docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:0.8.1_2.3.0
-   ```
-
+# Running on Linux VM
+docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:0.8.1_2.3.0
+```
 
 Once the image has been built or you ahve downloaded the correct image, you can then move on to running the quickstart in a notebook or shell.
 
@@ -152,23 +151,23 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    [{'timestamp': 1682475171964, 'delta-rs': '0.8.0'}, {'timestamp': 1682475171985, 'operation': 'WRITE', 'operationParameters': {'partitionBy': '[]', 'mode': 'Append'}, 'clientVersion': 'delta-rs.0.8.0'}]
    ```
 
-1.  Time Travel (load older version of table)
+1. Time Travel (load older version of table)
 
-      ```python
-      # Load initial version of table
-      dt.load_version(0)
+   ```python
+   # Load initial version of table
+   dt.load_version(0)
 
-      # Show table
-      dt.to_pandas()
+   # Show table
+   dt.to_pandas()
 
-      ## Output
-         0
-      0  0
-      1  1
-      2  2
-      3  3
-      4  4
-      ```
+   ## Output
+      0
+   0  0
+   1  1
+   2  2
+   3  3
+   4  4
+   ```
 
 1. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
 
@@ -325,6 +324,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Execute `examples/read_delta_table.rs` to review the Delta Lake table metadata and files of the `covid19_nyt` Delta Lake table.
+
    ```bash
    cd rs
    cargo run --example read_delta_table
@@ -428,6 +428,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
    ```bash
    curl localhost:8080/api/schema
    ```
+
    ```bash
    {
       "covid19_nyt":{"fields":[
@@ -445,9 +446,11 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
    ```
 
 6. Query the `deltars_table`
+
    ```bash
    curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
    ```
+
    ```bash
    # output
    [{"0":0},{"0":1},{"0":2},{"0":3},{"0":4},{"0":6},{"0":7},{"0":8},{"0":9},{"0":10}]
