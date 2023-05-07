@@ -489,36 +489,21 @@ curl localhost:8080/api/schema
    ```bash
    curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
    ```
-
-<details><summary>Click to view output</summary>
-
-```bash
-
-curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
-
-[{"0":0},{"0":1},{"0":2},{"0":3},{"0":4},{"0":6},{"0":7},{"0":8},{"0":9},{"0":10}]
-```
-
-</details>
+   ```bash
+   # output
+   [{"0":0},{"0":1},{"0":2},{"0":3},{"0":4},{"0":6},{"0":7},{"0":8},{"0":9},{"0":10}]
+   ```
 
 6. Query the `covid19_nyt` table
    ```bash
    curl -X POST -d "SELECT cases, county, date FROM covid19_nyt ORDER BY cases DESC LIMIT 5" localhost:8080/api/sql
    ```
-
-<details><summary>Click to view output</summary>
-
-```bash
-
-curl -X POST -d "SELECT cases, county, date FROM covid19_nyt ORDER BY cases DESC LIMIT 5" localhost:8080/api/sql
-
-[
-    {"cases":1208672,"county":"Los Angeles","date":"2021-03-11"},
-    {"cases":1207361,"county":"Los Angeles","date":"2021-03-10"},
-    {"cases":1205924,"county":"Los Angeles","date":"2021-03-09"},
-    {"cases":1204665,"county":"Los Angeles","date":"2021-03-08"},
-    {"cases":1203799,"county":"Los Angeles","date":"2021-03-07"}
-]
-```
-
-</details>
+   ```bash
+   [
+      {"cases":1208672,"county":"Los Angeles","date":"2021-03-11"},
+      {"cases":1207361,"county":"Los Angeles","date":"2021-03-10"},
+      {"cases":1205924,"county":"Los Angeles","date":"2021-03-09"},
+      {"cases":1204665,"county":"Los Angeles","date":"2021-03-08"},
+      {"cases":1203799,"county":"Los Angeles","date":"2021-03-07"}
+   ]
+   ```
