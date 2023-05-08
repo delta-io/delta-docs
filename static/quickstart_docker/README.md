@@ -52,8 +52,8 @@ Note, there are different versions of the Delta Lake docker
 
 Download the appropriate tag, e.g.:
 
-- `docker pull deltaio/delta-docker:0.8.1_2.3.0` for the standard Linux docker
-- `docker pull deltaio/delta-docker:0.8.1_2.3.0_arm64` for running this optimally on your Mac M1
+- `docker pull deltaio/delta-docker:latest` for the standard Linux docker
+- `docker pull deltaio/delta-docker:latest_arm64` for running this optimally on your Mac M1
 
 #### Image Entry Point
 
@@ -61,10 +61,10 @@ Your entry point for the Docker Hub image is:
 
 ```bash
 # Running locally on Mac M1
-docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:0.8.1_2.3.0_arm64
+docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:latest_arm64
 
 # Running on Linux VM
-docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:0.8.1_2.3.0
+docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:latest
 ```
 
 Once the image has been built or you ahve downloaded the correct image, you can then move on to running the quickstart in a notebook or shell.
@@ -196,7 +196,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickstart
 
    # Image entry point (M1)
-   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 -entrypoint bash deltaio/delta-docker:0.8.1_2.3.0_arm64
+   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 -entrypoint bash deltaio/delta-docker:latest_arm64
    ```
 
 3. Running the above command gives a JupyterLab notebook URL, copy that URL and launch a browser to follow along the notebook and run each cell.
