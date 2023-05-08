@@ -1,4 +1,4 @@
-# README for Delta Lake quickstart with Docker
+# Delta Lake Quickstart Docker
 
 This folder contains instructions and materials to get new users started with Delta Lake and work through the quickstart materials using a self-contained Docker image.
 
@@ -6,14 +6,16 @@ This folder contains instructions and materials to get new users started with De
 
 Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta Lake installed, run a container, and follow the quickstart in an interactive notebook or shell with any of the options like Python, PySpark, Scala Spark or even Rust.
 
-1. [Build the image](#Build-the-Image)
+1. [Working with Docker](#docker-image)
+   1. [Build the image](#Build-the-Image)
+   2. [Docker Hub](#docker-hub)
 2. [Choose an interface](#Choose-an-Interface)
 
 > Note: Python version available in this Docker image is 3.9.2 and is available as `python3`.
 
-## Build the Image
+## Working with Docker
 
-> Note, you can also download the image from https://go.delta.io/dockerhub
+### Build the Image
 
 1. Clone this repo
 2. Navigate to the cloned folder
@@ -25,7 +27,47 @@ Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta La
    docker build -t delta_quickstart -f Dockerfile_delta_quickstart .
    ```
 
-Once the image has been built, you can then move on to running the quickstart in a notebook or shell.
+#### Build Entry Point
+
+Your entry point for this locally built docker file is
+
+```bash
+docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
+```
+
+### Docker Hub
+
+You can also download the image from DockerHub at [Delta Lake DockerHub](https://go.delta.io/dockerhub)
+
+Note, there are different versions of the Delta Lake docker
+
+| Tag               | Platform | Python | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI |
+| ----------------- | -------- | ------ | ------ | ----------- | ----- | ---------- | ------ | ----- |
+| 0.8.1_2.3.0       | amd64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| 0.8.1_2.3.0_arm64 | arm64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| latest            | amd64    | 0.9.0  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| latest            | arm64    | 0.9.0  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+
+\*\* Note, the arm64 version is built for ARM64 platforms like Mac M1
+
+Download the appropriate tag, e.g.:
+
+- `docker pull deltaio/delta-docker:latest` for the standard Linux docker
+- `docker pull deltaio/delta-docker:latest_arm64` for running this optimally on your Mac M1
+
+#### Image Entry Point
+
+Your entry point for the Docker Hub image is:
+
+```bash
+# Running locally on Mac M1
+docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:latest_arm64
+
+# Running on Linux VM
+docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:latest
+```
+
+Once the image has been built or you ahve downloaded the correct image, you can then move on to running the quickstart in a notebook or shell.
 
 ## Choose the Delta Package version
 
@@ -46,21 +88,17 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint
+1. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
-   ```bash
-   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
-   ```
-
-3. Launch a _python_ interactive shell session with `python3`
+1. Launch a _python_ interactive shell session with `python3`
 
    ```bash
    python3
    ```
 
-   > Note: The Delta Rust Python bindings are already installed in this docker. To do this manually in your own environment, run the command: `pip3 install deltalake==0.8.1`
+   > Note: The Delta Rust Python bindings are already installed in this docker. To do this manually in your own environment, run the command: `pip3 install deltalake==0.9.0`
 
-4. Run some basic commands in the shell to write to and read from Delta Lake with Pandas
+1. Run some basic commands in the shell to write to and read from Delta Lake with Pandas
 
    ```python
    import pandas as pd
@@ -84,106 +122,92 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    dt.to_pandas()
    ```
 
-<details>
-  <summary>Click to view output</summary>
+   ```python
+   ## Output
+       0
+   0   0
+   1   1
+   2   2
+   ... ...
+   8   9
+   9  10
+   ```
 
-```python
-dt.to_pandas()
+1. Review the files
 
-## Output
-    0
-0   0
-1   1
-2   2
-... ...
-8   9
-9  10
-```
+   ```python
+   # List files for the Delta Lake table
+   dt.files()
 
-</details>
+   ## Output
+   ['0-d4920663-30e9-4a1a-afde-59bc4ebd24b5-0.parquet', '1-f27a5ea6-a15f-4ca1-91b3-72bcf64fbc09-0.parquet']
+   ```
 
-<details>
-  <summary><b>Click for more examples including files information and time travel</b></summary>
+1. Review history
 
-4.1. Review the files
+   ```python
+   # Review history
+   dt.history()
 
-```python
-# List files for the Delta Lake table
-dt.files()
+   ## Output
+   [{'timestamp': 1682475171964, 'delta-rs': '0.8.0'}, {'timestamp': 1682475171985, 'operation': 'WRITE', 'operationParameters': {'partitionBy': '[]', 'mode': 'Append'}, 'clientVersion': 'delta-rs.0.8.0'}]
+   ```
 
-## Output
-['0-d4920663-30e9-4a1a-afde-59bc4ebd24b5-0.parquet', '1-f27a5ea6-a15f-4ca1-91b3-72bcf64fbc09-0.parquet']
-```
+1. Time Travel (load older version of table)
 
-4.2. Review history
+   ```python
+   # Load initial version of table
+   dt.load_version(0)
 
-```python
-# Review history
-dt.history()
+   # Show table
+   dt.to_pandas()
 
-## Output
-[{'timestamp': 1682475171964, 'delta-rs': '0.8.0'}, {'timestamp': 1682475171985, 'operation': 'WRITE', 'operationParameters': {'partitionBy': '[]', 'mode': 'Append'}, 'clientVersion': 'delta-rs.0.8.0'}]
-```
+   ## Output
+      0
+   0  0
+   1  1
+   2  2
+   3  3
+   4  4
+   ```
 
-4.3. Time Travel (load older version of table)
+1. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
 
-```python
-# Load initial version of table
-dt.load_version(0)
+1. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/deltars-table`. Once you close your `python3` process, run a list command in your Docker shell and you should get something similar to below.
 
-# Show table
-dt.to_pandas()
+   ```bash
+   $ ls -lsgA /tmp/deltars_table
+   total 12
+   4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:12 _delta_log
+   4 -rw-r--r-- 1 NBuser 1689 Apr 26 02:12 0-d4920663-30e9-4a1a-afde-59bc4ebd24b5-0.parquet
+   4 -rw-r--r-- 1 NBuser 1691 Apr 26 02:12 1-f27a5ea6-a15f-4ca1-91b3-72bcf64fbc09-0.parquet
+   ```
 
-## Output
-    0
- 0  0
- 1  1
- 2  2
- 3  3
- 4  4
-```
-
-</details>
-
-5. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
-
-6. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/deltars-table`. Once you close your `python3` process, run a list command in your Docker shell and you should get something similar to below.
-
-<details><summary>Click to view output</summary>
-
-```bash
-$ ls -lsgA /tmp/deltars_table
-total 12
-4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:12 _delta_log
-4 -rw-r--r-- 1 NBuser 1689 Apr 26 02:12 0-d4920663-30e9-4a1a-afde-59bc4ebd24b5-0.parquet
-4 -rw-r--r-- 1 NBuser 1691 Apr 26 02:12 1-f27a5ea6-a15f-4ca1-91b3-72bcf64fbc09-0.parquet
-```
-
-</details>
-
-7. [Optional] Skip ahead to try out the [Delta Rust API](#delta-rust-api) and [ROAPI](#optional-roapi)
+1. [Optional] Skip ahead to try out the [Delta Rust API](#delta-rust-api) and [ROAPI](#optional-roapi)
 
 ### JupyterLab Notebook
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
+
 2. Run a container from the built image with a Juypter Lab entrypoint
 
    ```bash
+   # Build entry point
    docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickstart
+
+   # Image entry point (M1)
+   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 -entrypoint bash deltaio/delta-docker:latest_arm64
    ```
 
 3. Running the above command gives a JupyterLab notebook URL, copy that URL and launch a browser to follow along the notebook and run each cell.
 
-**Note that you may also launch the pyspark or scala shells after launching a terminal in JupyterLab**
+   > **Note that you may also launch the pyspark or scala shells after launching a terminal in JupyterLab**
 
 ### PySpark Shell
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
-2. Run a container from the built image with a bash entrypoint
 
-   ```bash
-   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
-   ```
+2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a pyspark interactive shell session
 
@@ -222,32 +246,25 @@ total 12
 
 6. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/delta-table`. Once you close your `pyspark` process, run a list command in your Docker shell and you should get something similar to below.
 
-<details><summary>Click to view output</summary>
-
-```bash
-$ ls -lsgA /tmp/delta-table
-total 36
-4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:30 _delta_log
-4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00000-bdee316b-8623-4423-b59c-6a809addaea8-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00001-6b373d50-5bdd-496a-9e21-ab4164176f11-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00002-9721ce9e-e043-4875-bcff-08f7d7c3d3f0-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00003-61aaf450-c318-452a-aea5-5a44c909fd74-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser  478 Apr 26 02:30 part-00000-bdee316b-8623-4423-b59c-6a809addaea8-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser  478 Apr 26 02:30 part-00001-6b373d50-5bdd-496a-9e21-ab4164176f11-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser  478 Apr 26 02:30 part-00002-9721ce9e-e043-4875-bcff-08f7d7c3d3f0-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser  486 Apr 26 02:30 part-00003-61aaf450-c318-452a-aea5-5a44c909fd74-c000.snappy.parquet
-```
-
-</details>
+   ```bash
+   $ ls -lsgA /tmp/delta-table
+   total 36
+   4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:30 _delta_log
+   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00000-bdee316b-8623-4423-b59c-6a809addaea8-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00001-6b373d50-5bdd-496a-9e21-ab4164176f11-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00002-9721ce9e-e043-4875-bcff-08f7d7c3d3f0-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00003-61aaf450-c318-452a-aea5-5a44c909fd74-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:30 part-00000-bdee316b-8623-4423-b59c-6a809addaea8-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:30 part-00001-6b373d50-5bdd-496a-9e21-ab4164176f11-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:30 part-00002-9721ce9e-e043-4875-bcff-08f7d7c3d3f0-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser  486 Apr 26 02:30 part-00003-61aaf450-c318-452a-aea5-5a44c909fd74-c000.snappy.parquet
+   ```
 
 ### Scala Shell
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
-2. Run a container from the built image with a bash entrypoint
 
-   ```bash
-   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
-   ```
+2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a scala interactive shell session
 
@@ -286,21 +303,19 @@ total 36
 
 6. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/delta-table`. Once you close your Scala Spark process [`spark-shell`], run a list command in your Docker shell and you should get something similar to below.
 
-<details><summary>Click to view output</summary>
-
-```bash
-$ ls -lsgA /tmp/delta-table
-total 36
-4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:31 _delta_log
-4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00000-e0353d3e-7473-4ff7-9b58-e977d48d008a-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00001-0e2c89cf-3f9b-4698-b059-6dd41d4e3aed-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00002-06bf68f9-16d8-4c08-ba8e-7b0b00d52b8e-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00003-5963f002-d98a-421f-9c2d-22376b7f87e4-c000.snappy.parquet.crc
-4 -rw-r--r-- 1 NBuser  478 Apr 26 02:31 part-00000-e0353d3e-7473-4ff7-9b58-e977d48d008a-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser  478 Apr 26 02:31 part-00001-0e2c89cf-3f9b-4698-b059-6dd41d4e3aed-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser  478 Apr 26 02:31 part-00002-06bf68f9-16d8-4c08-ba8e-7b0b00d52b8e-c000.snappy.parquet
-4 -rw-r--r-- 1 NBuser  486 Apr 26 02:31 part-00003-5963f002-d98a-421f-9c2d-22376b7f87e4-c000.snappy.parquet
-```
+   ```bash
+   $ ls -lsgA /tmp/delta-table
+   total 36
+   4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:31 _delta_log
+   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00000-e0353d3e-7473-4ff7-9b58-e977d48d008a-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00001-0e2c89cf-3f9b-4698-b059-6dd41d4e3aed-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00002-06bf68f9-16d8-4c08-ba8e-7b0b00d52b8e-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00003-5963f002-d98a-421f-9c2d-22376b7f87e4-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:31 part-00000-e0353d3e-7473-4ff7-9b58-e977d48d008a-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:31 part-00001-0e2c89cf-3f9b-4698-b059-6dd41d4e3aed-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:31 part-00002-06bf68f9-16d8-4c08-ba8e-7b0b00d52b8e-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser  486 Apr 26 02:31 part-00003-5963f002-d98a-421f-9c2d-22376b7f87e4-c000.snappy.parquet
+   ```
 
 </details>
 
@@ -308,97 +323,76 @@ total 36
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint
-
-   ```bash
-   docker run --name delta_quickstart --rm -it --entrypoint bash delta_quickstart
-   ```
+2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Execute `examples/read_delta_table.rs` to review the Delta Lake table metadata and files of the `covid19_nyt` Delta Lake table.
+
    ```bash
    cd rs
    cargo run --example read_delta_table
    ```
 
-<details><summary>Click to view output</summary>
-<p>
+   > If using [Delta Lake DockerHub](https://go.delta.io/dockerhub), sometimes the Rust environment hasn't been configured. To resolve this, run the command `source "$HOME/.cargo/env"`
 
-#### View output
-
-```bash
-cargo run --example read_delta_table
-
-=== Delta table metadata ===
-DeltaTable(../quickstart_docker/rs/data/COVID-19_NYT)
-   version: 0
-   metadata: GUID=7245fd1d-8a6d-4988-af72-92a95b646511, name=None, description=None, partitionColumns=[], createdTime=Some(1619121484605), configuration={}
-   min_version: read=1, write=2
-   files count: 8
+   ```bash
+   === Delta table metadata ===
+   DeltaTable(../quickstart_docker/rs/data/COVID-19_NYT)
+      version: 0
+      metadata: GUID=7245fd1d-8a6d-4988-af72-92a95b646511, name=None, description=None, partitionColumns=[], createdTime=Some(1619121484605), configuration={}
+      min_version: read=1, write=2
+      files count: 8
 
 
-=== Delta table files ===
-[
-   Path { raw: "part-00000-a496f40c-e091-413a-85f9-b1b69d4b3b4e-c000.snappy.parquet" },
-   Path { raw: "part-00001-9d9d980b-c500-4f0b-bb96-771a515fbccc-c000.snappy.parquet" },
-   Path { raw: "part-00002-8826af84-73bd-49a6-a4b9-e39ffed9c15a-c000.snappy.parquet" },
-   Path { raw: "part-00003-539aff30-2349-4b0d-9726-c18630c6ad90-c000.snappy.parquet" },
-   Path { raw: "part-00004-1bb9c3e3-c5b0-4d60-8420-23261f58a5eb-c000.snappy.parquet" },
-   Path { raw: "part-00005-4d47f8ff-94db-4d32-806c-781a1cf123d2-c000.snappy.parquet" },
-   Path { raw: "part-00006-d0ec7722-b30c-4e1c-92cd-b4fe8d3bb954-c000.snappy.parquet" },
-   Path { raw: "part-00007-4582392f-9fc2-41b0-ba97-a74b3afc8239-c000.snappy.parquet" }
-]
-```
-
-</p>
-</details>
+   === Delta table files ===
+   [
+      Path { raw: "part-00000-a496f40c-e091-413a-85f9-b1b69d4b3b4e-c000.snappy.parquet" },
+      Path { raw: "part-00001-9d9d980b-c500-4f0b-bb96-771a515fbccc-c000.snappy.parquet" },
+      Path { raw: "part-00002-8826af84-73bd-49a6-a4b9-e39ffed9c15a-c000.snappy.parquet" },
+      Path { raw: "part-00003-539aff30-2349-4b0d-9726-c18630c6ad90-c000.snappy.parquet" },
+      Path { raw: "part-00004-1bb9c3e3-c5b0-4d60-8420-23261f58a5eb-c000.snappy.parquet" },
+      Path { raw: "part-00005-4d47f8ff-94db-4d32-806c-781a1cf123d2-c000.snappy.parquet" },
+      Path { raw: "part-00006-d0ec7722-b30c-4e1c-92cd-b4fe8d3bb954-c000.snappy.parquet" },
+      Path { raw: "part-00007-4582392f-9fc2-41b0-ba97-a74b3afc8239-c000.snappy.parquet" }
+   ]
+   ```
 
 4. Execute `examples/read_delta_datafusion.rs` to query the `covid19_nyt` Delta Lake table using `datafusion`
-
-```bash
-cargo run --example read_delta_datafusion
-```
-
-<details><summary>Click to view output</summary>
-<p>
-
-```bash
-cargo run --example read_delta_datafusion
-
-[
-   RecordBatch {
-      schema: Schema {
-         fields: [
-            Field { name: "cases", data_type: Int32, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None },
-            Field { name: "county", data_type: Utf8, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None },
-            Field { name: "date", data_type: Utf8, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None }
-         ], metadata: {}
-      },
-      columns: [PrimitiveArray<Int32>
-      [
-      1,
-      1,
-      1,
-      1,
-      1,
-      ], StringArray
-      [
-      "Snohomish",
-      "Snohomish",
-      "Snohomish",
-      "Cook",
-      "Snohomish",
-      ], StringArray
-      [
-      "2020-01-21",
-      "2020-01-22",
-      "2020-01-23",
-      "2020-01-24",
-      "2020-01-24",
-      ]],
-      row_count: 5
-   }
-]
-```
+   ```bash
+   cargo run --example read_delta_datafusion
+   ```
+   ```bash
+   [
+      RecordBatch {
+         schema: Schema {
+            fields: [
+               Field { name: "cases", data_type: Int32, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None },
+               Field { name: "county", data_type: Utf8, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None },
+               Field { name: "date", data_type: Utf8, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None }
+            ], metadata: {}
+         },
+         columns: [PrimitiveArray<Int32>[
+            1,
+            1,
+            1,
+            1,
+            1,
+         ], StringArray [
+            "Snohomish",
+            "Snohomish",
+            "Snohomish",
+            "Cook",
+            "Snohomish",
+         ], StringArray [
+            "2020-01-21",
+            "2020-01-22",
+            "2020-01-23",
+            "2020-01-24",
+            "2020-01-24",
+         ]],
+         row_count: 5
+      }
+   ]
+   ```
 
 </p>
 </details>
@@ -407,15 +401,11 @@ cargo run --example read_delta_datafusion
 
 You can query your Delta Lake table with [Apache Arrow](https://github.com/apache/arrow) and [Datafusion](https://github.com/apache/arrow-datafusion) using [ROAPI](https://roapi.github.io/docs/config/dataset-formats/delta.html) which are pre-installed in this docker.
 
-> Note: If you need to do this in your own environment, run the command `pip3 install roapi==0.8.1`
+> Note: If you need to do this in your own environment, run the command `pip3 install roapi==0.9.0`
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint
-
-   ```bash
-   docker run --name delta_quickstart --rm -it -p 8080:8080 --entrypoint bash delta_quickstart
-   ```
+2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Start the `roapi` API using the following command. Notes:
 
@@ -433,7 +423,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
    docker exec -it delta_quickstart /bin/bash
    ```
 
-> Note: Run the below steps in the shell launched in the previous step
+   > Note: Run the below steps in the shell launched in the previous step
 
 5. Check the schema of the two Delta Lake tables
 
@@ -441,55 +431,43 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
    curl localhost:8080/api/schema
    ```
 
-<details><summary>Click to view output</summary>
+   ```bash
+   {
+      "covid19_nyt":{"fields":[
+         {"name":"date","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},
+         {"name":"county","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},
+         {"name":"state","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},
+         {"name":"fips","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},
+         {"name":"cases","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},
+         {"name":"deaths","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false}
+      ]},
+      "deltars_table":{"fields":[
+         {"name":"0","data_type":"Int64","nullable":true,"dict_id":0,"dict_is_ordered":false}
+      ]}
+   }
+   ```
 
-```bash
+6. Query the `deltars_table`
 
-curl localhost:8080/api/schema
-
-{
-   "covid19_nyt":{"fields":[{"name":"date","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"county","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"state","data_type":"Utf8","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"fips","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"cases","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false},{"name":"deaths","data_type":"Int32","nullable":true,"dict_id":0,"dict_is_ordered":false}]},
-
-   "deltars_table":{"fields":[{"name":"0","data_type":"Int64","nullable":true,"dict_id":0,"dict_is_ordered":false}]}
-}
-```
-
-</details>
-
-5. Query the `deltars_table`
    ```bash
    curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
    ```
 
-<details><summary>Click to view output</summary>
+   ```bash
+   # output
+   [{"0":0},{"0":1},{"0":2},{"0":3},{"0":4},{"0":6},{"0":7},{"0":8},{"0":9},{"0":10}]
+   ```
 
-```bash
-
-curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
-
-[{"0":0},{"0":1},{"0":2},{"0":3},{"0":4},{"0":6},{"0":7},{"0":8},{"0":9},{"0":10}]
-```
-
-</details>
-
-6. Query the `covid19_nyt` table
+7. Query the `covid19_nyt` table
    ```bash
    curl -X POST -d "SELECT cases, county, date FROM covid19_nyt ORDER BY cases DESC LIMIT 5" localhost:8080/api/sql
    ```
-
-<details><summary>Click to view output</summary>
-
-```bash
-
-curl -X POST -d "SELECT cases, county, date FROM covid19_nyt ORDER BY cases DESC LIMIT 5" localhost:8080/api/sql
-
-[
-    {"cases":1208672,"county":"Los Angeles","date":"2021-03-11"},
-    {"cases":1207361,"county":"Los Angeles","date":"2021-03-10"},
-    {"cases":1205924,"county":"Los Angeles","date":"2021-03-09"},
-    {"cases":1204665,"county":"Los Angeles","date":"2021-03-08"},
-    {"cases":1203799,"county":"Los Angeles","date":"2021-03-07"}
-]
-```
-
-</details>
+   ```bash
+   [
+      {"cases":1208672,"county":"Los Angeles","date":"2021-03-11"},
+      {"cases":1207361,"county":"Los Angeles","date":"2021-03-10"},
+      {"cases":1205924,"county":"Los Angeles","date":"2021-03-09"},
+      {"cases":1204665,"county":"Los Angeles","date":"2021-03-08"},
+      {"cases":1203799,"county":"Los Angeles","date":"2021-03-07"}
+   ]
+   ```
