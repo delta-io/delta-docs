@@ -45,6 +45,8 @@ Note, there are different versions of the Delta Lake docker
 | ----------------- | -------- | ------ | ------ | ----------- | ----- | ---------- | ------ | ----- |
 | 0.8.1_2.3.0       | amd64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
 | 0.8.1_2.3.0_arm64 | arm64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| latest            | amd64    | 0.9.0  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| latest            | arm64    | 0.9.0  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
 
 \*\* Note, the arm64 version is built for ARM64 platforms like Mac M1
 
@@ -94,7 +96,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    python3
    ```
 
-   > Note: The Delta Rust Python bindings are already installed in this docker. To do this manually in your own environment, run the command: `pip3 install deltalake==0.8.1`
+   > Note: The Delta Rust Python bindings are already installed in this docker. To do this manually in your own environment, run the command: `pip3 install deltalake==0.9.0`
 
 1. Run some basic commands in the shell to write to and read from Delta Lake with Pandas
 
