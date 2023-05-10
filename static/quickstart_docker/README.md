@@ -7,9 +7,9 @@ This folder contains instructions and materials to get new users started with De
 Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta Lake installed, run a container, and follow the quickstart in an interactive notebook or shell with any of the options like Python, PySpark, Scala Spark or even Rust.
 
 1. [Working with Docker](#docker-image)
-   1. [Build the image](#Build-the-Image)
+   1. [Build the image](#build-the-image)
    2. [Docker Hub](#docker-hub)
-2. [Choose an interface](#Choose-an-Interface)
+2. [Choose an interface](#choose-an-interface)
 
 > Note: Python version available in this Docker image is 3.9.2 and is available as `python3`.
 
@@ -62,12 +62,14 @@ Your entry point for the Docker Hub image is:
 ```bash
 # Running locally on Mac M1
 docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:latest_arm64
+```
 
+```bash
 # Running on Linux VM
 docker run --name delta_quickstart --rm -it --entrypoint bash deltaio/delta-docker:latest
 ```
 
-Once the image has been built or you ahve downloaded the correct image, you can then move on to running the quickstart in a notebook or shell.
+Once the image has been built or you have downloaded the correct image, you can then move on to running the quickstart in a notebook or shell.
 
 ## Choose the Delta Package version
 
@@ -138,7 +140,9 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    ```python
    # List files for the Delta Lake table
    dt.files()
+   ```
 
+   ```python
    ## Output
    ['0-d4920663-30e9-4a1a-afde-59bc4ebd24b5-0.parquet', '1-f27a5ea6-a15f-4ca1-91b3-72bcf64fbc09-0.parquet']
    ```
@@ -148,7 +152,9 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    ```python
    # Review history
    dt.history()
+   ```
 
+   ```python
    ## Output
    [{'timestamp': 1682475171964, 'delta-rs': '0.8.0'}, {'timestamp': 1682475171985, 'operation': 'WRITE', 'operationParameters': {'partitionBy': '[]', 'mode': 'Append'}, 'clientVersion': 'delta-rs.0.8.0'}]
    ```
@@ -161,7 +167,9 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
    # Show table
    dt.to_pandas()
+   ```
 
+   ```python
    ## Output
       0
    0  0
@@ -177,6 +185,9 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
    ```bash
    $ ls -lsgA /tmp/deltars_table
+   ```
+
+   ```bash
    total 12
    4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:12 _delta_log
    4 -rw-r--r-- 1 NBuser 1689 Apr 26 02:12 0-d4920663-30e9-4a1a-afde-59bc4ebd24b5-0.parquet
@@ -194,7 +205,9 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    ```bash
    # Build entry point
    docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickstart
+   ```
 
+   ```bash
    # Image entry point (M1)
    docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 -entrypoint bash deltaio/delta-docker:latest_arm64
    ```
@@ -242,12 +255,28 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    df.show()
    ```
 
+   ```python
+   ## Output
+   +---+
+   | id|
+   +---+
+   |  0|
+   |  1|
+   |  2|
+   |  3|
+   |  4|
+   +---+
+   ```
+
 5. Continue with the quickstart [here](https://docs.delta.io/latest/quick-start.html#create-a-table&language-python)
 
 6. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/delta-table`. Once you close your `pyspark` process, run a list command in your Docker shell and you should get something similar to below.
 
    ```bash
    $ ls -lsgA /tmp/delta-table
+   ```
+
+   ```bash
    total 36
    4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:30 _delta_log
    4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00000-bdee316b-8623-4423-b59c-6a809addaea8-c000.snappy.parquet.crc
@@ -299,12 +328,28 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    df.show()
    ```
 
+   ```scala
+   ## Output
+   +---+
+   | id|
+   +---+
+   |  0|
+   |  1|
+   |  2|
+   |  3|
+   |  4|
+   +---+
+   ```
+
 5. Follow the quickstart [here](https://docs.delta.io/latest/quick-start.html#create-a-table&language-scala)
 
 6. To verify that you have a Delta Lake table, you can list the contents within the folder of your Delta Lake table. For example, in the previous code, you saved the table in `/tmp/delta-table`. Once you close your Scala Spark process [`spark-shell`], run a list command in your Docker shell and you should get something similar to below.
 
    ```bash
    $ ls -lsgA /tmp/delta-table
+   ```
+
+   ```bash
    total 36
    4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:31 _delta_log
    4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00000-e0353d3e-7473-4ff7-9b58-e977d48d008a-c000.snappy.parquet.crc
@@ -417,15 +462,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
    nohup roapi --addr-http 0.0.0.0:8080 --table 'deltars_table=/tmp/deltars_table/,format=delta' --table 'covid19_nyt=/opt/spark/work-dir/rs/data/COVID-19_NYT,format=delta' &
    ```
 
-4. Open another shell to connect to the same Docker image
-
-   ```bash
-   docker exec -it delta_quickstart /bin/bash
-   ```
-
-   > Note: Run the below steps in the shell launched in the previous step
-
-5. Check the schema of the two Delta Lake tables
+4. Check the schema of the two Delta Lake tables
 
    ```bash
    curl localhost:8080/api/schema
@@ -447,7 +484,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
    }
    ```
 
-6. Query the `deltars_table`
+5. Query the `deltars_table`
 
    ```bash
    curl -X POST -d "SELECT * FROM deltars_table"  localhost:8080/api/sql
@@ -458,7 +495,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
    [{"0":0},{"0":1},{"0":2},{"0":3},{"0":4},{"0":6},{"0":7},{"0":8},{"0":9},{"0":10}]
    ```
 
-7. Query the `covid19_nyt` table
+6. Query the `covid19_nyt` table
    ```bash
    curl -X POST -d "SELECT cases, county, date FROM covid19_nyt ORDER BY cases DESC LIMIT 5" localhost:8080/api/sql
    ```
