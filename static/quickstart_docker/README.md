@@ -6,7 +6,7 @@ This folder contains instructions and materials to get new users started with De
 
 Follow the steps below to build an Apache Spark<sup>TM</sup> image with Delta Lake installed, run a container, and follow the quickstart in an interactive notebook or shell with any of the options like Python, PySpark, Scala Spark or even Rust.
 
-1. [Working with Docker](#docker-image)
+1. [Working with Docker](#working-with-docker)
    1. [Build the image](#build-the-image)
    2. [Docker Hub](#docker-hub)
 2. [Choose an interface](#choose-an-interface)
@@ -90,7 +90,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-1. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
+1. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 1. Launch a _python_ interactive shell session with `python3`
 
@@ -200,7 +200,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a Juypter Lab entrypoint
+2. Run a container from the image with a JuypterLab entrypoint
 
    ```bash
    # Build entry point
@@ -220,7 +220,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
+2. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a pyspark interactive shell session
 
@@ -293,7 +293,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
+2. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a scala interactive shell session
 
@@ -368,7 +368,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
+2. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Execute `examples/read_delta_table.rs` to review the Delta Lake table metadata and files of the `covid19_nyt` Delta Lake table.
 
@@ -405,6 +405,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    ```bash
    cargo run --example read_delta_datafusion
    ```
+   
    ```bash
    [
       RecordBatch {
@@ -450,7 +451,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the built image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
+2. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Start the `roapi` API using the following command. Notes:
 
@@ -499,6 +500,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
    ```bash
    curl -X POST -d "SELECT cases, county, date FROM covid19_nyt ORDER BY cases DESC LIMIT 5" localhost:8080/api/sql
    ```
+
    ```bash
    [
       {"cases":1208672,"county":"Los Angeles","date":"2021-03-11"},
