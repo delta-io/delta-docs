@@ -402,10 +402,11 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    ```
 
 4. Execute `examples/read_delta_datafusion.rs` to query the `covid19_nyt` Delta Lake table using `datafusion`
+
    ```bash
    cargo run --example read_delta_datafusion
    ```
-   
+
    ```bash
    [
       RecordBatch {
@@ -497,6 +498,7 @@ You can query your Delta Lake table with [Apache Arrow](https://github.com/apach
    ```
 
 6. Query the `covid19_nyt` table
+
    ```bash
    curl -X POST -d "SELECT cases, county, date FROM covid19_nyt ORDER BY cases DESC LIMIT 5" localhost:8080/api/sql
    ```
