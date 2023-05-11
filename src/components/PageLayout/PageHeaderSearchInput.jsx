@@ -140,6 +140,9 @@ const PageHeaderSearchInput = (props) => {
                   href={result.url}
                   key={result.id}
                   newTab={result.isExternal}
+                  onClick={() => {
+                    onChange("");
+                  }}
                 >
                   <em>{result.type}</em>
                   <strong>
