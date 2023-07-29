@@ -204,7 +204,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
    ```bash
    # Build entry point
-   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 delta_quickstart
+   docker run --name delta_quickstart --rm -it -p 8888-8889:8888-8889 deltaio/delta-docker:latest
    ```
 
    ```bash
