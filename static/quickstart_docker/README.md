@@ -229,9 +229,9 @@ The current version is `delta-core_2.12:3.0.0` which corresponds to Apache Spark
    ```bash
    
    $SPARK_HOME/bin/pyspark --packages io.delta:${DELTA_PACKAGE_VERSION} \
-  --conf spark.driver.extraJavaOptions="-Divy.cache.dir=/tmp -Divy.home=/tmp" \
-  --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
-  --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
+   --conf spark.driver.extraJavaOptions="-Divy.cache.dir=/tmp -Divy.home=/tmp" \
+   --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
+   --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
    ```
    > Note: `DELTA_PACKAGE_VERSION` is set in `./startup.sh`
 
@@ -314,7 +314,7 @@ The current version is `delta-core_2.12:3.0.0` which corresponds to Apache Spark
    ```
 
 4. Run some basic commands in the shell
-> note: if you've already written to the Delta table in the python shell example, use `.mode("overwrite")` to overwrite the current delta table. You can always time-travel to rewind.
+   > note: if you've already written to the Delta table in the python shell example, use `.mode("overwrite")` to overwrite the current delta table. You can always time-travel to rewind.
 
    ```scala
    // Create a Spark DataFrame
