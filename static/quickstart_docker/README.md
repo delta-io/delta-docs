@@ -41,14 +41,16 @@ You can also download the image from DockerHub at [Delta Lake DockerHub](https:/
 
 Note, there are different versions of the Delta Lake docker
 
-| Tag               | Platform | Python | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI |
-| ----------------- | -------- | ------ | ------ | ----------- | ----- | ---------- | ------ | ----- |
-| 0.8.1_2.3.0       | amd64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
-| 0.8.1_2.3.0_arm64 | arm64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
-| latest            | amd64    | 0.9.0  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
-| latest            | arm64    | 0.9.0  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| Tag               | Platform | Python  | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI |
+| ----------------- | -------- | ------- | ------ | ----------- | ----- | ---------- | ------ | ----- |
+| 0.8.1_2.3.0       | amd64    | 0.8.1   | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| 0.8.1_2.3.0_arm64 | arm64    | 0.8.1   | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| 1.0.0_3.0.0       | amd64    | 0.12.0  | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
+| 1.0.0_3.0.0_arm64 | arm64    | 0.12.0  | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
+| latest            | amd64    | 0.12.0  | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
+| latest            | arm64    | 0.12.0  | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
 
-\*\* Note, the arm64 version is built for ARM64 platforms like Mac M1
+> Note, the arm64 version is built for ARM64 platforms like Mac M1
 
 Download the appropriate tag, e.g.:
 
@@ -75,7 +77,7 @@ Once the image has been built or you have downloaded the correct image, you can 
 
 In the following instructions, the variable `${DELTA_PACKAGE_VERSION}` refers to the Delta Lake Package version.
 
-The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark 3.3.x release line.
+The current version is `delta-core_2.12:3.0.0` which corresponds to Apache Spark 3.5.x release line.
 
 ## Choose an Interface
 
@@ -126,13 +128,13 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
    ```python
    ## Output
-       0
-   0   0
-   1   1
-   2   2
-   ... ...
-   8   9
-   9  10
+      data
+   0     0
+   1     1
+   2     2
+   ...
+   8     9
+   9    10
    ```
 
 1. Review the files
@@ -144,7 +146,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
    ```python
    ## Output
-   ['0-d4920663-30e9-4a1a-afde-59bc4ebd24b5-0.parquet', '1-f27a5ea6-a15f-4ca1-91b3-72bcf64fbc09-0.parquet']
+   ['0-6944fddf-60e3-4eab-811d-1398e9f64073-0.parquet', '1-66c7ee6e-6aab-4c74-866d-a82790102652-0.parquet']
    ```
 
 1. Review history
@@ -156,7 +158,7 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
    ```python
    ## Output
-   [{'timestamp': 1682475171964, 'delta-rs': '0.8.0'}, {'timestamp': 1682475171985, 'operation': 'WRITE', 'operationParameters': {'partitionBy': '[]', 'mode': 'Append'}, 'clientVersion': 'delta-rs.0.8.0'}]
+   [{'timestamp': 1698002214493, 'operation': 'WRITE', 'operationParameters': {'mode': 'Append', 'partitionBy': '[]'}, 'clientVersion': 'delta-rs.0.17.0', 'version': 1}, {'timestamp': 1698002207527, 'operation': 'CREATE TABLE', 'operationParameters': {'mode': 'ErrorIfExists', 'protocol': '{"minReaderVersion":1,"minWriterVersion":1}', 'location': 'file:///tmp/deltars_table', 'metadata': '{"configuration":{},"created_time":1698002207525,"description":null,"format":{"options":{},"provider":"parquet"},"id":"bf749aab-22b6-484b-bd73-dc1680ee4384","name":null,"partition_columns":[],"schema":{"fields":[{"metadata":{},"name":"data","nullable":true,"type":"long"}],"type":"struct"}}'}, 'clientVersion': 'delta-rs.0.17.0', 'version': 0}]
    ```
 
 1. Time Travel (load older version of table)
@@ -171,12 +173,12 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
    ```python
    ## Output
-      0
-   0  0
-   1  1
-   2  2
-   3  3
-   4  4
+      data
+   0     0
+   1     1
+   2     2
+   3     3
+   4     4
    ```
 
 1. Follow the delta-rs Python documentation [here](https://delta-io.github.io/delta-rs/python/usage.html#)
@@ -189,9 +191,9 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
    ```bash
    total 12
-   4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:12 _delta_log
-   4 -rw-r--r-- 1 NBuser 1689 Apr 26 02:12 0-d4920663-30e9-4a1a-afde-59bc4ebd24b5-0.parquet
-   4 -rw-r--r-- 1 NBuser 1691 Apr 26 02:12 1-f27a5ea6-a15f-4ca1-91b3-72bcf64fbc09-0.parquet
+   4 -rw-r--r-- 1 NBuser 1689 Oct 22 19:16 0-6944fddf-60e3-4eab-811d-1398e9f64073-0.parquet
+   4 -rw-r--r-- 1 NBuser 1691 Oct 22 19:16 1-66c7ee6e-6aab-4c74-866d-a82790102652-0.parquet
+   4 drwxr-xr-x 2 NBuser 4096 Oct 22 19:16 _delta_log
    ```
 
 1. [Optional] Skip ahead to try out the [Delta Rust API](#delta-rust-api) and [ROAPI](#optional-roapi)
@@ -223,12 +225,15 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 2. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a pyspark interactive shell session
-
+   
    ```bash
+   
    $SPARK_HOME/bin/pyspark --packages io.delta:${DELTA_PACKAGE_VERSION} \
-   --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
-   --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
+  --conf spark.driver.extraJavaOptions="-Divy.cache.dir=/tmp -Divy.home=/tmp" \
+  --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
+  --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
    ```
+   > Note: `DELTA_PACKAGE_VERSION` is set in `./startup.sh`
 
 4. Run some basic commands in the shell
 
@@ -277,16 +282,20 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    ```
 
    ```bash
-   total 36
-   4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:30 _delta_log
-   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00000-bdee316b-8623-4423-b59c-6a809addaea8-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00001-6b373d50-5bdd-496a-9e21-ab4164176f11-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00002-9721ce9e-e043-4875-bcff-08f7d7c3d3f0-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:30 .part-00003-61aaf450-c318-452a-aea5-5a44c909fd74-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:30 part-00000-bdee316b-8623-4423-b59c-6a809addaea8-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:30 part-00001-6b373d50-5bdd-496a-9e21-ab4164176f11-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:30 part-00002-9721ce9e-e043-4875-bcff-08f7d7c3d3f0-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser  486 Apr 26 02:30 part-00003-61aaf450-c318-452a-aea5-5a44c909fd74-c000.snappy.parquet
+   total 52
+   4 drwxr-xr-x 2 NBuser 4096 Oct 22 19:23 _delta_log
+   4 -rw-r--r-- 1 NBuser  296 Oct 22 19:23 part-00000-dc0fd6b3-9c0f-442f-a6db-708301b27bd2-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:23 .part-00000-dc0fd6b3-9c0f-442f-a6db-708301b27bd2-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:23 part-00001-d379441e-1ee4-4e78-8616-1d9635df1c7b-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:23 .part-00001-d379441e-1ee4-4e78-8616-1d9635df1c7b-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:23 part-00003-c08dcac4-5ea9-4329-b85d-9110493e8757-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:23 .part-00003-c08dcac4-5ea9-4329-b85d-9110493e8757-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:23 part-00005-5db8dd16-2ab1-4d76-9b4d-457c5641b1c8-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:23 .part-00005-5db8dd16-2ab1-4d76-9b4d-457c5641b1c8-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:23 part-00007-cad760e0-3c26-4d22-bed6-7d75a9459a0f-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:23 .part-00007-cad760e0-3c26-4d22-bed6-7d75a9459a0f-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:23 part-00009-b58e8445-07b7-4e2a-9abf-6fea8d0c3e3f-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:23 .part-00009-b58e8445-07b7-4e2a-9abf-6fea8d0c3e3f-c000.snappy.parquet.crc
    ```
 
 ### Scala Shell
@@ -299,17 +308,20 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
 
    ```bash
    $SPARK_HOME/bin/spark-shell --packages io.delta:${DELTA_PACKAGE_VERSION} \
+   --conf spark.driver.extraJavaOptions="-Divy.cache.dir=/tmp -Divy.home=/tmp" \
    --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
    --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
    ```
 
 4. Run some basic commands in the shell
+> note: if you've already written to the Delta table in the python shell example, use `.mode("overwrite")` to overwrite the current delta table. You can always time-travel to rewind.
 
    ```scala
    // Create a Spark DataFrame
    val data = spark.range(0, 5)
 
    // Write to a Delta Lake table
+   
    (data
       .write
       .format("delta")
@@ -350,21 +362,28 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    ```
 
    ```bash
-   total 36
-   4 drwxr-xr-x 2 NBuser 4096 Apr 26 02:31 _delta_log
-   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00000-e0353d3e-7473-4ff7-9b58-e977d48d008a-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00001-0e2c89cf-3f9b-4698-b059-6dd41d4e3aed-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00002-06bf68f9-16d8-4c08-ba8e-7b0b00d52b8e-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser   12 Apr 26 02:31 .part-00003-5963f002-d98a-421f-9c2d-22376b7f87e4-c000.snappy.parquet.crc
-   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:31 part-00000-e0353d3e-7473-4ff7-9b58-e977d48d008a-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:31 part-00001-0e2c89cf-3f9b-4698-b059-6dd41d4e3aed-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser  478 Apr 26 02:31 part-00002-06bf68f9-16d8-4c08-ba8e-7b0b00d52b8e-c000.snappy.parquet
-   4 -rw-r--r-- 1 NBuser  486 Apr 26 02:31 part-00003-5963f002-d98a-421f-9c2d-22376b7f87e4-c000.snappy.parquet
+   total 52
+   4 drwxr-xr-x 2 NBuser 4096 Oct 22 19:28 _delta_log
+   4 -rw-r--r-- 1 NBuser  296 Oct 22 19:28 part-00000-f1f417f7-df64-4c7c-96f2-6a452ae2b49e-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00000-f1f417f7-df64-4c7c-96f2-6a452ae2b49e-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00001-b28acb6f-f08a-460f-a24e-4d9c1affee86-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00001-b28acb6f-f08a-460f-a24e-4d9c1affee86-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00003-29079c58-d1ad-4604-9c04-0f00bf09546d-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00003-29079c58-d1ad-4604-9c04-0f00bf09546d-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00005-04424aa7-48e1-4212-bd57-52552c713154-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00005-04424aa7-48e1-4212-bd57-52552c713154-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00007-e7a54a4f-bee4-4371-a35d-d284e28eb9f8-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00007-e7a54a4f-bee4-4371-a35d-d284e28eb9f8-c000.snappy.parquet.crc
+   4 -rw-r--r-- 1 NBuser  478 Oct 22 19:28 part-00009-086e6cd9-e8c6-4f16-9658-b15baf22905d-c000.snappy.parquet
+   4 -rw-r--r-- 1 NBuser   12 Oct 22 19:28 .part-00009-086e6cd9-e8c6-4f16-9658-b15baf22905d-c000.snappy.parquet.crc
    ```
 
 </details>
 
 ### Delta Rust API
+> Note: Use a docker volume in case of running into limits "no room left on device"
+> `docker volume create rustbuild`
+> `docker run --name delta_quickstart -v rustbuild:/tmp --rm -it --entrypoint bash deltaio/delta-docker:3.0.0`
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
@@ -377,28 +396,25 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    cargo run --example read_delta_table
    ```
 
+   > You can also use a different location to build and run the examples
+   ```bash
+   cd rs
+   CARGO_TARGET_DIR=/tmp cargo run --example read_delta_table
+   ```
+
    > If using [Delta Lake DockerHub](https://go.delta.io/dockerhub), sometimes the Rust environment hasn't been configured. To resolve this, run the command `source "$HOME/.cargo/env"`
 
    ```bash
    === Delta table metadata ===
-   DeltaTable(../quickstart_docker/rs/data/COVID-19_NYT)
-      version: 0
-      metadata: GUID=7245fd1d-8a6d-4988-af72-92a95b646511, name=None, description=None, partitionColumns=[], createdTime=Some(1619121484605), configuration={}
-      min_version: read=1, write=2
-      files count: 8
+   DeltaTable(/opt/spark/work-dir/rs/data/COVID-19_NYT)
+	   version: 0
+	   metadata: GUID=7245fd1d-8a6d-4988-af72-92a95b646511, name=None, description=None, partitionColumns=[], createdTime=Some(1619121484605), configuration={}
+	   min_version: read=1, write=2
+	   files count: 8
 
 
    === Delta table files ===
-   [
-      Path { raw: "part-00000-a496f40c-e091-413a-85f9-b1b69d4b3b4e-c000.snappy.parquet" },
-      Path { raw: "part-00001-9d9d980b-c500-4f0b-bb96-771a515fbccc-c000.snappy.parquet" },
-      Path { raw: "part-00002-8826af84-73bd-49a6-a4b9-e39ffed9c15a-c000.snappy.parquet" },
-      Path { raw: "part-00003-539aff30-2349-4b0d-9726-c18630c6ad90-c000.snappy.parquet" },
-      Path { raw: "part-00004-1bb9c3e3-c5b0-4d60-8420-23261f58a5eb-c000.snappy.parquet" },
-      Path { raw: "part-00005-4d47f8ff-94db-4d32-806c-781a1cf123d2-c000.snappy.parquet" },
-      Path { raw: "part-00006-d0ec7722-b30c-4e1c-92cd-b4fe8d3bb954-c000.snappy.parquet" },
-      Path { raw: "part-00007-4582392f-9fc2-41b0-ba97-a74b3afc8239-c000.snappy.parquet" }
-   ]
+   [Path { raw: "part-00000-a496f40c-e091-413a-85f9-b1b69d4b3b4e-c000.snappy.parquet" }, Path { raw: "part-00001-9d9d980b-c500-4f0b-bb96-771a515fbccc-c000.snappy.parquet" }, Path { raw: "part-00002-8826af84-73bd-49a6-a4b9-e39ffed9c15a-c000.snappy.parquet" }, Path { raw: "part-00003-539aff30-2349-4b0d-9726-c18630c6ad90-c000.snappy.parquet" }, Path { raw: "part-00004-1bb9c3e3-c5b0-4d60-8420-23261f58a5eb-c000.snappy.parquet" }, Path { raw: "part-00005-4d47f8ff-94db-4d32-806c-781a1cf123d2-c000.snappy.parquet" }, Path { raw: "part-00006-d0ec7722-b30c-4e1c-92cd-b4fe8d3bb954-c000.snappy.parquet" }, Path { raw: "part-00007-4582392f-9fc2-41b0-ba97-a74b3afc8239-c000.snappy.parquet" }]
    ```
 
 4. Execute `examples/read_delta_datafusion.rs` to query the `covid19_nyt` Delta Lake table using `datafusion`
@@ -408,37 +424,29 @@ The current version is `delta-core_2.12:2.3.0` which corresponds to Apache Spark
    ```
 
    ```bash
+   === Datafusion query ===
+   [RecordBatch { schema: Schema { fields: [Field { name: "cases", data_type: Int32, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None }, Field { name: "county", data_type: Utf8, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None }, Field { name: "date", data_type: Utf8, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None }], metadata: {} }, columns: [PrimitiveArray<Int32>
    [
-      RecordBatch {
-         schema: Schema {
-            fields: [
-               Field { name: "cases", data_type: Int32, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None },
-               Field { name: "county", data_type: Utf8, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None },
-               Field { name: "date", data_type: Utf8, nullable: true, dict_id: 0, dict_is_ordered: false, metadata: None }
-            ], metadata: {}
-         },
-         columns: [PrimitiveArray<Int32>[
-            1,
-            1,
-            1,
-            1,
-            1,
-         ], StringArray [
-            "Snohomish",
-            "Snohomish",
-            "Snohomish",
-            "Cook",
-            "Snohomish",
-         ], StringArray [
-            "2020-01-21",
-            "2020-01-22",
-            "2020-01-23",
-            "2020-01-24",
-            "2020-01-24",
-         ]],
-         row_count: 5
-      }
-   ]
+      1,
+      1,
+      1,
+      1,
+      1,
+   ], StringArray
+   [
+      "Snohomish",
+      "Snohomish",
+      "Snohomish",
+      "Cook",
+      "Snohomish",
+   ], StringArray
+   [
+      "2020-01-21",
+      "2020-01-22",
+      "2020-01-23",
+      "2020-01-24",
+      "2020-01-24",
+   ]], row_count: 5 }]
    ```
 
 </p>
