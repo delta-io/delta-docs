@@ -1,7 +1,7 @@
 [package]
 name = "quickstart"
-version = "0.1.1"
-rust-version = "1.64"
+version = "0.1.2"
+rust-version = "1.73"
 authors = ["Denny Lee <denny.g.lee@gmail.com>"]
 license = "Apache-2.0"
 keywords = ["deltalake", "delta", "datalake", "deltars"]
