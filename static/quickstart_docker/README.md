@@ -41,14 +41,14 @@ You can also download the image from DockerHub at [Delta Lake DockerHub](https:/
 
 Note, there are different versions of the Delta Lake docker
 
-| Tag               | Platform | Python  | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI |
-| ----------------- | -------- | ------- | ------ | ----------- | ----- | ---------- | ------ | ----- |
-| 0.8.1_2.3.0       | amd64    | 0.8.1   | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
-| 0.8.1_2.3.0_arm64 | arm64    | 0.8.1   | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
-| 1.0.0_3.0.0       | amd64    | 0.12.0  | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
-| 1.0.0_3.0.0_arm64 | arm64    | 0.12.0  | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
-| latest            | amd64    | 0.12.0  | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
-| latest            | arm64    | 0.12.0  | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
+| Tag               | Platform | Python | Rust   | Delta-Spark | Spark | JupyterLab | Pandas | ROAPI |
+| ----------------- | -------- | ------ | ------ | ----------- | ----- | ---------- | ------ | ----- |
+| 0.8.1_2.3.0       | amd64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| 0.8.1_2.3.0_arm64 | arm64    | 0.8.1  | latest | 2.3.0       | 3.3.2 | 3.6.3      | 1.5.3  | 0.9.0 |
+| 1.0.0_3.0.0       | amd64    | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
+| 1.0.0_3.0.0_arm64 | arm64    | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
+| latest            | amd64    | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
+| latest            | arm64    | 0.12.0 | latest | 3.0.0       | 3.5.0 | 3.6.3      | 1.5.3  | 0.9.0 |
 
 > Note, the arm64 version is built for ARM64 platforms like Mac M1
 
@@ -225,14 +225,15 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
 2. Run a container from the image with a bash entrypoint ([build](#build-entry-point) | [DockerHub](#image-entry-point))
 
 3. Launch a pyspark interactive shell session
-   
+
    ```bash
-   
+
    $SPARK_HOME/bin/pyspark --packages io.delta:${DELTA_PACKAGE_VERSION} \
    --conf spark.driver.extraJavaOptions="-Divy.cache.dir=/tmp -Divy.home=/tmp" \
    --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
    --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
    ```
+
    > Note: `DELTA_PACKAGE_VERSION` is set in `./startup.sh`
 
 4. Run some basic commands in the shell
@@ -314,6 +315,7 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
    ```
 
 4. Run some basic commands in the shell
+
    > note: if you've already written to the Delta table in the python shell example, use `.mode("overwrite")` to overwrite the current delta table. You can always time-travel to rewind.
 
    ```scala
@@ -321,7 +323,7 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
    val data = spark.range(0, 5)
 
    // Write to a Delta Lake table
-   
+
    (data
       .write
       .format("delta")
@@ -381,9 +383,9 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
 </details>
 
 ### Delta Rust API
+
 > Note: Use a docker volume in case of running into limits "no room left on device"
-> `docker volume create rustbuild`
-> `docker run --name delta_quickstart -v rustbuild:/tmp --rm -it --entrypoint bash deltaio/delta-docker:3.0.0`
+> `docker volume create rustbuild` > `docker run --name delta_quickstart -v rustbuild:/tmp --rm -it --entrypoint bash deltaio/delta-docker:3.0.0`
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
@@ -397,6 +399,7 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
    ```
 
    > You can also use a different location to build and run the examples
+
    ```bash
    cd rs
    CARGO_TARGET_DIR=/tmp cargo run --example read_delta_table
@@ -407,10 +410,10 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
    ```bash
    === Delta table metadata ===
    DeltaTable(/opt/spark/work-dir/rs/data/COVID-19_NYT)
-	   version: 0
-	   metadata: GUID=7245fd1d-8a6d-4988-af72-92a95b646511, name=None, description=None, partitionColumns=[], createdTime=Some(1619121484605), configuration={}
-	   min_version: read=1, write=2
-	   files count: 8
+      version: 0
+      metadata: GUID=7245fd1d-8a6d-4988-af72-92a95b646511, name=None, description=None, partitionColumns=[], createdTime=Some(1619121484605), configuration={}
+      min_version: read=1, write=2
+      files count: 8
 
 
    === Delta table files ===
