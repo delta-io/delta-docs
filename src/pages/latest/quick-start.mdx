@@ -9,6 +9,31 @@ This guide helps you quickly explore the main features of Delta Lake. It
 provides code snippets that show how to read from and write to Delta tables from
 interactive, batch, and streaming queries.
 
+## Copy paste example 
+In this example we install pyspark and delta-spark python packages. Then we start the pyspark shell with the delta packages and configuration. From the python shall we redirect our python example code.
+
+Assumes python 3.10 environment is setup and a bash command shell is open.
+```bash
+pip install pyspark==3.4.1 delta-spark==2.4.0
+pyspark --packages io.delta:delta-core_2.12:2.4.0 --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog" << EOF
+
+import pyspark
+from delta import *
+
+builder = pyspark.sql.SparkSession.builder.appName("MyApp") \
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+
+spark = configure_spark_with_delta_pip(builder).getOrCreate()
+
+spark.sql("CREATE OR REPLACE TABLE mytable_delta(id BIGINT) USING DELTA")
+spark.range(5).write.format('delta').mode('append').saveAsTable("mytable_delta")
+spark.read.table("mytable_delta").show()
+spark.sql("DESCRIBE TABLE mytable_delta").show()
+
+EOF
+```
+
 ## Set up Apache Spark with Delta Lake
 
 Follow these instructions to set up Delta Lake with Spark. You can run the
