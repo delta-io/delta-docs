@@ -100,7 +100,7 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
    python3
    ```
 
-   > Note: The Delta Rust Python bindings are already installed in this docker. To do this manually in your own environment, run the command: `pip3 install deltalake==0.9.0`
+   > Note: The Delta Rust Python bindings are already installed in this docker. To do this manually in your own environment, run the command: `pip3 install deltalake==0.12.0`
 
 1. Run some basic commands in the shell to write to and read from Delta Lake with Pandas
 
