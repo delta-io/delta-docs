@@ -104,7 +104,7 @@ const PageFooter = () => (
           <Typography variant="p2">
             Copyright © {new Date().getFullYear()} Delta Lake, a series of LF
             Projects, LLC. For web site terms of use, trademark policy and other
-            project polcies please see{" "}
+            project policies please see{" "}
             <Link href="https://lfprojects.org" newTab>
               https://lfprojects.org
             </Link>

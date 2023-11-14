@@ -13,7 +13,7 @@ For many Delta Lake operations on tables, you enable integration with Apache Spa
 
 Delta Lake supports creating two types of tables --- tables defined in the metastore and tables defined by path.
 
-To work with metastore-defined tables, you must enable integration with Apache Spark DataSourceV2 and Catalog APIs by setting configurations when you create a new `SparkSession`. See [Configure SparkSesion](#configure-sparksession).
+To work with metastore-defined tables, you must enable integration with Apache Spark DataSourceV2 and Catalog APIs by setting configurations when you create a new `SparkSession`. See [Configure SparkSession](#configure-sparksession).
 
 You can create tables in the following ways.
 
@@ -1347,7 +1347,7 @@ pyspark --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" --
 
 ## Configure storage credentials
 
-Delta Lake uses Hadoop FileSystem APIs to access the storage systems. The credentails for storage systems usually can be set through Hadoop configurations. Delta Lake provides multiple ways to set Hadoop configurations similar to Apache Spark.
+Delta Lake uses Hadoop FileSystem APIs to access the storage systems. The credentials for storage systems usually can be set through Hadoop configurations. Delta Lake provides multiple ways to set Hadoop configurations similar to Apache Spark.
 
 ### Spark configurations
 
@@ -1365,7 +1365,7 @@ Spark SQL will pass all of the current [SQL session configurations](http://spark
 
 Besides setting Hadoop file system configurations through the Spark (cluster) configurations or SQL session configurations, Delta supports reading Hadoop file system configurations from `DataFrameReader` and `DataFrameWriter` options (that is, option keys that start with the `fs.` prefix) when the table is read or written, by using `DataFrameReader.load(path)` or `DataFrameWriter.save(path)`.
 
-For example, you can pass your storage credentails through DataFrame options:
+For example, you can pass your storage credentials through DataFrame options:
 
 <CodeTabs>
 
