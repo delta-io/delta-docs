@@ -51,7 +51,7 @@ operate in three stages:
 
 The following table describes which pairs of write operations can conflict. Compaction refers to [file compaction operation](/latest/best-practices#compact-files) written with the option dataChange set to false.
 
-|                                | **INSERT**      | **UPDATE, DELTE, MERGE INTO** | **OPTIMIZE** |
+|                                | **INSERT**      | **UPDATE, DELETE, MERGE INTO** | **OPTIMIZE** |
 | ------------------------------ | --------------- | ----------------------------- | ------------ |
 | **INSERT**                     | Cannot conflict |                               |              |
 | **UPDATE, DELETE, MERGE INTO** | Can conflict    | Can conflict                  |              |

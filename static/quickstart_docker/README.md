@@ -202,7 +202,7 @@ The current version is `delta-spark_2.12:3.0.0` which corresponds to Apache Spar
 
 1. Open a bash shell (if on windows use git bash, WSL, or any shell configured for bash commands)
 
-2. Run a container from the image with a JuypterLab entrypoint
+2. Run a container from the image with a JupyterLab entrypoint
 
    ```bash
    # Build entry point

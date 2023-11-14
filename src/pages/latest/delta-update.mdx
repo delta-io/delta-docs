@@ -455,7 +455,7 @@ You can reduce the time taken by merge using the following approaches:
 
   </CodeTabs>
 
-  will make the query faster as it looks for matches only in the relevant partitions. Furthermore, it will also reduce the chances of conflicts with other concurrent operations. See [concurency control](/latest/concurrency-control) for more details.
+  will make the query faster as it looks for matches only in the relevant partitions. Furthermore, it will also reduce the chances of conflicts with other concurrent operations. See [concurrency control](/latest/concurrency-control) for more details.
 
 - **Compact files**: If the data is stored in many small files, reading the data to search for matches can become slow. You can compact small files into larger files to improve read throughput. See [best practices for compaction](/latest/best-practices/#compact-files) for details.
 

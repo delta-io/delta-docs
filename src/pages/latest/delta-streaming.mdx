@@ -279,7 +279,7 @@ For applications with more lenient latency requirements, you can save computing 
   Available in Delta Lake 2.0.0 and above.
 </Info>
 
-The command `foreachBatch` allows you to specify a function that is executed on the output of every micro-batch after arbitrary transformations in the streaming query. This allows implementating a `foreachBatch` function that can write the micro-batch output to one or more target Delta table destinations. However, `foreachBatch` does not make those writes idempotent as those write attempts lack the information of whether the batch is being re-executed or not. For example, rerunning a failed batch could result in duplicate data writes.
+The command `foreachBatch` allows you to specify a function that is executed on the output of every micro-batch after arbitrary transformations in the streaming query. This allows implementing a `foreachBatch` function that can write the micro-batch output to one or more target Delta table destinations. However, `foreachBatch` does not make those writes idempotent as those write attempts lack the information of whether the batch is being re-executed or not. For example, rerunning a failed batch could result in duplicate data writes.
 
 To address this, Delta tables support the following `DataFrameWriter` options to make the writes idempotent:
 
