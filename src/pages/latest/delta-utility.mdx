@@ -1,5 +1,5 @@
 ---
-title: Utility Operations
+title: Table utility commands
 width: full
 menu: docs
 ---
@@ -18,9 +18,9 @@ default retention threshold for the files is 7 days. To change this behavior, se
 
 - `vacuum` removes all files from directories not managed by Delta Lake, ignoring directories beginning with _. If you are storing additional metadata like Structured Streaming checkpoints within a Delta table directory, use a directory name such as `_checkpoints`.
 
-- `vacuum` deletes only data files, not log files. Log files are deleted automatically and asynchronously after checkpoint operations. The default retention period of log files is 30 days, configurable through the `delta.logRetentionDuration` property which you set with the `ALTER TABLE SET TBLPROPERTIES SQL` method. See [Table properties](/latest/delta-batch/#table-properties).
+- `vacuum` deletes only data files, not log files. Log files are deleted automatically and asynchronously after checkpoint operations. The default retention period of log files is 30 days, configurable through the `delta.logRetentionDuration` property which you set with the `ALTER TABLE SET TBLPROPERTIES` SQL method. See [Table properties](/latest/delta-batch/#table-properties).
 
-- The ability to time travel back to a version older than the retention period is lost after running vacuum.
+- The ability to [time travel](/latest/delta-batch#deltatimetravel) back to a version older than the retention period is lost after running `vacuum`.
 
 </Info>
 
@@ -78,7 +78,7 @@ When using `VACUUM`, to configure Spark to delete files in parallel (based on th
 
 See the [Delta Lake APIs](/latest/delta-apidoc) for Scala, Java, and Python syntax details.
 
-<Info title="Warning" level="info">
+<Info title="Warning" level="danger">
 It is recommended that you set a retention interval to be at least 7 days, because old snapshots and uncommitted files can still be in use by concurrent readers or writers to the table. If `VACUUM` cleans up active files, concurrent readers can fail or, worse, tables can be corrupted when `VACUUM` deletes files that have not yet been committed. You must choose an interval that is longer than the longest running concurrent transaction and the longest period that any stream can lag behind the most recent update to the table.
 </Info>
 
@@ -421,7 +421,7 @@ You can easily convert a Delta table back to a Parquet table using the following
 
 ## Restore a Delta table to an earlier state
 
-You can restore a Delta table to its earlier state by using the `RESTORE` command. A Delta table internally maintains historic versions of the table that enable it to be restored to an earlier state. A version corresponding to the earlier state or a timestamp of when the earlier state was created are supported as options by the RE`STORE command.
+You can restore a Delta table to its earlier state by using the `RESTORE` command. A Delta table internally maintains historic versions of the table that enable it to be restored to an earlier state. A version corresponding to the earlier state or a timestamp of when the earlier state was created are supported as options by the `RESTORE` command.
 
 <Info title="Important!" level="warning">
 
@@ -476,7 +476,7 @@ deltaTable.restoreToTimestamp("2019-02-14") // restore to a specific timestamp
 
 <Info title="Important!" level="warning">
 
-Restore is considered a data-changing operation. Delta Lake log entries added by the RESTORE command contain dataChange set to true. If there is a downstream application, such as a Structured streaming job that processes the updates to a Delta Lake table, the data change log entries added by the restore operation are considered as new data updates, and processing them may result in duplicate data.
+Restore is considered a data-changing operation. Delta Lake log entries added by the `RESTORE` command contain [dataChange](https://github.com/delta-io/delta/blob/master/PROTOCOL.md#add-file-and-remove-file) set to true. If there is a downstream application, such as a [Structured streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html) job that processes the updates to a Delta Lake table, the data change log entries added by the restore operation are considered as new data updates, and processing them may result in duplicate data.
 
 For example:
 
